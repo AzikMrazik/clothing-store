@@ -1,14 +1,16 @@
-app:
-  name: clothing-store-frontend
-  project: clothing-store
-  lang: nodejs
+meta:
+  environment: nodejs
+  toolchain:
+    name: npm
+    version: 18
 
 build:
-  node_version: 18
+  args: --production
 
-deploy:
+run:
   port: 80
-  start_command: npm run preview
+  command: npm run preview
+  persistenceMount: /app/data
   resources:
     limits:
       memory: 512M
