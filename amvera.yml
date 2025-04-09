@@ -1,0 +1,21 @@
+app:
+  name: clothing-store
+  project: clothing-store
+  env: node18
+  
+services:
+  - name: backend
+    root: backend
+    build:
+      command: npm install && npm run build
+    start:
+      command: npm start
+    port: 3000
+
+  - name: frontend
+    root: frontend
+    build:
+      command: npm install && npm run build
+    static:
+      dir: dist
+    port: 80

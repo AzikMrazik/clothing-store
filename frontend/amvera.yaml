@@ -1,0 +1,14 @@
+app:
+  name: clothing-store-frontend
+  project: clothing-store
+
+build:
+  dockerfile: Dockerfile
+
+deploy:
+  port: 80
+  resources:
+    limits:
+      memory: 512M
+    requests:
+      memory: 256M
