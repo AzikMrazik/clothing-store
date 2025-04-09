@@ -1,12 +1,14 @@
 app:
   name: clothing-store-frontend
   project: clothing-store
+  lang: nodejs
 
 build:
-  dockerfile: Dockerfile
+  node_version: 18
 
 deploy:
   port: 80
+  start_command: npm run preview
   resources:
     limits:
       memory: 512M
