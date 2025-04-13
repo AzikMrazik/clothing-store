@@ -71,17 +71,55 @@ if ss -tulpn | grep -q ":3001 "; then
     fi
     
     # Находим и убиваем любые процессы на порту 3001
-    pid=$(ss -tulpn | grep ":3001 " | awk '{print $7}' | cut -d"=" -f2 | cut -d"," -f1)
-    if [ ! -z "$pid" ]; then
-        print_message "Завершаем процесс с PID: $pid"
-        kill -9 "$pid"
+    # Исправленный способ получения PID
+    pids=$(lsof -i :3001 -t 2>/dev/null)
+    if [ -z "$pids" ]; then
+        # Альтернативный метод с использованием fuser
+        pids=$(fuser 3001/tcp 2>/dev/null)
+    fi
+    
+    # Если и это не сработало, пробуем через netstat
+    if [ -z "$pids" ]; then
+        pids=$(netstat -tunlp 2>/dev/null | grep ":3001 " | awk '{print $7}' | cut -d'/' -f1)
+    fi
+    
+    # Если получили PID, убиваем процессы
+    if [ ! -z "$pids" ]; then
+        print_message "Завершаем процессы с PID: $pids"
+        for pid in $pids; do
+            if [ ! -z "$pid" ] && [ "$pid" -eq "$pid" ] 2>/dev/null; then  # Проверяем, что PID - число
+                kill -9 "$pid" 2>/dev/null
+                print_message "Процесс $pid завершен"
+            fi
+        done
         sleep 1
+    else
+        print_warning "Не удалось определить PID процесса, занимающего порт 3001"
     fi
     
     # Проверяем, освободился ли порт
     if ss -tulpn | grep -q ":3001 "; then
-        print_error "Не удалось освободить порт 3001. Попробуйте перезагрузить сервер."
-        exit 1
+        # Принудительный метод освобождения порта через systemd socket
+        print_warning "Стандартные методы не сработали. Пробуем systemd socket activation..."
+        systemctl stop "*:3001.service" 2>/dev/null
+        systemctl stop "*:3001.socket" 2>/dev/null
+        sleep 1
+        
+        if ss -tulpn | grep -q ":3001 "; then
+            # Последнее средство - простая перезагрузка приложения через PM2
+            print_warning "Пробуем перезапустить все приложения PM2..."
+            pm2 restart all 2>/dev/null
+            sleep 2
+            
+            if ss -tulpn | grep -q ":3001 "; then
+                print_error "Не удалось освободить порт 3001. Попробуйте перезагрузить сервер."
+                print_warning "Пытаемся продолжить несмотря на занятый порт. Может потребоваться ручная перезагрузка."
+            else
+                print_message "✅ Порт 3001 освобожден после дополнительных попыток"
+            fi
+        else
+            print_message "✅ Порт 3001 успешно освобожден"
+        fi
     else
         print_message "✅ Порт 3001 успешно освобожден"
     fi
@@ -734,7 +772,7 @@ if (fs.existsSync(FRONTEND_PATH)) {
             .endpoint { margin: 10px 0; padding: 5px; }
             code { background: #d6d8db; padding: 2px 5px; border-radius: 3px; }
             .btn { display: inline-block; background: #2c3e50; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 4px; margin-top: 1rem; }
-            footer { background: #2c3e50; color: white; text-align: center; padding: 1rem 0; margin-top: 2rem; }
+            footer { background: #2c3e50; color: white; text-align: center; padding: 1рем 0; margin-top: 2rem; }
           </style>
         </head>
         <body>
