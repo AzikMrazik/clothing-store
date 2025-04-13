@@ -341,7 +341,7 @@ try {
   }
   
   // Восстанавливаем оригинальный tsconfig.json
-  if (fs.existsync(`${tsconfigPath}.backup`)) {
+  if (fs.existsSync(`${tsconfigPath}.backup`)) {
     fs.copyFileSync(`${tsconfigPath}.backup`, tsconfigPath);
     fs.unlinkSync(`${tsconfigPath}.backup`);
   } else if (fs.existsSync(`${tsconfigPath}.original`)) {
