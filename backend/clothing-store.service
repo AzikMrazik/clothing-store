@@ -1,0 +1,23 @@
+[Unit]
+Description=Clothing Store Backend Service
+After=network.target mongodb.service
+Wants=mongodb.service
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/clothing-store
+ExecStart=/usr/bin/node dist/index.js
+Restart=always
+# Перезапуск с 10-секундной задержкой, если произошла ошибка
+RestartSec=10
+# Количество попыток перезапуска службы в случае сбоя
+StartLimitIntervalSec=60
+StartLimitBurst=3
+# Переменные окружения
+Environment=NODE_ENV=production
+# Позволяет приложению создавать больше сетевых подключений
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target
