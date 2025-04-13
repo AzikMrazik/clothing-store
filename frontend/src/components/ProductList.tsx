@@ -54,6 +54,25 @@ export const ProductList = () => {
   }
 
   return (
-    // ...existing render code...
+    <div className="product-list">
+      <h2>Наши товары</h2>
+      {products.length === 0 ? (
+        <p>No products available right now.</p>
+      ) : (
+        <div className="product-grid">
+          {products.map((product) => (
+            <div key={product.id} className="product-card">
+              {product.imageUrl && (
+                <img src={product.imageUrl} alt={product.name} className="product-image" />
+              )}
+              <h3>{product.name}</h3>
+              <p className="product-price">{product.price} ₽</p>
+              <p className="product-description">{product.description}</p>
+              <button className="add-to-cart-btn">Добавить в корзину</button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 };
