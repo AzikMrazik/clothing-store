@@ -5,7 +5,7 @@ meta:
     version: "16"
 
 build:
-  commands:
+  additionalCommands:
     - cd backend && npm install
     - cd ../frontend && npm install && npm run build
     - mkdir -p ../backend/public
