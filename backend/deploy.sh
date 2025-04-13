@@ -11,14 +11,72 @@ else
     echo "Node.js уже установлен: $(node -v)"
 fi
 
+# Улучшенная установка MongoDB с альтернативными методами
 if ! command -v mongod &> /dev/null; then
     echo "MongoDB не установлен. Устанавливаем..."
-    curl -fsSL https://pgp.mongodb.com/server-6.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-6.0.gpg --dearmor
-    echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg ] https://repo.mongodb.org/apt/ubuntu $(lsb_release -cs)/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+    
+    # Метод 1: Основной метод установки через официальный репозиторий
+    echo "Метод 1: Установка MongoDB из официального репозитория"
+    sudo apt install -y gnupg curl
+    
+    # Очистка старых ключей, если они есть
+    sudo rm -f /usr/share/keyrings/mongodb-server-*
+    
+    # Импорт публичного ключа MongoDB
+    curl -fsSL https://pgp.mongodb.com/server-6.0.asc | \
+        sudo gpg -o /usr/share/keyrings/mongodb-server-6.0.gpg --dearmor
+    
+    # Проверка успешности импорта ключа
+    if [ ! -f "/usr/share/keyrings/mongodb-server-6.0.gpg" ]; then
+        echo "Ошибка импорта ключа MongoDB. Пробуем альтернативный метод..."
+        
+        # Метод 2: Использование apt-key (устаревший, но иногда работает на старых системах)
+        curl -fsSL https://pgp.mongodb.com/server-6.0.asc | sudo apt-key add -
+        echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu $(lsb_release -cs)/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+    else
+        # Продолжаем с первым методом
+        echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg ] https://repo.mongodb.org/apt/ubuntu $(lsb_release -cs)/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+    fi
+    
+    # Обновление пакетов
     sudo apt update
-    sudo apt install -y mongodb-org
-    sudo systemctl start mongod
-    sudo systemctl enable mongod
+    
+    # Пробуем установить MongoDB
+    if ! sudo apt install -y mongodb-org; then
+        echo "Ошибка установки MongoDB через репозиторий. Пробуем метод 3..."
+        
+        # Метод 3: Установка через snap (доступно во всех современных Ubuntu)
+        echo "Метод 3: Установка MongoDB через snap"
+        sudo snap install mongodb
+        
+        if ! command -v mongod &> /dev/null; then
+            echo "Все методы установки MongoDB не удались."
+            echo "Пожалуйста, установите MongoDB вручную с сайта: https://www.mongodb.com/docs/manual/installation/"
+            echo "После установки MongoDB, запустите этот скрипт снова."
+            exit 1
+        fi
+    fi
+    
+    # Запуск и активация MongoDB (для apt установки)
+    if systemctl list-unit-files | grep -q mongod; then
+        sudo systemctl start mongod
+        sudo systemctl enable mongod
+        echo "MongoDB запущен и добавлен в автозагрузку"
+    elif systemctl list-unit-files | grep -q mongodb; then
+        # Для snap-версии или некоторых других вариантов
+        sudo systemctl start mongodb
+        sudo systemctl enable mongodb
+        echo "MongoDB (snap) запущен и добавлен в автозагрузку"
+    fi
+    
+    # Проверка работы MongoDB
+    sleep 5 # Даем MongoDB время запуститься
+    if ! mongo --eval "db.version()" || ! mongosh --eval "db.version()"; then
+        echo "ВНИМАНИЕ: Не удалось подключиться к MongoDB для проверки. Возможно, требуется дополнительная настройка."
+        echo "Проверьте логи: sudo systemctl status mongod"
+    else
+        echo "MongoDB успешно установлен и работает."
+    fi
 else
     echo "MongoDB уже установлен"
 fi
