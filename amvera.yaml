@@ -2,16 +2,29 @@ meta:
   environment: node
   toolchain:
     name: npm
-    version: 16
+    version: "16"  # Версию Node.js можно изменить в зависимости от требований проекта
 
 build:
+  skip: false
+  additionalCommands: |
+    # Установка зависимостей и сборка бэкенда
+    cd backend && npm install
+    # Установка зависимостей и сборка фронтенда
+    cd ../frontend && npm install && npm run build
+    # Копирование собранного фронтенда в директорию public бэкенда
+    mkdir -п ../backend/public
+    cp -r dist/* ../backend/public/
+    cd ..
   artifacts:
-    - ./backend/node_modules
+    "backend/": /app/
+    "backend/node_modules/": /app/node_modules/
+    "backend/public/": /app/public/
 
 run:
-  command: cd backend && npm run start
-  containerPort: 3001
-  persistenceMount: /app/uploads
+  command: cd /app && npm run start
+  persistenceMount: /app/uploads  # Место для хранения загружаемых файлов
+  containerPort: "3001"  # Порт, на котором работает ваше приложение
 
 env:
   NODE_ENV: production
+  # Другие переменные окружения будут добавлены через интерфейс Amvera
