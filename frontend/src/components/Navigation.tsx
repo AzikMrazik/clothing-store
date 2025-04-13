@@ -1,11 +1,117 @@
-import { AppBar, Toolbar, Button, Badge, Typography, Box, IconButton } from '@mui/material';
-import { ShoppingCart, Person } from '@mui/icons-material';
+import React, { useState, useEffect, useRef } from 'react';
+import { 
+  AppBar, 
+  Toolbar, 
+  Button, 
+  Badge, 
+  Typography, 
+  Box, 
+  IconButton, 
+  Menu,
+  MenuItem,
+  Divider,
+  TextField,
+  InputAdornment,
+  Paper,
+  ClickAwayListener,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemButton
+} from '@mui/material';
+import { 
+  ShoppingCart, 
+  Search, 
+  KeyboardArrowDown, 
+  Category as CategoryIcon
+} from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
+import { Category, Product } from '../types/models';
+import { CategoryService } from '../services/CategoryService';
+import { useState as useStateReact } from 'react';
+import { API_URL } from '../config';
+import SearchBar from './SearchBar';
 
 const Navigation = () => {
   const navigate = useNavigate();
   const { cart } = useCart();
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [searchResults, setSearchResults] = useState<{products: Product[], categories: Category[]}>({products: [], categories: []});
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+
+  // Загрузка категорий при монтировании компонента
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const fetchedCategories = await CategoryService.fetchCategories();
+        // Фильтруем только активные категории и сортируем по порядку
+        const activeCategories = fetchedCategories
+          .filter(category => category.isActive)
+          .sort((a, b) => a.order - b.order);
+        
+        setCategories(activeCategories);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  // Функция для обработки поиска
+  const handleSearchChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setSearchTerm(value);
+    
+    if (value.trim().length > 2) {
+      try {
+        const response = await fetch(`${API_URL}/search?q=${encodeURIComponent(value)}`);
+        if (response.ok) {
+          const data = await response.json();
+          setSearchResults(data);
+          setShowSearchResults(true);
+        }
+      } catch (error) {
+        console.error('Error searching:', error);
+      }
+    } else {
+      setShowSearchResults(false);
+    }
+  };
+
+  // Обработчики для меню категорий
+  const handleOpenCatalogMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setMenuAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseCatalogMenu = () => {
+    setMenuAnchorEl(null);
+  };
+
+  const handleCategoryClick = (categoryId: string) => {
+    navigate(`/?category=${categoryId}`);
+    handleCloseCatalogMenu();
+  };
+
+  // Обработчик для выбора результата поиска
+  const handleSearchResultClick = (type: 'product' | 'category', id: string) => {
+    if (type === 'product') {
+      navigate(`/product/${id}`);
+    } else {
+      navigate(`/?category=${id}`);
+    }
+    setShowSearchResults(false);
+    setSearchTerm('');
+  };
+
+  // Закрытие результатов поиска при клике вне
+  const handleClickAway = () => {
+    setShowSearchResults(false);
+  };
 
   return (
     <AppBar position="sticky" elevation={2}>
@@ -14,39 +120,68 @@ const Navigation = () => {
           variant="h6" 
           component="div" 
           sx={{ 
-            flexGrow: 1, 
+            flexGrow: 0, 
             cursor: 'pointer',
-            fontWeight: 'bold'
+            fontWeight: 'bold',
+            mr: 2
           }}
           onClick={() => navigate('/')}
         >
           Prostor-Shop
         </Typography>
         
-        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+        <Box sx={{ position: 'relative' }}>
           <Button 
             color="inherit"
-            onClick={() => navigate('/')}
+            endIcon={<KeyboardArrowDown />}
+            onClick={handleOpenCatalogMenu}
+            startIcon={<CategoryIcon />}
           >
             Каталог
           </Button>
-          
-          <IconButton 
-            color="inherit"
-            onClick={() => navigate('/cart')}
+          <Menu
+            anchorEl={menuAnchorEl}
+            open={Boolean(menuAnchorEl)}
+            onClose={handleCloseCatalogMenu}
+            PaperProps={{
+              elevation: 3,
+              sx: { 
+                mt: 1,
+                width: 220,
+                maxHeight: '70vh'
+              }
+            }}
           >
-            <Badge badgeContent={cart?.items?.length || 0} color="secondary">
-              <ShoppingCart />
-            </Badge>
-          </IconButton>
-
-          <IconButton 
-            color="inherit"
-            onClick={() => navigate('/admin')}
-          >
-            <Person />
-          </IconButton>
+            <MenuItem onClick={() => {
+              navigate('/');
+              handleCloseCatalogMenu();
+            }}>
+              <ListItemText primary="Все товары" />
+            </MenuItem>
+            <Divider />
+            {categories.map((category) => (
+              <MenuItem 
+                key={category._id}
+                onClick={() => handleCategoryClick(category._id)}
+              >
+                <ListItemText primary={category.name} />
+              </MenuItem>
+            ))}
+          </Menu>
         </Box>
+
+        <Box sx={{ flexGrow: 1, mx: 2, maxWidth: 600 }}>
+          <SearchBar />
+        </Box>
+
+        <IconButton 
+          color="inherit"
+          onClick={() => navigate('/cart')}
+        >
+          <Badge badgeContent={cart?.items?.length || 0} color="secondary">
+            <ShoppingCart />
+          </Badge>
+        </IconButton>
       </Toolbar>
     </AppBar>
   );

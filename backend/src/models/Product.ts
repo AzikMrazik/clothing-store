@@ -29,13 +29,46 @@ const ProductSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
+  // Изменяем тип поля категорий на массив строк
+  categories: {
+    type: [String],
+    default: []
+  },
+  // Сохраняем совместимость со старыми товарами
   category: {
     type: String,
-    required: [true, 'Product category is required'],
     trim: true
   }
 }, {
   timestamps: true
+});
+
+// Middleware для обеспечения обратной совместимости
+ProductSchema.pre('save', function(next) {
+  // Если указана основная категория, но нет массива категорий или он пуст
+  if (this.category && (!this.categories || this.categories.length === 0)) {
+    this.categories = [this.category];
+  }
+  // Если есть массив категорий, но не указана основная категория
+  else if ((!this.category || this.category === '') && this.categories && this.categories.length > 0) {
+    this.category = this.categories[0];
+  }
+  next();
+});
+
+// Также добавляем обработку для методов обновления
+ProductSchema.pre('findOneAndUpdate', function(next) {
+  const update: any = this.getUpdate();
+  
+  // Проверяем, есть ли в обновлении поля категорий
+  if (update && update.category && (!update.categories || update.categories.length === 0)) {
+    update.categories = [update.category];
+  } 
+  else if (update && (!update.category || update.category === '') && update.categories && update.categories.length > 0) {
+    update.category = update.categories[0];
+  }
+  
+  next();
 });
 
 export const Product = mongoose.model('Product', ProductSchema);

@@ -29,6 +29,7 @@ import { Visibility } from '@mui/icons-material';
 import { useApi } from '../../hooks/useApi';
 import { useNotification } from '../../contexts/NotificationContext';
 import Loading from '../Loading';
+import { API_URL } from '../../config';
 
 interface Order {
   _id: string;
@@ -81,7 +82,7 @@ const OrdersTab = () => {
   const fetchOrders = async () => {
     const result = await call(
       async () => {
-        const response = await fetch('http://localhost:3001/api/orders');
+        const response = await fetch(`${API_URL}/orders`);
         if (!response.ok) throw new Error('Failed to fetch orders');
         return response.json();
       },
@@ -96,7 +97,7 @@ const OrdersTab = () => {
   const handleStatusChange = async (orderId: string, newStatus: string) => {
     const result = await call(
       async () => {
-        const response = await fetch(`http://localhost:3001/api/orders/${orderId}/status`, {
+        const response = await fetch(`${API_URL}/orders/${orderId}/status`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ status: newStatus })

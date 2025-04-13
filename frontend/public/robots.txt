@@ -1,0 +1,29 @@
+# Запрещаем индексацию всем поисковым роботам
+User-agent: *
+Disallow: /admin
+Disallow: /api/
+Disallow: /cart
+Disallow: /login
+Disallow: /profile
+Disallow: /shared-cart/
+Disallow: /checkout
+
+# Разрешаем индексацию основных страниц
+Allow: /
+Allow: /product/
+
+# Запрещаем обращение к конфиденциальным файлам
+Disallow: /*.json$
+Disallow: /*.js$
+Disallow: /*.ts$
+Disallow: /*.tsx$
+Disallow: /*.env$
+Disallow: /*.config$
+
+# Исключаем страницы поиска
+Disallow: /*?q=*
+Disallow: /*?search=*
+Disallow: /*?filter=*
+
+# Указываем расположение карты сайта
+Sitemap: https://your-domain.com/sitemap.xml

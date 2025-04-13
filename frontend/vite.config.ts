@@ -1,37 +1,159 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import fs from 'fs';
 
-export default defineConfig({
-  plugins: [react()],
-  root: path.resolve(__dirname, ''),
-  build: {
-    outDir: 'dist'
-  },
-  server: {
-    host: '0.0.0.0',
-    port: 5173,
-    strictPort: true,
-    cors: true,
-    proxy: {
-      '/api': {
-        target: 'http://localhost:3000',
-        changeOrigin: true,
-        secure: false,
-        rewrite: (path) => path.replace(/^\/api/, '')
+export default defineConfig(({ mode }) => {
+  // Загружаем переменные окружения
+  const env = loadEnv(mode, process.cwd(), '');
+  const apiUrl = env.VITE_API_URL || 'http://localhost:3001';
+  const isProd = mode === 'production';
+  
+  // Создаем CSP политику для защиты от XSS и других уязвимостей
+  const cspPolicy = {
+    'default-src': ["'self'"],
+    // Добавляем 'unsafe-inline' для работы с Vite в режиме разработки
+    'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://www.google-analytics.com"],
+    'style-src': ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+    // Разрешаем загрузку изображений со всех HTTPS источников
+    'img-src': ["'self'", "data:", "blob:", "https://*", "http://*"], // Разрешаем все https и http источники для изображений
+    'font-src': ["'self'", "data:", "https://fonts.gstatic.com"],
+    // Исправляем connect-src, чтобы он правильно работал с API
+    'connect-src': ["'self'", apiUrl, "https://www.google-analytics.com", "*"],
+    'media-src': ["'self'"],
+    'object-src': ["'none'"],
+    'frame-src': ["'self'"],
+    'frame-ancestors': ["'self'"],
+    'base-uri': ["'self'"]
+  };
+  
+  // Преобразуем политику CSP в строку для заголовков
+  const cspString = Object.entries(cspPolicy)
+    .map(([key, values]) => `${key} ${values.join(' ')}`)
+    .join('; ');
+  
+  // Определяем настройки SSL для локальной разработки (если нужно)
+  let httpsOptions = undefined;
+  const keyPath = path.resolve(__dirname, './cert/localhost-key.pem');
+  const certPath = path.resolve(__dirname, './cert/localhost.pem');
+  
+  if (!isProd && fs.existsSync(keyPath) && fs.existsSync(certPath)) {
+    httpsOptions = {
+      key: fs.readFileSync(keyPath),
+      cert: fs.readFileSync(certPath)
+    };
+  }
+  
+  return {
+    plugins: [
+      // Настройка плагина React с правильными параметрами для горячей перезагрузки
+      react({
+        // Включаем Fast Refresh для лучшей разработки
+        fastRefresh: true,
+        // Явно включаем JSX runtime
+        jsxRuntime: 'automatic'
+        // Удаляем проблемную конфигурацию Babel
+      }),
+      {
+        name: 'security-headers',
+        configureServer(server) {
+          server.middlewares.use((req, res, next) => {
+            // Добавляем заголовки безопасности ко всем ответам
+            res.setHeader('X-Content-Type-Options', 'nosniff');
+            res.setHeader('X-Frame-Options', 'DENY');
+            res.setHeader('X-XSS-Protection', '1; mode=block');
+            res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+            res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+            
+            // Устанавливаем CSP в режиме разработки, но только если в HTML нет CSP
+            // Это предотвращает дублирование CSP правил
+            if (!isProd) {
+              res.setHeader('Content-Security-Policy', 
+                cspString + "; script-src-attr 'unsafe-inline'");
+            }
+            
+            next();
+          });
+        }
+      }
+    ],
+    root: path.resolve(__dirname, ''),
+    build: {
+      outDir: 'dist',
+      // Включаем source map только для дев-режима
+      sourcemap: !isProd,
+      // Настройки безопасности для сборки
+      rollupOptions: {
+        output: {
+          // Разделение кода по чанкам
+          manualChunks: {
+            vendor: ['react', 'react-dom', 'react-router-dom'],
+            ui: ['@mui/material', '@emotion/react', '@emotion/styled']
+          },
+          // Добавление хэшей к именам файлов для кэширования
+          entryFileNames: isProd ? 'assets/[name].[hash].js' : 'assets/[name].js',
+          chunkFileNames: isProd ? 'assets/[name].[hash].js' : 'assets/[name].js',
+          assetFileNames: isProd ? 'assets/[name].[hash].[ext]' : 'assets/[name].[ext]',
+        }
+      },
+      // Настройки минификации
+      minify: isProd ? 'terser' : false,
+      terserOptions: isProd ? {
+        compress: {
+          drop_console: true,
+          drop_debugger: true
+        },
+        format: {
+          comments: false
+        }
+      } : undefined
+    },
+    server: {
+      host: '0.0.0.0',
+      port: 5173,
+      strictPort: true,
+      // Настройки прокси
+      proxy: {
+        '/api': {
+          target: apiUrl,
+          changeOrigin: true,
+          secure: isProd, // В продакшн режиме требуем SSL
+          // Убираем rewrite, чтобы сохранить префикс /api
+          configure: (proxy, _options) => {
+            proxy.on('error', (err, _req, _res) => {
+              console.log('Proxy error:', err);
+            });
+            proxy.on('proxyReq', (proxyReq, req, _res) => {
+              console.log('Proxy request:', req.method, req.url);
+            });
+            proxy.on('proxyRes', (proxyRes, req, _res) => {
+              console.log('Proxy response:', proxyRes.statusCode, req.url);
+            });
+          }
+        }
+      },
+      cors: true,
+      hmr: {
+        // Проверяем целостность для HMR
+        clientPort: 5173,
+        overlay: true
+      },
+      // Добавляем HTTPS если есть сертификаты
+      https: httpsOptions
+    },
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src')
       }
     },
-    allowedHosts: [
-      '213d-2a12-5940-9ddd-00-2.ngrok-free.app',
-      'localhost',
-      '127.0.0.1',
-      '.ngrok.io',
-      '.ngrok-free.app'
-    ],
-    hmr: {
-      clientPort: 443,
-      protocol: 'wss',
-      host: '213d-2a12-5940-9ddd-00-2.ngrok-free.app'
+    // Настройки для различных окружений
+    esbuild: {
+      // Минифицируем только в продакшн
+      minifyIdentifiers: isProd,
+      minifySyntax: isProd,
+      minifyWhitespace: isProd,
+      // Удаляем console.log в продакшн
+      drop: isProd ? ['console', 'debugger'] : []
     }
-  }
+  };
 });

@@ -15,11 +15,15 @@ import {
   List,
   ListItem,
   ListItemText,
-  Divider
+  Divider,
+  Chip,
+  Grid
 } from '@mui/material';
 import { useCart } from '../contexts/CartContext';
 import { useNotification } from '../contexts/NotificationContext';
 import { useNavigate } from 'react-router-dom';
+import { API_URL } from '../config';
+import { LocalShipping } from '@mui/icons-material';
 
 interface FormData {
   firstName: string;
@@ -127,6 +131,7 @@ const CheckoutForm = () => {
 
   const handleSubmit = async () => {
     try {
+      // Подготавливаем данные о заказе, включая информацию о скидках и доставке
       const orderData = {
         items: cart.items.map(item => ({
           _id: item._id,
@@ -136,10 +141,15 @@ const CheckoutForm = () => {
           imageUrl: item.imageUrl
         })),
         customerInfo: formData,
-        total: cart.items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+        subtotal: cart.subtotal || cart.items.reduce((sum, item) => sum + item.price * item.quantity, 0),
+        discount: cart.discount || 0,
+        deliveryCost: cart.deliveryCost || 0,
+        total: calculateTotal(),
+        promoCode: cart.appliedPromoCode ? cart.appliedPromoCode.code : undefined,
+        freeDelivery: cart.freeDelivery || false
       };
 
-      const response = await fetch('http://localhost:3001/api/orders', {
+      const response = await fetch(`${API_URL}/orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -166,6 +176,15 @@ const CheckoutForm = () => {
         'error'
       );
     }
+  };
+
+  // Рассчитываем итоговую сумму с учетом скидок и доставки
+  const calculateTotal = (): number => {
+    const subtotal = cart.subtotal || cart.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const discount = cart.discount || 0;
+    const deliveryCost = cart.deliveryCost || 0;
+    
+    return subtotal - discount + deliveryCost;
   };
 
   const renderStepContent = (step: number) => {
@@ -243,23 +262,105 @@ const CheckoutForm = () => {
             <Typography variant="h6" gutterBottom>
               Проверьте данные заказа
             </Typography>
-            <List>
-              {cart.items.map((item) => (
-                <ListItem key={item._id}>
-                  <ListItemText
-                    primary={item.name}
-                    secondary={`${item.quantity} шт. × ${Math.round(item.price)} ₽`}
-                  />
-                  <Typography>
-                    {Math.round(item.quantity * item.price)} ₽
+            
+            {/* Информация о покупателе */}
+            <Paper variant="outlined" sx={{ p: 2, mb: 3 }}>
+              <Typography variant="subtitle1" gutterBottom fontWeight="bold">
+                Данные получателя
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="body2">
+                    <strong>Имя:</strong> {formData.firstName} {formData.lastName}
                   </Typography>
-                </ListItem>
-              ))}
-            </List>
-            <Divider />
-            <Typography variant="subtitle1">
-              Итого: {Math.round(cart.items.reduce((sum, item) => sum + item.price * item.quantity, 0))} ₽
-            </Typography>
+                  <Typography variant="body2">
+                    <strong>Email:</strong> {formData.email}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Телефон:</strong> {formData.phone}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="body2">
+                    <strong>Адрес доставки:</strong> {formData.address}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Город:</strong> {formData.city}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Индекс:</strong> {formData.zipCode}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Paper>
+            
+            {/* Список товаров */}
+            <Paper variant="outlined" sx={{ p: 2, mb: 3 }}>
+              <Typography variant="subtitle1" gutterBottom fontWeight="bold">
+                Товары
+              </Typography>
+              <List>
+                {cart.items.map((item) => (
+                  <ListItem key={item._id} disableGutters>
+                    <ListItemText
+                      primary={item.name}
+                      secondary={`${item.quantity} шт. × ${Math.round(item.price)} ₽`}
+                    />
+                    <Typography>
+                      {Math.round(item.quantity * item.price)} ₽
+                    </Typography>
+                  </ListItem>
+                ))}
+              </List>
+            </Paper>
+
+            {/* Сводка по заказу */}
+            <Paper variant="outlined" sx={{ p: 2 }}>
+              <Typography variant="subtitle1" gutterBottom fontWeight="bold">
+                Сводка заказа
+              </Typography>
+              
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                <Typography variant="body2">Подытог:</Typography>
+                <Typography variant="body2">
+                  {Math.round(cart.subtotal || cart.items.reduce((sum, item) => sum + item.price * item.quantity, 0))} ₽
+                </Typography>
+              </Box>
+              
+              {/* Информация о доставке */}
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <LocalShipping fontSize="small" color="action" />
+                  <Typography variant="body2">Доставка:</Typography>
+                </Box>
+                {cart.freeDelivery ? (
+                  <Chip label="Бесплатно" color="success" size="small" variant="outlined" />
+                ) : (
+                  <Typography variant="body2">{Math.round(cart.deliveryCost || 0)} ₽</Typography>
+                )}
+              </Box>
+              
+              {/* Информация о промокоде и скидке */}
+              {cart.discount && cart.discount > 0 && (
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                  <Typography variant="body2">
+                    Скидка{cart.appliedPromoCode ? ` (${cart.appliedPromoCode.code})` : ''}:
+                  </Typography>
+                  <Typography variant="body2" color="success.main">
+                    -{Math.round(cart.discount)} ₽
+                  </Typography>
+                </Box>
+              )}
+              
+              <Divider sx={{ my: 1.5 }} />
+              
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold' }}>
+                <Typography variant="subtitle1">Итого:</Typography>
+                <Typography variant="subtitle1" color="primary">
+                  {Math.round(calculateTotal())} ₽
+                </Typography>
+              </Box>
+            </Paper>
           </Box>
         );
     }
@@ -298,7 +399,7 @@ const CheckoutForm = () => {
         <DialogTitle>Подтвердите заказ</DialogTitle>
         <DialogContent>
           <Typography>
-            Вы уверены, что хотите оформить заказ?
+            Вы уверены, что хотите оформить заказ на сумму {Math.round(calculateTotal())} ₽?
           </Typography>
         </DialogContent>
         <DialogActions>
