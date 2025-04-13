@@ -1,13 +1,12 @@
-// Импорт React не нужен с версии React 17+ при использовании JSX Transform
+import React from 'react';
 import { Box, CircularProgress, Typography } from '@mui/material';
 
 interface LoadingProps {
   fullScreen?: boolean;
   message?: string;
-  size?: number;  // Добавляем поддержку свойства size
 }
 
-const Loading = ({ fullScreen = false, message = 'Загрузка...', size = 40 }: LoadingProps) => {
+const Loading = ({ fullScreen = false, message = 'Загрузка...' }: LoadingProps) => {
   if (fullScreen) {
     return (
       <Box
@@ -25,7 +24,7 @@ const Loading = ({ fullScreen = false, message = 'Загрузка...', size = 4
           zIndex: 9999,
         }}
       >
-        <CircularProgress size={size || 60} />
+        <CircularProgress size={60} />
         <Typography sx={{ mt: 2 }} variant="h6">
           {message}
         </Typography>
@@ -43,7 +42,7 @@ const Loading = ({ fullScreen = false, message = 'Загрузка...', size = 4
         py: 8,
       }}
     >
-      <CircularProgress size={size} />
+      <CircularProgress size={40} />
       <Typography sx={{ mt: 2 }} variant="body1" color="text.secondary">
         {message}
       </Typography>

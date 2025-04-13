@@ -1,0 +1,36 @@
+# Директории
+node_modules
+dist
+dist-ssr
+
+# Логи
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Файлы окружения
+.env
+.env.*
+!.env.example
+
+# Локальные файлы
+*.local
+
+# Редакторы
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Тесты
+coverage
