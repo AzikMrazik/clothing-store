@@ -52,6 +52,43 @@ print_message "- Фронтенд: $FRONTEND_DIR"
 mkdir -p $FRONTEND_DIR/dist
 mkdir -p $BACKEND_DIR/dist
 
+# Шаг 0: Проверка и освобождение порта 3001
+print_header "Проверка и освобождение порта 3001"
+
+# Поиск и убийство процессов, слушающих порт 3001
+if ss -tulpn | grep -q ":3001 "; then
+    print_message "Порт 3001 занят. Освобождаем порт..."
+    
+    # Находим и останавливаем все процессы PM2, использующие порт 3001
+    if command -v pm2 &> /dev/null; then
+        pm2 list | grep -E '(online|stopped|errored)' | awk '{print $2}' | while read -r app_name; do
+            if pm2 describe "$app_name" | grep -q "3001"; then
+                print_message "Останавливаем приложение PM2: $app_name"
+                pm2 stop "$app_name"
+                pm2 delete "$app_name"
+            fi
+        done
+    fi
+    
+    # Находим и убиваем любые процессы на порту 3001
+    pid=$(ss -tulpn | grep ":3001 " | awk '{print $7}' | cut -d"=" -f2 | cut -d"," -f1)
+    if [ ! -z "$pid" ]; then
+        print_message "Завершаем процесс с PID: $pid"
+        kill -9 "$pid"
+        sleep 1
+    fi
+    
+    # Проверяем, освободился ли порт
+    if ss -tulpn | grep -q ":3001 "; then
+        print_error "Не удалось освободить порт 3001. Попробуйте перезагрузить сервер."
+        exit 1
+    else
+        print_message "✅ Порт 3001 успешно освобожден"
+    fi
+else
+    print_message "✅ Порт 3001 свободен"
+fi
+
 # Шаг 2: Сборка фронтенда с игнорированием ошибок TypeScript
 print_header "Сборка фронтенда с игнорированием ошибок TypeScript"
 
@@ -71,7 +108,17 @@ console.log('Запуск сборки с игнорированием TypeScrip
 const tsconfigPath = path.join(process.cwd(), 'tsconfig.json');
 if (fs.existsSync(tsconfigPath)) {
   try {
-    const tsconfig = JSON.parse(fs.readFileSync(tsconfigPath, 'utf8'));
+    // Считываем файл и удаляем комментарии перед парсингом
+    let content = fs.readFileSync(tsconfigPath, 'utf8');
+    
+    // Удаляем однострочные комментарии
+    content = content.replace(/\/\/.*$/gm, '');
+    
+    // Удаляем многострочные комментарии
+    content = content.replace(/\/\*[\s\S]*?\*\//g, '');
+    
+    // Парсим JSON
+    const tsconfig = JSON.parse(content);
     
     // Создаем резервную копию
     fs.writeFileSync(`${tsconfigPath}.backup`, JSON.stringify(tsconfig, null, 2), 'utf8');
@@ -152,24 +199,24 @@ try {
   console.log(`Установлен API URL: ${apiUrl}`);
 
   // Установка явных зависимостей, которые могут быть необходимы для сборки
-  console.log('Убеждаемся, что все необходимые зависимости установлены...');
+  console.log('Установка зависимостей...');
   try {
     execSync('npm install --save-dev vite @vitejs/plugin-react typescript', { stdio: 'inherit' });
   } catch (e) {
-    console.log('Некоторые зависимости не удалось установить, но продолжаем сборку...');
+    console.log('Некоторые зависимости не удалось установить, продолжаем сборку...');
   }
 
-  // Попытка создания простого dist каталога с базовым HTML
+  // Создаем dist каталог если его нет
   if (!fs.existsSync('dist')) {
     fs.mkdirSync('dist', { recursive: true });
   }
   
-  // Запускаем сборку, игнорируя ошибки
-  console.log('Запуск сборки через Vite...');
+  // Запускаем сборку
+  console.log('Сборка Vite...');
   try {
     execSync('npx vite build --emptyOutDir', { stdio: 'inherit' });
   } catch (e) {
-    console.log('Ошибка при сборке Vite, пробуем другой метод...');
+    console.log('Ошибка сборки Vite, создаем базовый фронтенд...');
     
     // Создаем базовый index.html
     const fallbackHtml = `<!DOCTYPE html>
@@ -244,7 +291,7 @@ try {
     console.log('Создан базовый index.html для показа товаров из API');
   }
   
-  console.log('Сборка успешно завершена!');
+  console.log('Сборка завершена');
 } catch (error) {
   console.error('Ошибка при сборке:', error.message);
   process.exit(1);
@@ -255,15 +302,13 @@ try {
     console.log('Восстановлен оригинальный vite.config.ts');
   }
   
-  // Восстанавливаем оригинальный tsconfig.json если был изменен
-  if (fs.existsSync(`${tsconfigPath}.backup`)) {
+  // Восстанавливаем оригинальный tsconfig.json
+  if (fs.existsync(`${tsconfigPath}.backup`)) {
     fs.copyFileSync(`${tsconfigPath}.backup`, tsconfigPath);
     fs.unlinkSync(`${tsconfigPath}.backup`);
-    console.log('Восстановлен оригинальный tsconfig.json');
   } else if (fs.existsSync(`${tsconfigPath}.original`)) {
     fs.copyFileSync(`${tsconfigPath}.original`, tsconfigPath);
     fs.unlinkSync(`${tsconfigPath}.original`);
-    console.log('Восстановлен оригинальный tsconfig.json');
   }
 }
 EOF
