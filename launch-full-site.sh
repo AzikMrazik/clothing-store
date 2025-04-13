@@ -825,14 +825,24 @@ print_header "Перезапуск приложения через PM2"
 
 cd $BACKEND_DIR
 
-# Обновляем приложение через PM2 или создаем новое
-if pm2 list | grep -q "$APP_NAME"; then
-    print_message "Перезапуск существующего приложения в PM2..."
-    pm2 restart $APP_NAME
-else
-    print_message "Создание нового приложения в PM2..."
-    pm2 start dist/index.js --name $APP_NAME
+# Останавливаем и удаляем конфликтующие процессы
+print_message "Проверка конфликтующих процессов PM2..."
+if pm2 list | grep -q "prostor-shop.shop"; then
+    print_message "Обнаружен конфликтующий процесс 'prostor-shop.shop'. Удаление..."
+    pm2 stop prostor-shop.shop
+    pm2 delete prostor-shop.shop
 fi
+
+# Удаляем старый процесс clothing-store, чтобы начать с чистого состояния
+if pm2 list | grep -q "$APP_NAME"; then
+    print_message "Останавливаем и удаляем предыдущую версию приложения..."
+    pm2 stop $APP_NAME
+    pm2 delete $APP_NAME
+fi
+
+# Создаем новый процесс
+print_message "Создание нового приложения в PM2..."
+pm2 start dist/index.js --name $APP_NAME
 
 # Сохраняем настройки PM2
 pm2 save
