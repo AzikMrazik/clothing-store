@@ -1,6 +1,9 @@
 import crypto from 'crypto';
 import { SECURITY } from '../config';
 
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const JWT_EXPIRY = process.env.JWT_EXPIRY || '1d';
+
 // Генерация случайной соли
 export const generateSalt = (length = 16): string => {
   return crypto.randomBytes(length).toString('hex');
@@ -29,7 +32,7 @@ export const verifyPassword = (password: string, hash: string, salt: string): bo
 };
 
 // Функция для шифрования данных
-export const encryptData = (data: string, secretKey = SECURITY.JWT_SECRET): string => {
+export const encryptData = (data: string, secretKey = JWT_SECRET): string => {
   // Используем алгоритм AES-256-GCM для шифрования
   const iv = crypto.randomBytes(16); // Инициализирующий вектор
   const key = crypto.scryptSync(secretKey, 'salt', 32); // Получаем ключ из секретного ключа
@@ -48,7 +51,7 @@ export const encryptData = (data: string, secretKey = SECURITY.JWT_SECRET): stri
 };
 
 // Функция для расшифровки данных
-export const decryptData = (encryptedData: string, secretKey = SECURITY.JWT_SECRET): string => {
+export const decryptData = (encryptedData: string, secretKey = JWT_SECRET): string => {
   // Разделяем зашифрованные данные на IV, зашифрованный текст и тег аутентификации
   const [ivHex, encrypted, authTagHex] = encryptedData.split(':');
   
@@ -78,7 +81,7 @@ export const decryptData = (encryptedData: string, secretKey = SECURITY.JWT_SECR
 };
 
 // Создание JWT токена
-export const generateJWT = (payload: any, expiresIn = SECURITY.JWT_EXPIRY): string => {
+export const generateJWT = (payload: any, expiresIn = JWT_EXPIRY): string => {
   // Создаем заголовок
   const header = {
     alg: 'HS256',
@@ -103,7 +106,7 @@ export const generateJWT = (payload: any, expiresIn = SECURITY.JWT_EXPIRY): stri
   
   // Создаем подпись
   const signature = crypto
-    .createHmac('sha256', SECURITY.JWT_SECRET)
+    .createHmac('sha256', JWT_SECRET)
     .update(`${headerBase64}.${payloadBase64}`)
     .digest('base64url');
   
@@ -124,7 +127,7 @@ export const verifyJWT = (token: string): any => {
   
   // Создаем подпись для проверки
   const signature = crypto
-    .createHmac('sha256', SECURITY.JWT_SECRET)
+    .createHmac('sha256', JWT_SECRET)
     .update(`${headerBase64}.${payloadBase64}`)
     .digest('base64url');
   

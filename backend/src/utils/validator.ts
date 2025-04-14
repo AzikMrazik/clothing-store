@@ -8,10 +8,10 @@ const window = new JSDOM('').window;
 const purify = DOMPurify(window);
 
 // Валидация и санитизация данных из тела запроса
-export const validateBody = (validations) => {
+export const validateBody = (validations: any[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     // Выполняем все валидаторы
-    await Promise.all(validations.map(validation => validation.run(req)));
+    await Promise.all(validations.map((validation: any) => validation.run(req)));
     
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -28,9 +28,9 @@ export const validateBody = (validations) => {
 };
 
 // Валидация параметров URL
-export const validateParams = (validations) => {
+export const validateParams = (validations: any[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
-    await Promise.all(validations.map(validation => validation.run(req)));
+    await Promise.all(validations.map((validation: any) => validation.run(req)));
     
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -47,9 +47,9 @@ export const validateParams = (validations) => {
 };
 
 // Валидация query-параметров
-export const validateQuery = (validations) => {
+export const validateQuery = (validations: any[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
-    await Promise.all(validations.map(validation => validation.run(req)));
+    await Promise.all(validations.map((validation: any) => validation.run(req)));
     
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -112,7 +112,7 @@ export const validators = {
     .isFloat({ min: 0 }).withMessage('Цена должна быть положительным числом'),
   
   // Валидатор для строк с запретом HTML
-  safeString: (field) => body(field)
+  safeString: (field: any) => body(field)
     .trim()
     .isLength({ min: 1 }).withMessage(`Поле ${field} не может быть пустым`)
     .custom(value => {
