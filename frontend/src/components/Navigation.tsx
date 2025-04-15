@@ -9,27 +9,17 @@ import {
   IconButton, 
   Menu,
   MenuItem,
-  Divider,
-  TextField,
-  InputAdornment,
-  Paper,
-  ClickAwayListener,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemButton
+  Divider
 } from '@mui/material';
 import { 
   ShoppingCart, 
-  Search, 
   KeyboardArrowDown, 
   Category as CategoryIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
-import { Category, Product } from '../types/models';
+import { Category } from '../types/models';
 import { CategoryService } from '../services/CategoryService';
-import { useState as useStateReact } from 'react';
 import { API_URL } from '../config';
 import SearchBar from './SearchBar';
 
@@ -38,10 +28,6 @@ const Navigation = () => {
   const { cart } = useCart();
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const [searchResults, setSearchResults] = useState<{products: Product[], categories: Category[]}>({products: [], categories: []});
-  const [showSearchResults, setShowSearchResults] = useState(false);
-  const searchRef = useRef<HTMLDivElement>(null);
 
   // Загрузка категорий при монтировании компонента
   useEffect(() => {
@@ -62,27 +48,6 @@ const Navigation = () => {
     fetchCategories();
   }, []);
 
-  // Функция для обработки поиска
-  const handleSearchChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    setSearchTerm(value);
-    
-    if (value.trim().length > 2) {
-      try {
-        const response = await fetch(`${API_URL}/search?q=${encodeURIComponent(value)}`);
-        if (response.ok) {
-          const data = await response.json();
-          setSearchResults(data);
-          setShowSearchResults(true);
-        }
-      } catch (error) {
-        console.error('Error searching:', error);
-      }
-    } else {
-      setShowSearchResults(false);
-    }
-  };
-
   // Обработчики для меню категорий
   const handleOpenCatalogMenu = (event: React.MouseEvent<HTMLElement>) => {
     setMenuAnchorEl(event.currentTarget);
@@ -95,22 +60,6 @@ const Navigation = () => {
   const handleCategoryClick = (categoryId: string) => {
     navigate(`/?category=${categoryId}`);
     handleCloseCatalogMenu();
-  };
-
-  // Обработчик для выбора результата поиска
-  const handleSearchResultClick = (type: 'product' | 'category', id: string) => {
-    if (type === 'product') {
-      navigate(`/product/${id}`);
-    } else {
-      navigate(`/?category=${id}`);
-    }
-    setShowSearchResults(false);
-    setSearchTerm('');
-  };
-
-  // Закрытие результатов поиска при клике вне
-  const handleClickAway = () => {
-    setShowSearchResults(false);
   };
 
   return (

@@ -16,14 +16,14 @@ import {
   Checkbox,
   ListItemText,
   TextField,
-  useTheme
+  Chip
 } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useApi } from '../hooks/useApi';
 import { useNotification } from '../contexts/NotificationContext';
 import Loading from '../components/Loading';
-import { Product, Category } from '../types/models';
+import { Product } from '../types/models';
 import { API_URL } from '../config';
 import PromoCarousel from '../components/PromoCarousel';
 import CategoryCards from '../components/CategoryCards';
@@ -43,7 +43,6 @@ const Catalog = () => {
   const { showNotification } = useNotification();
   const query = useQuery();
   const categoryFromUrl = query.get('category');
-  const theme = useTheme();
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -284,9 +283,8 @@ const Catalog = () => {
           flexWrap: 'wrap'
         }}>
           {filteredProducts.map((product) => (
-            <Grid 
+            <Box 
               key={product._id} 
-              item 
               xs={6} // Всегда 2 карточки в ряд на мобильных
               sm={6} // 2 карточки в ряд на планшетах
               md={4} // 3 карточки в ряд на маленьких десктопах
@@ -469,7 +467,7 @@ const Catalog = () => {
                   </Box>
                 </CardContent>
               </Card>
-            </Grid>
+            </Box>
           ))}
         </Grid>
 

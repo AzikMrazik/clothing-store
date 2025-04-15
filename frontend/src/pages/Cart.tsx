@@ -27,7 +27,7 @@ import { useNavigate } from 'react-router-dom';
 import { useNotification } from '../contexts/NotificationContext';
 import { API_URL } from '../config';
 import { PromoService } from '../services/PromoService';
-import { DeliverySettings, PromoCode } from '../types/models';
+import { DeliverySettings } from '../types/models';
 
 const Cart = () => {
   const { cart, updateQuantity, removeFromCart, updateCart } = useCart();
@@ -364,7 +364,7 @@ const Cart = () => {
             )}
 
             {/* Скидка по промокоду */}
-            {(cart.discount ?? 0) > 0 && (
+            {cart.discount > 0 && (
               <Box sx={{ 
                 display: 'flex', 
                 justifyContent: 'space-between',
@@ -372,7 +372,7 @@ const Cart = () => {
                 color: 'success.main'
               }}>
                 <Typography>Скидка</Typography>
-                <Typography>-{Math.round(cart.discount ?? 0)} ₽</Typography>
+                <Typography>-{Math.round(cart.discount)} ₽</Typography>
               </Box>
             )}
           </Box>

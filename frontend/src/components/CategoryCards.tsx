@@ -7,9 +7,7 @@ import {
   CardContent,
   CardMedia,
   Typography,
-  Container,
-  useTheme,
-  useMediaQuery
+  Container
 } from '@mui/material';
 import { motion } from 'framer-motion';
 import { Category } from '../types/models';
@@ -27,7 +25,6 @@ const CategoryCards: React.FC<CategoryCardsProps> = ({ onCategoryChange }) => {
   const [loading, setLoading] = useState(true);
   const { showNotification } = useNotification();
   const navigate = useNavigate();
-  const theme = useTheme();
 
   useEffect(() => {
     fetchCategories();

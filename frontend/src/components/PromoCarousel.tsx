@@ -25,7 +25,7 @@ interface PromoCarouselProps {
 
 // Компоненты для пользовательских стрелок навигации
 const NextArrow = (props: any) => {
-  const { className, style, onClick } = props;
+  const { className, onClick } = props;
   return (
     <Box
       className={className}
@@ -57,7 +57,7 @@ const NextArrow = (props: any) => {
 };
 
 const PrevArrow = (props: any) => {
-  const { className, style, onClick } = props;
+  const { className, onClick } = props;
   return (
     <Box
       className={className}
@@ -98,7 +98,6 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({
   const { showNotification } = useNotification();
   const navigate = useNavigate();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     fetchPromos();

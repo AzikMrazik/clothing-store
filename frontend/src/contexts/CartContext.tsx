@@ -215,17 +215,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const removeFromCart = async (id: string) => {
     try {
-      // Store item for potential rollback
-      const removedItem = cart.items.find(item => item._id === id);
-      
       // Optimistic update
       dispatch({ type: 'REMOVE_ITEM', payload: id });
       showNotification('Товар удален из корзины', 'success');
     } catch (error) {
-      // Rollback on error
-      if (removedItem) {
-        dispatch({ type: 'ADD_ITEM', payload: removedItem });
-      }
       dispatch({ type: 'SET_ERROR', payload: 'Failed to remove item from cart' });
       showNotification('Не удалось удалить товар из корзины', 'error');
     }
@@ -233,19 +226,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const updateQuantity = async (id: string, quantity: number) => {
     try {
-      // Store old quantity for potential rollback
-      const oldItem = cart.items.find(item => item._id === id);
-      
       // Optimistic update
       dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } });
     } catch (error) {
-      // Rollback on error
-      if (oldItem) {
-        dispatch({ 
-          type: 'UPDATE_QUANTITY', 
-          payload: { id, quantity: oldItem.quantity } 
-        });
-      }
       dispatch({ type: 'SET_ERROR', payload: 'Failed to update quantity' });
       showNotification('Не удалось обновить количество', 'error');
     }

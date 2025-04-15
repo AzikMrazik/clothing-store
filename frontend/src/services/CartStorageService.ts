@@ -234,7 +234,8 @@ export class CartStorageService {
           // Сравниваем по количеству товаров и времени последнего обновления
           const isServerCartNewer = 
             serverCart.items.length > localCart.items.length || 
-            serverCart.metadata?.lastUpdated > (localCart.metadata?.lastUpdated || 0);
+            (typeof serverCart.metadata?.lastUpdated === 'number' && 
+            serverCart.metadata?.lastUpdated > (typeof localCart.metadata?.lastUpdated === 'number' ? localCart.metadata?.lastUpdated : 0));
           
           if (isServerCartNewer) {
             return serverCart;

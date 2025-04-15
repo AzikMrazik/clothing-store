@@ -16,7 +16,6 @@ import {
   ListItemSecondaryAction,
   Switch,
   FormControlLabel,
-  Grid,
   Alert
 } from '@mui/material';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
@@ -360,8 +359,8 @@ const CategoryManager: React.FC = () => {
           {editingCategory ? `Редактирование категории: ${editingCategory.name}` : 'Создание новой категории'}
         </DialogTitle>
         <DialogContent>
-          <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12} sm={6}>
+          <Box sx={{ mt: 1, display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+            <Box sx={{ flex: '1 1 45%' }}>
               <TextField
                 name="name"
                 label="Название категории"
@@ -372,8 +371,8 @@ const CategoryManager: React.FC = () => {
                 helperText={errors.name}
                 required
               />
-            </Grid>
-            <Grid item xs={12} sm={6}>
+            </Box>
+            <Box sx={{ flex: '1 1 45%' }}>
               <TextField
                 name="slug"
                 label="URL-имя (slug)"
@@ -384,8 +383,8 @@ const CategoryManager: React.FC = () => {
                 helperText={errors.slug || 'Например: winter-collection, t-shirts, new-arrivals'}
                 required
               />
-            </Grid>
-            <Grid item xs={12}>
+            </Box>
+            <Box sx={{ flex: '1 1 100%' }}>
               <TextField
                 name="description"
                 label="Описание"
@@ -395,8 +394,8 @@ const CategoryManager: React.FC = () => {
                 value={formData.description}
                 onChange={handleInputChange}
               />
-            </Grid>
-            <Grid item xs={12}>
+            </Box>
+            <Box sx={{ flex: '1 1 100%' }}>
               <TextField
                 name="imageUrl"
                 label="URL изображения"
@@ -406,8 +405,8 @@ const CategoryManager: React.FC = () => {
                 error={!!errors.imageUrl}
                 helperText={errors.imageUrl}
               />
-            </Grid>
-            <Grid item xs={12}>
+            </Box>
+            <Box sx={{ flex: '1 1 100%' }}>
               <FormControlLabel
                 control={
                   <Switch
@@ -419,8 +418,8 @@ const CategoryManager: React.FC = () => {
                 }
                 label="Категория активна"
               />
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDialog} color="inherit">

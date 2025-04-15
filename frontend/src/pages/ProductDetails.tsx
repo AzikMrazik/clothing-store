@@ -17,7 +17,6 @@ import { Add, Remove, ShoppingCart } from '@mui/icons-material';
 import { useCart } from '../contexts/CartContext';
 import { useApi } from '../hooks/useApi';
 import { useNotification } from '../contexts/NotificationContext';
-import { useAuth } from '../contexts/AuthContext';
 import ImageGallery from '../components/ImageGallery';
 import { Product } from '../types/models';
 import Loading from '../components/Loading';
@@ -32,11 +31,9 @@ const ProductDetails = () => {
   const { addToCart } = useCart();
   const { call, error } = useApi();
   const { showNotification } = useNotification();
-  const { isAuthenticated } = useAuth();
   
   // Состояние для меню действий
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const openMenu = Boolean(anchorEl);
 
   useEffect(() => {
     fetchProduct();
@@ -109,34 +106,8 @@ const ProductDetails = () => {
   };
 
   // Функции для меню действий
-  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
   const handleMenuClose = () => {
     setAnchorEl(null);
-  };
-
-  const handleCopyLink = () => {
-    if (product) {
-      const productUrl = `${window.location.origin}/product/${product._id}`;
-      navigator.clipboard.writeText(productUrl)
-        .then(() => {
-          showNotification('Ссылка на товар скопирована', 'success');
-        })
-        .catch(err => {
-          console.error('Failed to copy link: ', err);
-          showNotification('Не удалось скопировать ссылку', 'error');
-        });
-    }
-    handleMenuClose();
-  };
-
-  const handleEditProduct = () => {
-    if (product) {
-      navigate('/admin', { state: { productToEdit: product } });
-    }
-    handleMenuClose();
   };
 
   if (error) {
@@ -320,7 +291,7 @@ const ProductDetails = () => {
             flexWrap: 'wrap'
           }}>
             {relatedProducts.map((relatedProduct) => (
-              <Grid 
+              <Box 
                 key={relatedProduct._id} 
                 item 
                 xs={6} // Всегда 2 карточки в ряд на мобильных
@@ -500,7 +471,7 @@ const ProductDetails = () => {
                     </Box>
                   </CardContent>
                 </Card>
-              </Grid>
+              </Box>
             ))}
           </Grid>
         </Box>

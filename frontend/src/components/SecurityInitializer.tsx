@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import securityService from '../services/security';
 import { SECURITY } from '../config';
 
@@ -6,9 +6,6 @@ import { SECURITY } from '../config';
  * Компонент для инициализации всех механизмов безопасности
  */
 const SecurityInitializer: React.FC = () => {
-  // Добавляем состояние для отслеживания ошибок
-  const [error, setError] = useState<Error | null>(null);
-
   useEffect(() => {
     // Инициализируем все механизмы безопасности при монтировании компонента
     try {
@@ -19,12 +16,10 @@ const SecurityInitializer: React.FC = () => {
           initSecurity();
         } catch (err) {
           console.error('Ошибка при инициализации системы безопасности:', err);
-          setError(err instanceof Error ? err : new Error('Неизвестная ошибка безопасности'));
         }
       }, 0);
     } catch (error) {
       console.error('Критическая ошибка при инициализации системы безопасности:', error);
-      setError(error instanceof Error ? error : new Error('Критическая ошибка безопасности'));
     }
   }, []);
 
@@ -94,7 +89,7 @@ const SecurityInitializer: React.FC = () => {
       console.debug = () => {};
       
       // Но оставляем возможность восстановить консоль для отладки
-      window['_restoreConsole'] = () => {
+      (window as any)['_restoreConsole'] = () => {
         Object.assign(console, consoleOriginal);
       };
     } catch (e) {
