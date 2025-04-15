@@ -21,8 +21,7 @@ import {
   CardContent,
   CardMedia,
   FormHelperText,
-  InputAdornment,
-  Grid
+  InputAdornment
 } from '@mui/material';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
