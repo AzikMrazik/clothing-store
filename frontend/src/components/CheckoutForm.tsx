@@ -269,7 +269,7 @@ const CheckoutForm = () => {
                 Данные получателя
               </Typography>
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+                <Box sx={{ flex: 1, minWidth: 0, mb: 2 }}>
                   <Typography variant="body2">
                     <strong>Имя:</strong> {formData.firstName} {formData.lastName}
                   </Typography>
@@ -279,8 +279,8 @@ const CheckoutForm = () => {
                   <Typography variant="body2">
                     <strong>Телефон:</strong> {formData.phone}
                   </Typography>
-                </Grid>
-                <Grid item xs={12} sm={6}>
+                </Box>
+                <Box sx={{ flex: 1, minWidth: 0, mb: 2 }}>
                   <Typography variant="body2">
                     <strong>Адрес доставки:</strong> {formData.address}
                   </Typography>
@@ -290,7 +290,7 @@ const CheckoutForm = () => {
                   <Typography variant="body2">
                     <strong>Индекс:</strong> {formData.zipCode}
                   </Typography>
-                </Grid>
+                </Box>
               </Grid>
             </Paper>
             
@@ -341,13 +341,13 @@ const CheckoutForm = () => {
               </Box>
               
               {/* Информация о промокоде и скидке */}
-              {(cart.discount ?? 0) > 0 && (
+              {cart.discount && cart.discount > 0 && (
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                   <Typography variant="body2">
                     Скидка{cart.appliedPromoCode ? ` (${cart.appliedPromoCode.code})` : ''}:
                   </Typography>
                   <Typography variant="body2" color="success.main">
-                    -{Math.round(cart.discount ?? 0)} ₽
+                    -{Math.round(cart.discount)} ₽
                   </Typography>
                 </Box>
               )}

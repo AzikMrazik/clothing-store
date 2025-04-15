@@ -23,8 +23,7 @@ import {
   ListItemText,
   DialogActions,
   Button,
-  Divider,
-  Grid
+  Divider
 } from '@mui/material';
 import { Visibility } from '@mui/icons-material';
 import { useApi } from '../../hooks/useApi';

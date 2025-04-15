@@ -115,7 +115,7 @@ class ApiService {
       clearTimeout(timeoutId);
       
       // Если ошибка из-за тайм-аута, выбрасываем специальную ошибку
-      if (error.name === 'AbortError') {
+      if (error instanceof Error && error.name === 'AbortError') {
         throw {
           status: 408,
           message: 'Request timeout',

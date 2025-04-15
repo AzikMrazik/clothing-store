@@ -16,7 +16,6 @@ import {
   ListItemSecondaryAction,
   Switch,
   FormControlLabel,
-  Grid,
   Alert,
   InputAdornment,
   FormHelperText,
@@ -377,62 +376,60 @@ const PromoCodeManager: React.FC = () => {
                   borderRadius: 1,
                 }}
               >
-                <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6} md={4}>
-                    <ListItemText
-                      primary={
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <Typography 
-                            variant="subtitle1" 
-                            fontWeight="bold"
-                            sx={{ 
-                              fontFamily: 'monospace',
-                              letterSpacing: '0.5px' 
-                            }}
-                          >
-                            {promoCode.code}
-                          </Typography>
-                          <Chip 
-                            label={formatDiscount(promoCode)} 
-                            size="small" 
-                            color={promoCode.discountType === 'percentage' ? 'primary' : 'secondary'}
-                            sx={{ ml: 1 }}
-                          />
-                        </Box>
-                      }
-                      secondary={
-                        <Typography variant="body2" color="text.secondary">
-                          {promoCode.description}
+                <Box sx={{ width: { xs: '100%', sm: '50%', md: '33.33%' }, pr: 2, mb: 2 }}>
+                  <ListItemText
+                    primary={
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography 
+                          variant="subtitle1" 
+                          fontWeight="bold"
+                          sx={{ 
+                            fontFamily: 'monospace',
+                            letterSpacing: '0.5px' 
+                          }}
+                        >
+                          {promoCode.code}
                         </Typography>
-                      }
+                        <Chip 
+                          label={formatDiscount(promoCode)} 
+                          size="small" 
+                          color={promoCode.discountType === 'percentage' ? 'primary' : 'secondary'}
+                          sx={{ ml: 1 }}
+                        />
+                      </Box>
+                    }
+                    secondary={
+                      <Typography variant="body2" color="text.secondary">
+                        {promoCode.description}
+                      </Typography>
+                    }
+                  />
+                </Box>
+                
+                <Box sx={{ width: { xs: '100%', sm: '50%', md: '33.33%' }, pr: 2, mb: 2 }}>
+                  <Typography variant="body2" color="text.secondary">
+                    Мин. заказ: {promoCode.minOrderAmount} ₽
+                    {promoCode.maxDiscountAmount && promoCode.maxDiscountAmount > 0 && ` | Макс. скидка: ${promoCode.maxDiscountAmount} ₽`}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {formatDate(promoCode.startDate)} - {formatDate(promoCode.endDate)}
+                  </Typography>
+                </Box>
+                
+                <Box sx={{ width: { xs: '100%', sm: '50%', md: '33.33%' }, pr: 2, mb: 2 }}>
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                    <Chip 
+                      label={status} 
+                      size="small" 
+                      color={isActive ? 'success' : 'default'} 
                     />
-                  </Grid>
-                  
-                  <Grid item xs={12} sm={6} md={4}>
-                    <Typography variant="body2" color="text.secondary">
-                      Мин. заказ: {promoCode.minOrderAmount} ₽
-                      {promoCode.maxDiscountAmount > 0 && ` | Макс. скидка: ${promoCode.maxDiscountAmount} ₽`}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {formatDate(promoCode.startDate)} - {formatDate(promoCode.endDate)}
-                    </Typography>
-                  </Grid>
-                  
-                  <Grid item xs={12} sm={6} md={4}>
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                      <Chip 
-                        label={status} 
-                        size="small" 
-                        color={isActive ? 'success' : 'default'} 
-                      />
-                      <Chip 
-                        label={`Использован: ${promoCode.usageCount}${promoCode.usageLimit ? `/${promoCode.usageLimit}` : ''}`} 
-                        size="small" 
-                        variant="outlined"
-                      />
-                    </Box>
-                  </Grid>
-                </Grid>
+                    <Chip 
+                      label={`Использован: ${promoCode.usageCount}${promoCode.usageLimit ? `/${promoCode.usageLimit}` : ''}`} 
+                      size="small" 
+                      variant="outlined"
+                    />
+                  </Box>
+                </Box>
 
                 <ListItemSecondaryAction>
                   <IconButton 

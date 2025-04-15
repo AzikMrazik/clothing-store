@@ -3,7 +3,6 @@ import {
   Box, 
   Tabs, 
   Tab,
-  Typography,
   useTheme,
   useMediaQuery,
   IconButton,

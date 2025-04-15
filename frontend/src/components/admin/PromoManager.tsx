@@ -16,7 +16,6 @@ import {
   ListItemSecondaryAction,
   Switch,
   FormControlLabel,
-  Grid,
   Alert,
   Card,
   CardContent,
@@ -24,7 +23,6 @@ import {
   FormHelperText,
   InputAdornment
 } from '@mui/material';
-import Grid from '@mui/material/Grid';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -370,47 +368,45 @@ const PromoManager: React.FC = () => {
                             <DragIndicatorIcon color="action" />
                           </Box>
                           
-                          <Grid container spacing={2}>
-                            <Grid item xs={12} sm={3} md={2}>
-                              {promo.imageUrl && (
-                                <Card sx={{ height: '100%' }}>
-                                  <CardMedia
-                                    component="img"
-                                    image={promo.imageUrl}
-                                    alt={promo.title}
-                                    sx={{ height: 100, objectFit: 'cover' }}
-                                  />
-                                </Card>
-                              )}
-                            </Grid>
-                            
-                            <Grid item xs={12} sm={9} md={10}>
-                              <ListItemText
-                                primary={
-                                  <Typography variant="subtitle1" fontWeight="bold">
-                                    {promo.title} 
-                                    <Typography component="span" variant="body2" color="text.secondary" sx={{ ml: 1 }}>
-                                      ({status})
-                                    </Typography>
+                          <Box sx={{ width: { xs: '100%', sm: '25%', md: '16.66%' }, pr: 2 }}>
+                            {promo.imageUrl && (
+                              <Card sx={{ height: '100%' }}>
+                                <CardMedia
+                                  component="img"
+                                  image={promo.imageUrl}
+                                  alt={promo.title}
+                                  sx={{ height: 100, objectFit: 'cover' }}
+                                />
+                              </Card>
+                            )}
+                          </Box>
+                          
+                          <Box sx={{ flex: 1 }}>
+                            <ListItemText
+                              primary={
+                                <Typography variant="subtitle1" fontWeight="bold">
+                                  {promo.title} 
+                                  <Typography component="span" variant="body2" color="text.secondary" sx={{ ml: 1 }}>
+                                    ({status})
                                   </Typography>
-                                }
-                                secondary={
-                                  <>
-                                    <Typography variant="body2" color="text.secondary" noWrap>
-                                      {promo.description}
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                      С {formatDate(promo.startDate)} по {formatDate(promo.endDate)}
-                                    </Typography>
-                                    <Typography variant="body2" color="primary" component="div" sx={{ mt: 0.5 }}>
-                                      <LinkIcon fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />
-                                      {promo.linkUrl}
-                                    </Typography>
-                                  </>
-                                }
-                              />
-                            </Grid>
-                          </Grid>
+                                </Typography>
+                              }
+                              secondary={
+                                <>
+                                  <Typography variant="body2" color="text.secondary" noWrap>
+                                    {promo.description}
+                                  </Typography>
+                                  <Typography variant="body2" color="text.secondary">
+                                    С {formatDate(promo.startDate)} по {formatDate(promo.endDate)}
+                                  </Typography>
+                                  <Typography variant="body2" color="primary" component="div" sx={{ mt: 0.5 }}>
+                                    <LinkIcon fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />
+                                    {promo.linkUrl}
+                                  </Typography>
+                                </>
+                              }
+                            />
+                          </Box>
                           
                           <ListItemSecondaryAction>
                             <IconButton 

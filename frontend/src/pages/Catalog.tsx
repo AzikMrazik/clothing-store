@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   Container,
   Grid,
@@ -12,7 +12,10 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  useMediaQuery,
+  OutlinedInput,
+  Checkbox,
+  ListItemText,
+  TextField,
   useTheme
 } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -41,7 +44,6 @@ const Catalog = () => {
   const query = useQuery();
   const categoryFromUrl = query.get('category');
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,7 +52,6 @@ const Catalog = () => {
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
   const [sortBy, setSortBy] = useState<SortOption>('price_asc');
   const [categoryMap, setCategoryMap] = useState<Record<string, string>>({});
-  const [showingCategory, setShowingCategory] = useState<Category | null>(null);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   const categories = useMemo(() => {
@@ -73,13 +74,6 @@ const Catalog = () => {
     }
     
     window.history.replaceState({}, '', url.toString());
-    
-    // Загружаем информацию о выбранной категории
-    if (selectedCategory) {
-      fetchCategoryInfo(selectedCategory);
-    } else {
-      setShowingCategory(null);
-    }
   }, [selectedCategory]);
 
   useEffect(() => {
@@ -97,16 +91,6 @@ const Catalog = () => {
       setCategoryMap(map);
     } catch (error) {
       console.error('Error fetching categories for mapping:', error);
-    }
-  };
-
-  const fetchCategoryInfo = async (categoryId: string) => {
-    try {
-      const categories = await CategoryService.fetchCategories();
-      const category = categories.find(cat => cat._id === categoryId);
-      setShowingCategory(category || null);
-    } catch (error) {
-      console.error('Error fetching category info:', error);
     }
   };
 
@@ -192,10 +176,6 @@ const Catalog = () => {
     setSelectedCategory('');
     setPriceRange([0, maxPrice]);
     setSelectedCategories([]);
-  };
-
-  const handlePriceRangeChange = (newRange: [number, number]) => {
-    setPriceRange(newRange);
   };
 
   if (loading) {

@@ -31,16 +31,12 @@ export class ProductService {
       }
       return data;
     } catch (error) {
-      console.error(`Error fetching products: ${error.message}`);
-      
-      if (retry < MAX_RETRIES) {
-        if (API_DEBUG) {
-          console.log(`Retrying in ${RETRY_DELAY}ms... (${retry + 1}/${MAX_RETRIES})`);
-        }
-        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
-        return this.fetchProducts(retry + 1);
+      if (error instanceof Error) {
+        console.error(`Error fetching products: ${error.message}`);
+      } else {
+        console.error('Error fetching products:', error);
       }
-      throw new Error('Failed to load products. Please check your connection and try again.');
+      throw error;
     }
   }
 }

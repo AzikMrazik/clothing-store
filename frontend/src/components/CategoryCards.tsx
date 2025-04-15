@@ -28,7 +28,6 @@ const CategoryCards: React.FC<CategoryCardsProps> = ({ onCategoryChange }) => {
   const { showNotification } = useNotification();
   const navigate = useNavigate();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     fetchCategories();
@@ -82,8 +81,7 @@ const CategoryCards: React.FC<CategoryCardsProps> = ({ onCategoryChange }) => {
           flexWrap: 'wrap'
         }}>
           {categories.map((category) => (
-            <Grid item key={category._id} 
-              xs={6} sm={4} md={3} lg={2} 
+            <Box key={category._id} 
               component={motion.div}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -146,7 +144,7 @@ const CategoryCards: React.FC<CategoryCardsProps> = ({ onCategoryChange }) => {
                   </Typography>
                 </CardContent>
               </Card>
-            </Grid>
+            </Box>
           ))}
         </Grid>
       </Box>
