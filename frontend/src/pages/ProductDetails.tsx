@@ -9,14 +9,11 @@ import {
   CardContent,
   Box,
   Chip,
-  Divider,
-  IconButton,
-  Menu,
-  MenuItem
+  IconButton
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { motion } from 'framer-motion';
-import { Add, Remove, ShoppingCart, MoreVert, ContentCopy, Edit } from '@mui/icons-material';
+import { Add, Remove, ShoppingCart } from '@mui/icons-material';
 import { useCart } from '../contexts/CartContext';
 import { useApi } from '../hooks/useApi';
 import { useNotification } from '../contexts/NotificationContext';

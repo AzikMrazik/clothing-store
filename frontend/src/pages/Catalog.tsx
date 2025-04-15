@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   Container,
   Grid,
@@ -13,17 +12,9 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Divider,
-  Chip,
-  Stack,
   useMediaQuery,
-  useTheme,
-  OutlinedInput,
-  Checkbox,
-  ListItemText,
-  TextField
+  useTheme
 } from '@mui/material';
-import Grid from '@mui/material/Grid';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useApi } from '../hooks/useApi';
@@ -218,8 +209,6 @@ const Catalog = () => {
       {/* Отображаем карточки категорий только когда не выбрана ни одна категория */}
       {!selectedCategory && <CategoryCards onCategoryChange={setSelectedCategory} />}
       
-      <Divider sx={{ mb: 3 }} />
-
       <Container maxWidth="xl" sx={{ py: 2 }}>
         {/* Filter and sort section */}
         <Box sx={{ 
@@ -314,196 +303,194 @@ const Catalog = () => {
           display: 'flex',
           flexWrap: 'wrap'
         }}>
-          <AnimatePresence>
-            {filteredProducts.map((product) => (
-              <Grid 
-                key={product._id} 
-                item 
-                xs={6} // Всегда 2 карточки в ряд на мобильных
-                sm={6} // 2 карточки в ряд на планшетах
-                md={4} // 3 карточки в ряд на маленьких десктопах
-                lg={3} // 4 карточки в ряд на десктопах
-                xl={2} // 6 карточек в ряд на больших экранах
+          {filteredProducts.map((product) => (
+            <Grid 
+              key={product._id} 
+              item 
+              xs={6} // Всегда 2 карточки в ряд на мобильных
+              sm={6} // 2 карточки в ряд на планшетах
+              md={4} // 3 карточки в ряд на маленьких десктопах
+              lg={3} // 4 карточки в ряд на десктопах
+              xl={2} // 6 карточек в ряд на больших экранах
+              sx={{ 
+                display: 'flex',
+                alignItems: 'stretch',
+                width: { xs: 'calc(50% - 8px)', sm: 'calc(50% - 16px)', md: 'calc(33.33% - 16px)', lg: 'calc(25% - 16px)', xl: 'calc(16.66% - 16px)' },
+                maxWidth: { xs: 'calc(50% - 8px)', sm: 'calc(50% - 16px)', md: 'calc(33.33% - 16px)', lg: 'calc(25% - 16px)', xl: 'calc(16.66% - 16px)' },
+                paddingLeft: '0 !important',
+                paddingTop: '0 !important',
+                marginBottom: { xs: 1, sm: 2, md: 3 },
+                boxSizing: 'border-box'
+              }}
+            >
+              <Card 
                 sx={{ 
-                  display: 'flex',
-                  alignItems: 'stretch',
-                  width: { xs: 'calc(50% - 8px)', sm: 'calc(50% - 16px)', md: 'calc(33.33% - 16px)', lg: 'calc(25% - 16px)', xl: 'calc(16.66% - 16px)' },
-                  maxWidth: { xs: 'calc(50% - 8px)', sm: 'calc(50% - 16px)', md: 'calc(33.33% - 16px)', lg: 'calc(25% - 16px)', xl: 'calc(16.66% - 16px)' },
-                  paddingLeft: '0 !important',
-                  paddingTop: '0 !important',
-                  marginBottom: { xs: 1, sm: 2, md: 3 },
-                  boxSizing: 'border-box'
+                  width: '100%',
+                  display: 'flex', 
+                  flexDirection: 'column',
+                  height: '100%', 
+                  minHeight: { xs: 300, sm: 320, md: 340 },
+                  aspectRatio: '3/4', // Устанавливаем соотношение сторон 3:4 (ширина:высота)
+                  '&:hover': {
+                    transform: 'translateY(-4px)',
+                    transition: 'transform 0.2s ease-in-out',
+                    boxShadow: 6
+                  },
+                  border: '1px solid #e0e0e0',
+                  borderRadius: 2,
                 }}
               >
-                <Card 
+                <Box 
                   sx={{ 
+                    position: 'relative',
+                    paddingTop: '75%', // 3:4 соотношение для контейнера изображения (75% = 3/4)
                     width: '100%',
-                    display: 'flex', 
-                    flexDirection: 'column',
-                    height: '100%', 
-                    minHeight: { xs: 300, sm: 320, md: 340 },
-                    aspectRatio: '3/4', // Устанавливаем соотношение сторон 3:4 (ширина:высота)
-                    '&:hover': {
-                      transform: 'translateY(-4px)',
-                      transition: 'transform 0.2s ease-in-out',
-                      boxShadow: 6
-                    },
-                    border: '1px solid #e0e0e0',
-                    borderRadius: 2,
+                    overflow: 'hidden',
+                    backgroundColor: 'background.paper',
+                    flexShrink: 0, // Предотвращает сжатие секции с изображением
                   }}
                 >
-                  <Box 
-                    sx={{ 
-                      position: 'relative',
-                      paddingTop: '75%', // 3:4 соотношение для контейнера изображения (75% = 3/4)
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
                       width: '100%',
-                      overflow: 'hidden',
-                      backgroundColor: 'background.paper',
-                      flexShrink: 0, // Предотвращает сжатие секции с изображением
+                      height: '100%',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center'
                     }}
                   >
-                    <Box
-                      sx={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center'
-                      }}
-                    >
-                      {product.imageUrl ? (
-                        <CardMedia
-                          component="img"
-                          image={product.imageUrl}
-                          alt={product.name}
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src = '/placeholder-product.jpg';
-                          }}
-                          sx={{ 
-                            cursor: 'pointer',
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'contain',
-                            transition: 'transform 0.3s ease',
-                            '&:hover': {
-                              transform: 'scale(1.05)'
-                            }
-                          }}
-                          onClick={() => navigate(`/product/${product._id}`)}
-                        />
-                      ) : (
-                        <Box 
-                          sx={{
-                            width: '100%',
-                            height: '100%',
-                            backgroundColor: 'rgba(0,0,0,0.05)',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center'
-                          }}
-                          onClick={() => navigate(`/product/${product._id}`)}
-                        >
-                          <Typography color="text.secondary">
-                            Нет фото
-                          </Typography>
-                        </Box>
-                      )}
-                    </Box>
-                  </Box>
-
-                  <CardContent 
-                    sx={{ 
-                      display: 'flex', 
-                      flexDirection: 'column',
-                      p: { xs: 1.5, sm: 2 },
-                      '&:last-child': { pb: { xs: 1.5, sm: 2 } },
-                      flexGrow: 1,
-                    }}
-                  >
-                    {/* Контейнер для текстового содержимого с фиксированной высотой */}
-                    <Box sx={{ flexGrow: 1, overflow: 'hidden', mb: 2 }}>
-                      <Typography 
-                        variant="h6" 
-                        component="h2"
+                    {product.imageUrl ? (
+                      <CardMedia
+                        component="img"
+                        image={product.imageUrl}
+                        alt={product.name}
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = '/placeholder-product.jpg';
+                        }}
                         sx={{ 
                           cursor: 'pointer',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          display: '-webkit-box',
-                          WebkitLineClamp: 2,
-                          WebkitBoxOrient: 'vertical',
-                          lineHeight: '1.2',
-                          fontSize: { xs: '0.9rem', sm: '1rem' },
-                          mb: 1,
-                          fontWeight: 600
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'contain',
+                          transition: 'transform 0.3s ease',
+                          '&:hover': {
+                            transform: 'scale(1.05)'
+                          }
+                        }}
+                        onClick={() => navigate(`/product/${product._id}`)}
+                      />
+                    ) : (
+                      <Box 
+                        sx={{
+                          width: '100%',
+                          height: '100%',
+                          backgroundColor: 'rgba(0,0,0,0.05)',
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center'
                         }}
                         onClick={() => navigate(`/product/${product._id}`)}
                       >
-                        {product.name}
-                      </Typography>
-                      
-                      <Typography 
-                        variant="body2" 
-                        color="text.secondary"
-                        sx={{ 
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          display: '-webkit-box',
-                          WebkitLineClamp: 2,
-                          WebkitBoxOrient: 'vertical',
-                          lineHeight: '1.3',
-                          fontSize: { xs: '0.75rem', sm: '0.8rem' }
-                        }}
-                      >
-                        {product.description || 'Нет описания'}
-                      </Typography>
-                    </Box>
+                        <Typography color="text.secondary">
+                          Нет фото
+                        </Typography>
+                      </Box>
+                    )}
+                  </Box>
+                </Box>
+
+                <CardContent 
+                  sx={{ 
+                    display: 'flex', 
+                    flexDirection: 'column',
+                    p: { xs: 1.5, sm: 2 },
+                    '&:last-child': { pb: { xs: 1.5, sm: 2 } },
+                    flexGrow: 1,
+                  }}
+                >
+                  {/* Контейнер для текстового содержимого с фиксированной высотой */}
+                  <Box sx={{ flexGrow: 1, overflow: 'hidden', mb: 2 }}>
+                    <Typography 
+                      variant="h6" 
+                      component="h2"
+                      sx={{ 
+                        cursor: 'pointer',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        lineHeight: '1.2',
+                        fontSize: { xs: '0.9rem', sm: '1rem' },
+                        mb: 1,
+                        fontWeight: 600
+                      }}
+                      onClick={() => navigate(`/product/${product._id}`)}
+                    >
+                      {product.name}
+                    </Typography>
                     
-                    {/* Блок с ценой и кнопкой всегда внизу карточки */}
-                    <Box sx={{ 
-                      display: 'flex', 
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      pt: 1,
-                      borderTop: '1px solid',
-                      borderColor: 'divider',
-                      mt: 'auto'
-                    }}>
-                      <Typography 
-                        variant="h6" 
-                        color="primary" 
-                        sx={{ 
-                          fontSize: { xs: '1rem', sm: '1.1rem' },
-                          fontWeight: 600
-                        }}
-                      >
-                        {Math.round(product.price)} ₽
-                      </Typography>
-                      <Button
-                        variant="contained"
-                        size="small"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleAddToCart(product);
-                        }}
-                        sx={{ 
-                          minWidth: 'auto',
-                          px: { xs: 1, sm: 2 },
-                          py: 0.5,
-                          fontSize: { xs: '0.75rem', sm: '0.8rem' }
-                        }}
-                      >
-                        В корзину
-                      </Button>
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </AnimatePresence>
+                    <Typography 
+                      variant="body2" 
+                      color="text.secondary"
+                      sx={{ 
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        lineHeight: '1.3',
+                        fontSize: { xs: '0.75rem', sm: '0.8rem' }
+                      }}
+                    >
+                      {product.description || 'Нет описания'}
+                    </Typography>
+                  </Box>
+                  
+                  {/* Блок с ценой и кнопкой всегда внизу карточки */}
+                  <Box sx={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    pt: 1,
+                    borderTop: '1px solid',
+                    borderColor: 'divider',
+                    mt: 'auto'
+                  }}>
+                    <Typography 
+                      variant="h6" 
+                      color="primary" 
+                      sx={{ 
+                        fontSize: { xs: '1rem', sm: '1.1rem' },
+                        fontWeight: 600
+                      }}
+                    >
+                      {Math.round(product.price)} ₽
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddToCart(product);
+                      }}
+                      sx={{ 
+                        minWidth: 'auto',
+                        px: { xs: 1, sm: 2 },
+                        py: 0.5,
+                        fontSize: { xs: '0.75rem', sm: '0.8rem' }
+                      }}
+                    >
+                      В корзину
+                    </Button>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
         </Grid>
 
         {filteredProducts.length === 0 && (

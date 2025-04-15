@@ -2,6 +2,9 @@ import { SECURITY } from '../config';
 // Исправляем импорт DOMPurify
 import DOMPurify from 'dompurify';
 
+// Импорт настроек мониторинга
+import { MONITORING } from '../config';
+
 // Класс для работы с безопасностью на фронтенде
 class SecurityService {
   // Очистка потенциально опасного HTML
@@ -157,7 +160,7 @@ class SecurityService {
 
   // Отправка сообщений о проблемах безопасности на сервер
   reportSecurityIssue(issueData: any): void {
-    const { ERROR_ENDPOINT } = SECURITY.MONITORING;
+    const { ERROR_ENDPOINT } = MONITORING;
     
     fetch(ERROR_ENDPOINT, {
       method: 'POST',
@@ -192,9 +195,6 @@ class SecurityService {
     }
   }
 }
-
-// Импорт настроек мониторинга
-import { MONITORING } from '../config';
 
 // Создаем экземпляр сервиса безопасности
 const securityService = new SecurityService();

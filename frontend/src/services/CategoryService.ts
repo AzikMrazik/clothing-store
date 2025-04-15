@@ -51,7 +51,11 @@ export class CategoryService {
 
       return await response.json();
     } catch (error) {
-      console.error(`Error updating category order: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      if (error instanceof Error) {
+        console.error(`Error updating category order: ${error.message}`);
+      } else {
+        console.error('Error updating category order:', error);
+      }
       throw new Error('Failed to update category order. Please try again.');
     }
   }
@@ -103,7 +107,11 @@ export class CategoryService {
 
       return await response.json();
     } catch (error) {
-      console.error(`Error updating category: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      if (error instanceof Error) {
+        console.error(`Error updating category: ${error.message}`);
+      } else {
+        console.error('Error updating category:', error);
+      }
       throw new Error('Failed to update category. Please try again.');
     }
   }
@@ -122,7 +130,11 @@ export class CategoryService {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
     } catch (error) {
-      console.error(`Error deleting category: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      if (error instanceof Error) {
+        console.error(`Error deleting category: ${error.message}`);
+      } else {
+        console.error('Error deleting category:', error);
+      }
       throw new Error('Failed to delete category. Please try again.');
     }
   }

@@ -279,7 +279,11 @@ export class PromoService {
 
       return await response.json();
     } catch (error) {
-      console.error(`Error updating promo code: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      if (error instanceof Error) {
+        console.error(`Error updating promo code: ${error.message}`);
+      } else {
+        console.error('Error updating promo code:', error);
+      }
       throw new Error('Failed to update promo code. Please try again.');
     }
   }
@@ -298,8 +302,11 @@ export class PromoService {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
     } catch (error) {
-      console.error(`Error deleting promo code: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      throw new Error('Failed to delete promo code. Please try again.');
+      if (error instanceof Error) {
+        console.error(`Error deleting promo code: ${error.message}`);
+      } else {
+        console.error('Error deleting promo code:', error);
+      }
     }
   }
 

@@ -1,3 +1,5 @@
+/// <reference types="vite/client" />
+
 // Конфигурация API для продакшн-среды
 export const API_BASE_URL = process.env.VITE_API_URL || '/api';
 export const IMAGE_BASE_URL = `${API_BASE_URL}/images`;
