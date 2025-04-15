@@ -1,8 +1,5 @@
 import { API_URL, API_DEBUG } from '../config';
 
-const MAX_RETRIES = 3;
-const RETRY_DELAY = 1000;
-
 export class ProductService {
   static async fetchProducts(retry = 0): Promise<any[]> {
     const url = `${API_URL}/products`;
