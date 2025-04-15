@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import * as React from 'react';
 import {
   Container,
   Box,
@@ -13,10 +13,10 @@ import { useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const Login = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [username, setUsername] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [error, setError] = React.useState('');
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
   
   const { login, isAuthenticated, loading } = useAuth();
   const navigate = useNavigate();

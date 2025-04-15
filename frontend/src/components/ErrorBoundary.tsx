@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Box, Typography, Button, Container } from '@mui/material';
 import { Warning } from '@mui/icons-material';
 
