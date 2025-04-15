@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   AppBar, 
   Toolbar, 
@@ -9,7 +9,8 @@ import {
   IconButton, 
   Menu,
   MenuItem,
-  Divider
+  Divider,
+  ListItemText
 } from '@mui/material';
 import { 
   ShoppingCart, 
@@ -20,7 +21,6 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { Category } from '../types/models';
 import { CategoryService } from '../services/CategoryService';
-import { API_URL } from '../config';
 import SearchBar from './SearchBar';
 
 const Navigation = () => {

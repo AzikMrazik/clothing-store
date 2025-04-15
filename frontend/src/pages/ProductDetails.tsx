@@ -31,9 +31,6 @@ const ProductDetails = () => {
   const { addToCart } = useCart();
   const { call, error } = useApi();
   const { showNotification } = useNotification();
-  
-  // Состояние для меню действий
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   useEffect(() => {
     fetchProduct();
@@ -105,11 +102,6 @@ const ProductDetails = () => {
     showNotification('Товар добавлен в корзину', 'success');
   };
 
-  // Функции для меню действий
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
   if (error) {
     return (
       <Container sx={{ mt: 4, textAlign: 'center' }}>
@@ -149,131 +141,127 @@ const ProductDetails = () => {
       }}>
         <Grid container spacing={{ xs: 2, md: 4 }}>
           {/* Mobile layout: Image first */}
-          <Grid item xs={12} md={6}>
-            <Box sx={{ 
-              mb: { xs: 2, md: 0 },
-              width: '100%',
-              '& img': {
-                maxHeight: { xs: '400px', md: '600px' },
-                objectFit: 'contain',
-                width: '100%'
-              }
-            }}>
-              <ImageGallery
-                mainImage={product.imageUrl}
-                additionalImages={product.additionalImages || []}
-              />
-            </Box>
-          </Grid>
+          <Box sx={{ 
+            mb: { xs: 2, md: 0 },
+            width: '100%',
+            '& img': {
+              maxHeight: { xs: '400px', md: '600px' },
+              objectFit: 'contain',
+              width: '100%'
+            }
+          }}>
+            <ImageGallery
+              mainImage={product.imageUrl}
+              additionalImages={product.additionalImages || []}
+            />
+          </Box>
 
           {/* Product info section */}
-          <Grid item xs={12} md={6}>
-            <Box sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              height: '100%'
+          <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%'
+          }}>
+            {/* Categories */}
+            <Box sx={{ 
+              display: 'flex', 
+              flexWrap: 'wrap', 
+              gap: 1,
+              mb: 2
             }}>
-              {/* Categories */}
+              {product.categories?.map((category, idx) => (
+                <Chip
+                  key={idx}
+                  label={category}
+                  size="small"
+                  color="primary"
+                  variant="outlined"
+                  onClick={() => navigate(`/?category=${category}`)}
+                  sx={{ cursor: 'pointer' }}
+                />
+              ))}
+            </Box>
+
+            {/* Product name */}
+            <Typography 
+              variant="h4" 
+              sx={{ 
+                fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
+                fontWeight: 600,
+                mb: 2
+              }}
+            >
+              {product.name}
+            </Typography>
+
+            {/* Price */}
+            <Typography 
+              variant="h5" 
+              color="primary" 
+              sx={{ 
+                mb: { xs: 2, md: 3 },
+                fontSize: { xs: '1.4rem', md: '1.5rem' },
+                fontWeight: 'bold'
+              }}
+            >
+              {Math.round(product.price)} ₽
+            </Typography>
+
+            {/* Description */}
+            <Typography 
+              variant="body1" 
+              sx={{ 
+                mb: { xs: 3, md: 4 },
+                fontSize: { xs: '0.875rem', md: '1rem' },
+                lineHeight: 1.6,
+                color: 'text.secondary'
+              }}
+            >
+              {product.description}
+            </Typography>
+
+            {/* Add to cart section */}
+            <Box sx={{ 
+              display: 'flex',
+              alignItems: 'center',
+              gap: 2,
+              mt: 'auto'
+            }}>
               <Box sx={{ 
                 display: 'flex', 
-                flexWrap: 'wrap', 
-                gap: 1,
-                mb: 2
-              }}>
-                {product.categories?.map((category, idx) => (
-                  <Chip
-                    key={idx}
-                    label={category}
-                    size="small"
-                    color="primary"
-                    variant="outlined"
-                    onClick={() => navigate(`/?category=${category}`)}
-                    sx={{ cursor: 'pointer' }}
-                  />
-                ))}
-              </Box>
-
-              {/* Product name */}
-              <Typography 
-                variant="h4" 
-                sx={{ 
-                  fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
-                  fontWeight: 600,
-                  mb: 2
-                }}
-              >
-                {product.name}
-              </Typography>
-
-              {/* Price */}
-              <Typography 
-                variant="h5" 
-                color="primary" 
-                sx={{ 
-                  mb: { xs: 2, md: 3 },
-                  fontSize: { xs: '1.4rem', md: '1.5rem' },
-                  fontWeight: 'bold'
-                }}
-              >
-                {Math.round(product.price)} ₽
-              </Typography>
-
-              {/* Description */}
-              <Typography 
-                variant="body1" 
-                sx={{ 
-                  mb: { xs: 3, md: 4 },
-                  fontSize: { xs: '0.875rem', md: '1rem' },
-                  lineHeight: 1.6,
-                  color: 'text.secondary'
-                }}
-              >
-                {product.description}
-              </Typography>
-
-              {/* Add to cart section */}
-              <Box sx={{ 
-                display: 'flex',
                 alignItems: 'center',
-                gap: 2,
-                mt: 'auto'
+                border: '1px solid',
+                borderColor: 'divider',
+                borderRadius: 1
               }}>
-                <Box sx={{ 
-                  display: 'flex', 
-                  alignItems: 'center',
-                  border: '1px solid',
-                  borderColor: 'divider',
-                  borderRadius: 1
-                }}>
-                  <IconButton
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    size="small"
-                  >
-                    <Remove />
-                  </IconButton>
-                  <Typography sx={{ px: 2, minWidth: 40, textAlign: 'center' }}>
-                    {quantity}
-                  </Typography>
-                  <IconButton
-                    onClick={() => setQuantity(quantity + 1)}
-                    size="small"
-                  >
-                    <Add />
-                  </IconButton>
-                </Box>
-
-                <Button
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  onClick={handleAddToCart}
-                  startIcon={<ShoppingCart />}
+                <IconButton
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  size="small"
                 >
-                  В корзину
-                </Button>
+                  <Remove />
+                </IconButton>
+                <Typography sx={{ px: 2, minWidth: 40, textAlign: 'center' }}>
+                  {quantity}
+                </Typography>
+                <IconButton
+                  onClick={() => setQuantity(quantity + 1)}
+                  size="small"
+                >
+                  <Add />
+                </IconButton>
               </Box>
+
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                onClick={handleAddToCart}
+                startIcon={<ShoppingCart />}
+              >
+                В корзину
+              </Button>
             </Box>
-          </Grid>
+          </Box>
         </Grid>
       </Card>
 
@@ -293,10 +281,6 @@ const ProductDetails = () => {
             {relatedProducts.map((relatedProduct) => (
               <Box 
                 key={relatedProduct._id} 
-                item 
-                xs={6} // Всегда 2 карточки в ряд на мобильных
-                sm={6} // 2 карточки в ряд на планшетах
-                md={3} // 4 карточки в ряд на десктопах
                 sx={{ 
                   display: 'flex',
                   alignItems: 'stretch',

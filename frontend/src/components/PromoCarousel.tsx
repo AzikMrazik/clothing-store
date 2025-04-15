@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Box, 
-  useTheme,
-  useMediaQuery,
   Paper,
   Container
 } from '@mui/material';
@@ -97,7 +95,6 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({
   const [loading, setLoading] = useState(true);
   const { showNotification } = useNotification();
   const navigate = useNavigate();
-  const theme = useTheme();
 
   useEffect(() => {
     fetchPromos();

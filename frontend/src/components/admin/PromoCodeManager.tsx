@@ -470,7 +470,7 @@ const PromoCodeManager: React.FC = () => {
         <DialogContent>
           <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ru}>
             <Grid container spacing={2} sx={{ mt: 1 }}>
-              <Grid item xs={12} sm={8}>
+              <Box sx={{ width: '100%' }}>
                 <TextField
                   name="code"
                   label="Код промокода"
@@ -491,8 +491,8 @@ const PromoCodeManager: React.FC = () => {
                     style: { textTransform: 'uppercase' }
                   }}
                 />
-              </Grid>
-              <Grid item xs={12} sm={4}>
+              </Box>
+              <Box sx={{ width: '100%' }}>
                 <Button
                   variant="outlined"
                   fullWidth
@@ -501,9 +501,9 @@ const PromoCodeManager: React.FC = () => {
                 >
                   Сгенерировать код
                 </Button>
-              </Grid>
+              </Box>
               
-              <Grid item xs={12}>
+              <Box sx={{ width: '100%' }}>
                 <TextField
                   name="description"
                   label="Описание"
@@ -516,9 +516,9 @@ const PromoCodeManager: React.FC = () => {
                   helperText={errors.description}
                   required
                 />
-              </Grid>
+              </Box>
 
-              <Grid item xs={12} sm={6}>
+              <Box sx={{ width: '100%' }}>
                 <FormControl fullWidth>
                   <InputLabel id="discount-type-label">Тип скидки</InputLabel>
                   <Select
@@ -532,9 +532,9 @@ const PromoCodeManager: React.FC = () => {
                     <MenuItem value="fixed">Фиксированная сумма</MenuItem>
                   </Select>
                 </FormControl>
-              </Grid>
+              </Box>
 
-              <Grid item xs={12} sm={6}>
+              <Box sx={{ width: '100%' }}>
                 <TextField
                   name="discountValue"
                   label={formData.discountType === 'percentage' ? 'Процент скидки' : 'Сумма скидки'}
@@ -557,9 +557,9 @@ const PromoCodeManager: React.FC = () => {
                     ),
                   }}
                 />
-              </Grid>
+              </Box>
 
-              <Grid item xs={12} sm={6}>
+              <Box sx={{ width: '100%' }}>
                 <TextField
                   name="minOrderAmount"
                   label="Минимальная сумма заказа"
@@ -573,9 +573,9 @@ const PromoCodeManager: React.FC = () => {
                     endAdornment: <InputAdornment position="end">₽</InputAdornment>,
                   }}
                 />
-              </Grid>
+              </Box>
 
-              <Grid item xs={12} sm={6}>
+              <Box sx={{ width: '100%' }}>
                 <TextField
                   name="maxDiscountAmount"
                   label="Максимальная сумма скидки"
@@ -589,9 +589,9 @@ const PromoCodeManager: React.FC = () => {
                     endAdornment: <InputAdornment position="end">₽</InputAdornment>,
                   }}
                 />
-              </Grid>
+              </Box>
 
-              <Grid item xs={12} sm={6}>
+              <Box sx={{ width: '100%' }}>
                 <TextField
                   name="usageLimit"
                   label="Ограничение использований"
@@ -602,9 +602,9 @@ const PromoCodeManager: React.FC = () => {
                   error={!!errors.usageLimit}
                   helperText={errors.usageLimit || 'Оставьте 0 для снятия ограничения'}
                 />
-              </Grid>
+              </Box>
 
-              <Grid item xs={12} sm={6}>
+              <Box sx={{ width: '100%' }}>
                 {editingPromoCode && (
                   <Box sx={{ p: 2, bgcolor: 'background.default', borderRadius: 1 }}>
                     <Typography variant="body2">
@@ -612,17 +612,17 @@ const PromoCodeManager: React.FC = () => {
                     </Typography>
                   </Box>
                 )}
-              </Grid>
+              </Box>
 
-              <Grid item xs={12} sm={6}>
+              <Box sx={{ width: '100%' }}>
                 <DateTimePicker
                   label="Дата начала"
                   value={formData.startDate}
                   onChange={(date) => handleDateChange('startDate', date)}
                   format="dd.MM.yyyy HH:mm"
                 />
-              </Grid>
-              <Grid item xs={12} sm={6}>
+              </Box>
+              <Box sx={{ width: '100%' }}>
                 <DateTimePicker
                   label="Дата окончания"
                   value={formData.endDate}
@@ -632,9 +632,9 @@ const PromoCodeManager: React.FC = () => {
                 {errors.endDate && (
                   <FormHelperText error>{errors.endDate}</FormHelperText>
                 )}
-              </Grid>
+              </Box>
 
-              <Grid item xs={12}>
+              <Box sx={{ width: '100%' }}>
                 <FormControlLabel
                   control={
                     <Switch
@@ -646,7 +646,7 @@ const PromoCodeManager: React.FC = () => {
                   }
                   label="Промокод активен"
                 />
-              </Grid>
+              </Box>
             </Grid>
           </LocalizationProvider>
         </DialogContent>

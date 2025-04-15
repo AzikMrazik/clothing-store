@@ -364,7 +364,7 @@ const Cart = () => {
             )}
 
             {/* Скидка по промокоду */}
-            {cart.discount > 0 && (
+            {cart.discount !== undefined && cart.discount > 0 && (
               <Box sx={{ 
                 display: 'flex', 
                 justifyContent: 'space-between',
@@ -372,7 +372,7 @@ const Cart = () => {
                 color: 'success.main'
               }}>
                 <Typography>Скидка</Typography>
-                <Typography>-{Math.round(cart.discount)} ₽</Typography>
+                <Typography>-{Math.round(cart.discount ?? 0)} ₽</Typography>
               </Box>
             )}
           </Box>

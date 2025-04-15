@@ -452,8 +452,8 @@ const PromoManager: React.FC = () => {
         </DialogTitle>
         <DialogContent>
           <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ru}>
-            <Grid container spacing={2} sx={{ mt: 1 }}>
-              <Grid item xs={12}>
+            <Box sx={{ mt: 1 }}>
+              <Box sx={{ mb: 2 }}>
                 <TextField
                   name="title"
                   label="Заголовок акции"
@@ -464,8 +464,8 @@ const PromoManager: React.FC = () => {
                   helperText={errors.title}
                   required
                 />
-              </Grid>
-              <Grid item xs={12}>
+              </Box>
+              <Box sx={{ mb: 2 }}>
                 <TextField
                   name="description"
                   label="Описание"
@@ -478,8 +478,8 @@ const PromoManager: React.FC = () => {
                   helperText={errors.description}
                   required
                 />
-              </Grid>
-              <Grid item xs={12}>
+              </Box>
+              <Box sx={{ mb: 2 }}>
                 <TextField
                   name="imageUrl"
                   label="URL изображения"
@@ -497,8 +497,8 @@ const PromoManager: React.FC = () => {
                     ),
                   }}
                 />
-              </Grid>
-              <Grid item xs={12} sm={8}>
+              </Box>
+              <Box sx={{ mb: 2 }}>
                 <TextField
                   name="linkUrl"
                   label="URL для кнопки"
@@ -516,8 +516,8 @@ const PromoManager: React.FC = () => {
                     ),
                   }}
                 />
-              </Grid>
-              <Grid item xs={12} sm={4}>
+              </Box>
+              <Box sx={{ mb: 2 }}>
                 <TextField
                   name="buttonText"
                   label="Текст кнопки"
@@ -528,16 +528,16 @@ const PromoManager: React.FC = () => {
                   helperText={errors.buttonText}
                   required
                 />
-              </Grid>
-              <Grid item xs={12} sm={6}>
+              </Box>
+              <Box sx={{ mb: 2 }}>
                 <DateTimePicker
                   label="Дата начала"
                   value={formData.startDate}
                   onChange={(date) => handleDateChange('startDate', date)}
                   format="dd.MM.yyyy HH:mm"
                 />
-              </Grid>
-              <Grid item xs={12} sm={6}>
+              </Box>
+              <Box sx={{ mb: 2 }}>
                 <DateTimePicker
                   label="Дата окончания"
                   value={formData.endDate}
@@ -547,8 +547,8 @@ const PromoManager: React.FC = () => {
                 {errors.endDate && (
                   <FormHelperText error>{errors.endDate}</FormHelperText>
                 )}
-              </Grid>
-              <Grid item xs={12}>
+              </Box>
+              <Box sx={{ mb: 2 }}>
                 <FormControlLabel
                   control={
                     <Switch
@@ -560,10 +560,10 @@ const PromoManager: React.FC = () => {
                   }
                   label="Акция активна"
                 />
-              </Grid>
+              </Box>
 
               {formData.imageUrl && (
-                <Grid item xs={12}>
+                <Box sx={{ mb: 2 }}>
                   <Typography variant="subtitle2" gutterBottom>
                     Предпросмотр:
                   </Typography>
@@ -586,9 +586,9 @@ const PromoManager: React.FC = () => {
                       </Box>
                     </CardContent>
                   </Card>
-                </Grid>
+                </Box>
               )}
-            </Grid>
+            </Box>
           </LocalizationProvider>
         </DialogContent>
         <DialogActions>

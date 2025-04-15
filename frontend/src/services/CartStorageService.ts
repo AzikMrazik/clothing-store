@@ -231,11 +231,8 @@ export class CartStorageService {
         
         // Если серверная корзина найдена и её состав новее локальной
         if (serverCart) {
-          // Сравниваем по количеству товаров и времени последнего обновления
-          const isServerCartNewer = 
-            serverCart.items.length > localCart.items.length || 
-            (typeof serverCart.metadata?.lastUpdated === 'number' && 
-            serverCart.metadata?.lastUpdated > (typeof localCart.metadata?.lastUpdated === 'number' ? localCart.metadata?.lastUpdated : 0));
+          // Сравниваем только по количеству товаров
+          const isServerCartNewer = serverCart.items.length > localCart.items.length;
           
           if (isServerCartNewer) {
             return serverCart;
