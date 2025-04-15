@@ -4,6 +4,7 @@ import { Warning } from '@mui/icons-material';
 
 interface Props {
   children: React.ReactNode;
+  fallback?: React.ReactNode;
 }
 
 interface State {
@@ -31,6 +32,9 @@ class ErrorBoundary extends React.Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
+      if (this.props.fallback) {
+        return this.props.fallback;
+      }
       return (
         <Container maxWidth="sm">
           <Box

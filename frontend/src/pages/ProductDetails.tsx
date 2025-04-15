@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Container,
-  Grid,
   Typography,
   Button,
   Card,
@@ -15,6 +14,7 @@ import {
   Menu,
   MenuItem
 } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import { motion } from 'framer-motion';
 import { Add, Remove, ShoppingCart, MoreVert, ContentCopy, Edit } from '@mui/icons-material';
 import { useCart } from '../contexts/CartContext';

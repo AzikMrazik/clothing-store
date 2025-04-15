@@ -240,14 +240,12 @@ const PromoCodeManager: React.FC = () => {
       } else {
         // Создание нового промокода
         console.log("Creating new promo code with data:", JSON.stringify({
-          ...formData,
-          usageCount: 0
+          ...formData
         }, null, 2));
         
         try {
           const result = await PromoService.createPromoCode({
-            ...formData,
-            usageCount: 0
+            ...formData
           });
           console.log("Promo code created successfully:", result);
           showNotification('Промокод успешно создан', 'success');

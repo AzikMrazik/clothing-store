@@ -23,6 +23,7 @@ import {
   ListItemText,
   TextField
 } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useApi } from '../hooks/useApi';

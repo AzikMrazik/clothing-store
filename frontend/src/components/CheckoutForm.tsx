@@ -341,13 +341,13 @@ const CheckoutForm = () => {
               </Box>
               
               {/* Информация о промокоде и скидке */}
-              {cart.discount && cart.discount > 0 && (
+              {(cart.discount ?? 0) > 0 && (
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                   <Typography variant="body2">
                     Скидка{cart.appliedPromoCode ? ` (${cart.appliedPromoCode.code})` : ''}:
                   </Typography>
                   <Typography variant="body2" color="success.main">
-                    -{Math.round(cart.discount)} ₽
+                    -{Math.round(cart.discount ?? 0)} ₽
                   </Typography>
                 </Box>
               )}

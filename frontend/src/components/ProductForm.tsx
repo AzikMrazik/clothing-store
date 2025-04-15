@@ -2,6 +2,7 @@ import React, { useState, FormEvent, ChangeEvent } from 'react';
 import { TextField, Button, Grid, Box, Theme } from '@mui/material';
 import { SxProps } from '@mui/system';
 import { GridProps } from '@mui/material/Grid';
+import Grid from '@mui/material/Grid';
 
 interface GridItemProps extends Omit<GridProps, 'item' | 'xs'> {
   children: React.ReactNode;

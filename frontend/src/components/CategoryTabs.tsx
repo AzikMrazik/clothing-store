@@ -96,7 +96,7 @@ const CategoryTabs: React.FC<CategoryTabsProps> = ({ onCategoryChange, selectedC
   };
 
   if (loading) {
-    return <Box sx={{ p: 2, display: 'flex', justifyContent: 'center' }}><Loading size={30} /></Box>;
+    return <Box sx={{ p: 2, display: 'flex', justifyContent: 'center' }}><Loading /></Box>;
   }
 
   if (categories.length === 0) {

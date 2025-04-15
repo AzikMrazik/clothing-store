@@ -9,6 +9,7 @@ import {
   Typography,
   Container,
   useTheme,
+  useMediaQuery
 } from '@mui/material';
 import { motion } from 'framer-motion';
 import { Category } from '../types/models';
@@ -27,6 +28,7 @@ const CategoryCards: React.FC<CategoryCardsProps> = ({ onCategoryChange }) => {
   const { showNotification } = useNotification();
   const navigate = useNavigate();
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     fetchCategories();
@@ -59,7 +61,7 @@ const CategoryCards: React.FC<CategoryCardsProps> = ({ onCategoryChange }) => {
   };
 
   if (loading) {
-    return <Box sx={{ p: 2, display: 'flex', justifyContent: 'center' }}><Loading size={30} /></Box>;
+    return <Box sx={{ p: 2, display: 'flex', justifyContent: 'center' }}><Loading /></Box>;
   }
 
   if (categories.length === 0) {
@@ -80,9 +82,12 @@ const CategoryCards: React.FC<CategoryCardsProps> = ({ onCategoryChange }) => {
           flexWrap: 'wrap'
         }}>
           {categories.map((category) => (
-            <Grid 
-              key={category._id} 
+            <Grid item key={category._id} 
               xs={6} sm={4} md={3} lg={2} 
+              component={motion.div}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
               sx={{ 
                 display: 'flex',
                 alignItems: 'stretch',
@@ -94,60 +99,53 @@ const CategoryCards: React.FC<CategoryCardsProps> = ({ onCategoryChange }) => {
                 boxSizing: 'border-box'
               }}
             >
-              <motion.div
-                style={{ width: '100%', height: '100%' }}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
+              <Card 
+                sx={{ 
+                  cursor: 'pointer',
+                  width: '100%',
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  aspectRatio: '3/4', // Устанавливаем соотношение сторон 3:4 (ширина:высота)
+                  '&:hover': {
+                    transform: 'translateY(-5px)',
+                    boxShadow: 6,
+                    transition: 'transform 0.3s ease, box-shadow 0.3s ease'
+                  }
+                }}
+                onClick={() => handleCategoryClick(category._id)}
               >
-                <Card 
-                  sx={{ 
-                    cursor: 'pointer',
-                    width: '100%',
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    aspectRatio: '3/4', // Устанавливаем соотношение сторон 3:4 (ширина:высота)
-                    '&:hover': {
-                      transform: 'translateY(-5px)',
-                      boxShadow: 6,
-                      transition: 'transform 0.3s ease, box-shadow 0.3s ease'
-                    }
-                  }}
-                  onClick={() => handleCategoryClick(category._id)}
-                >
-                  <Box sx={{ 
-                    position: 'relative',
-                    paddingTop: '100%', // Квадратное соотношение сторон
-                    overflow: 'hidden'
-                  }}>
-                    {category.imageUrl && (
-                      <CardMedia
-                        component="img"
-                        image={category.imageUrl}
-                        alt={category.name}
-                        sx={{ 
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover',
-                          transition: 'transform 0.3s ease',
-                          '&:hover': {
-                            transform: 'scale(1.05)'
-                          }
-                        }}
-                      />
-                    )}
-                  </Box>
-                  <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>
-                    <Typography variant="h6">
-                      {category.name}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </motion.div>
+                <Box sx={{ 
+                  position: 'relative',
+                  paddingTop: '100%', // Квадратное соотношение сторон
+                  overflow: 'hidden'
+                }}>
+                  {category.imageUrl && (
+                    <CardMedia
+                      component="img"
+                      image={category.imageUrl}
+                      alt={category.name}
+                      sx={{ 
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        transition: 'transform 0.3s ease',
+                        '&:hover': {
+                          transform: 'scale(1.05)'
+                        }
+                      }}
+                    />
+                  )}
+                </Box>
+                <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>
+                  <Typography variant="h6">
+                    {category.name}
+                  </Typography>
+                </CardContent>
+              </Card>
             </Grid>
           ))}
         </Grid>

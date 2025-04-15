@@ -165,7 +165,7 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({
   };
 
   if (loading) {
-    return <Box sx={{ height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Loading size={40} /></Box>;
+    return <Box sx={{ height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Loading /></Box>;
   }
 
   if (promos.length === 0) {
