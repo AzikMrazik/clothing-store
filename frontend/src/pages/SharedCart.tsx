@@ -169,7 +169,7 @@ const SharedCart = () => {
       sx={{ py: 4 }}
     >
       <Typography variant="h4" gutterBottom>
-        Поделенная корзина
+        Шеринговая корзина
       </Typography>
 
       <Paper sx={{ p: 3, mb: 3 }}>
@@ -197,7 +197,7 @@ const SharedCart = () => {
                     )}
                     <Box
                       component="img"
-                      src={item.processedImageUrl}
+                      src={item.images && item.images.length > 0 ? item.images[0] : (item.processedImageUrl || '/placeholder-product.jpg')}
                       alt={item.name}
                       onError={handleImageError(item._id || index)}
                       onLoad={handleImageLoad(item._id || index)}
