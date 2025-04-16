@@ -39,9 +39,9 @@ const Cart = () => {
   const [promoError, setPromoError] = useState<string | null>(null);
   const [promoSuccess, setPromoSuccess] = useState<string | null>(null);
   const [isApplyingPromo, setIsApplyingPromo] = useState(false);
-  // Цена доставки теперь по умолчанию 0
+  // Цена доставки теперь по умолчанию 700
   const [deliverySettings, setDeliverySettings] = useState<DeliverySettings>({
-    defaultCost: 0,
+    defaultCost: 700,
     freeDeliveryThreshold: 5000
   });
 

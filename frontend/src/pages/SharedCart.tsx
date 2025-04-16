@@ -72,7 +72,11 @@ const SharedCart = () => {
       .then(data => {
         // Преобразуем все изображения к подходящему формату
         if (data && data.items) {
-          data.items.forEach((item: any) => {
+          data.items.forEach((item) => {
+            // Приводим images к массиву, если есть imageUrl
+            if ((!item.images || !Array.isArray(item.images) || item.images.length === 0) && item.imageUrl) {
+              item.images = [item.imageUrl];
+            }
             item.processedImageUrl = getImageUrl(item);
           });
         }
