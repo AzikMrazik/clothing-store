@@ -39,9 +39,10 @@ const Cart = () => {
   const [promoError, setPromoError] = useState<string | null>(null);
   const [promoSuccess, setPromoSuccess] = useState<string | null>(null);
   const [isApplyingPromo, setIsApplyingPromo] = useState(false);
+  // Цена доставки теперь по умолчанию 0
   const [deliverySettings, setDeliverySettings] = useState<DeliverySettings>({
-    defaultCost: 700, // Обновляем стоимость доставки
-    freeDeliveryThreshold: 5000 // Порог для бесплатной доставки остается прежним
+    defaultCost: 0,
+    freeDeliveryThreshold: 5000
   });
 
   const subtotal = useMemo(() => 

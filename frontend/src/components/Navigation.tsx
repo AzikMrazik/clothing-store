@@ -56,6 +56,18 @@ const Navigation = () => {
     fetchCategories();
   }, []);
 
+  // Глобальный перехват script error для Telegram WebView
+  useEffect(() => {
+    const handler = (e: ErrorEvent) => {
+      if (window?.TelegramWebviewProxy || navigator.userAgent.includes('Telegram')) {
+        e.preventDefault();
+        return false;
+      }
+    };
+    window.addEventListener('error', handler, true);
+    return () => window.removeEventListener('error', handler, true);
+  }, []);
+
   // Обработчики для меню категорий
   const handleOpenCatalogMenu = (event: React.MouseEvent<HTMLElement>) => {
     setMenuAnchorEl(event.currentTarget);
