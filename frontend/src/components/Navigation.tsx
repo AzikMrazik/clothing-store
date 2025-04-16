@@ -59,7 +59,8 @@ const Navigation = () => {
   // Глобальный перехват script error для Telegram WebView
   useEffect(() => {
     const handler = (e: ErrorEvent) => {
-      if (window?.TelegramWebviewProxy || navigator.userAgent.includes('Telegram')) {
+      // Проверяем только по userAgent, чтобы избежать ошибки типов
+      if (navigator.userAgent.includes('Telegram')) {
         e.preventDefault();
         return false;
       }
