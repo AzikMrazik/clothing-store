@@ -30,7 +30,7 @@ import {
   SelectChangeEvent
 } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Add, Edit, Delete } from '@mui/icons-material';
+import { Edit, Delete } from '@mui/icons-material';
 import { API_URL } from '../config';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -50,6 +50,7 @@ interface Product {
   videoUrl?: string;
   category: string;
   categories?: string[];
+  images: string[];
 }
 
 type ProductForm = {
@@ -76,7 +77,6 @@ const AdminPanel = () => {
   const [availableCategories, setAvailableCategories] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [tab, setTab] = useState(0);
 
   useEffect(() => {

@@ -133,6 +133,7 @@ const Catalog = () => {
     }
   };
 
+  // Удаляем все проверки product.category, используем только product.categories (массив)
   const filteredProducts = useMemo(() => {
     return products
       .filter(product => 
@@ -141,8 +142,6 @@ const Catalog = () => {
           product.description.toLowerCase().includes(searchQuery.toLowerCase())
         ) &&
         (!selectedCategory || 
-          product.category === categoryMap[selectedCategory] || 
-          product.category === selectedCategory ||
           (product.categories && product.categories.includes(selectedCategory))
         ) &&
         product.price >= priceRange[0] &&
