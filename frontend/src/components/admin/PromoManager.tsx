@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Typography,
@@ -57,6 +57,7 @@ const PromoManager: React.FC = () => {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { showNotification } = useNotification();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     fetchPromos();
@@ -173,6 +174,16 @@ const PromoManager: React.FC = () => {
         [name]: date
       }));
     }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await fetch('/api/promos/upload', { method: 'POST', body: formData });
+    const data = await res.json();
+    setFormData(prev => ({ ...prev, imageUrl: data.url }));
   };
 
   const handleSubmit = async () => {
@@ -559,6 +570,18 @@ const PromoManager: React.FC = () => {
                   }
                   label="Акция активна"
                 />
+              </Box>
+
+              <Box sx={{ mb: 2 }}>
+                <Button variant="outlined" component="label">
+                  Загрузить изображение
+                  <input type="file" hidden accept="image/*" ref={fileInputRef} onChange={handleImageUpload} />
+                </Button>
+                {formData.imageUrl && (
+                  <Box sx={{ mt: 1 }}>
+                    <img src={formData.imageUrl} alt="preview" style={{ maxWidth: 200, maxHeight: 120 }} />
+                  </Box>
+                )}
               </Box>
 
               {formData.imageUrl && (

@@ -1,6 +1,9 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { Product } from '../models/Product';
 import mongoose from 'mongoose';
+import { uploadToYOS, deleteFromYOS } from '../services/yos';
+import { upload, validateUploadedFiles } from '../middleware/fileUpload';
+import fs from 'fs';
 
 const router = express.Router();
 
@@ -182,6 +185,19 @@ router.post('/', asyncHandler(async (req: Request, res: Response): Promise<any> 
   }
 }));
 
+// Upload product image to YOS
+router.post('/upload', upload.single('file'), validateUploadedFiles, asyncHandler(async (req: Request, res: Response) => {
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+  try {
+    const url = await uploadToYOS(req.file.path);
+    fs.unlinkSync(req.file.path);
+    res.json({ url });
+  } catch (e) {
+    fs.unlinkSync(req.file.path);
+    res.status(500).json({ error: 'Upload to YOS failed' });
+  }
+}));
+
 // Update a product
 router.put('/:id', asyncHandler(async (req: Request, res: Response): Promise<any> => {
   try {
@@ -237,6 +253,12 @@ router.put('/:id', asyncHandler(async (req: Request, res: Response): Promise<any
       updateData.videoUrl = videoUrl;
     }
 
+    // Удаление старого изображения из YOS при замене
+    const oldProduct = await Product.findById(req.params.id);
+    if (oldProduct && oldProduct.imageUrl && oldProduct.imageUrl !== imageUrl) {
+      try { await deleteFromYOS(oldProduct.imageUrl); } catch {}
+    }
+
     const product = await Product.findByIdAndUpdate(
       req.params.id,
       updateData,
@@ -265,6 +287,10 @@ router.delete('/:id', asyncHandler(async (req: Request, res: Response): Promise<
     const product = await Product.findByIdAndDelete(req.params.id);
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
+    }
+    // Удаление изображения из YOS
+    if (product.imageUrl) {
+      try { await deleteFromYOS(product.imageUrl); } catch {}
     }
     res.json({ message: 'Product deleted successfully' });
   } catch (error) {

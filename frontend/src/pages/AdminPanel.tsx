@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Container,
   Box,
@@ -57,6 +57,7 @@ const AdminPanel = () => {
   const [availableCategories, setAvailableCategories] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     fetchProducts();
@@ -150,6 +151,16 @@ const AdminPanel = () => {
         };
       });
     }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await fetch('/api/products/upload', { method: 'POST', body: formData });
+    const data = await res.json();
+    setEditingProduct(prev => ({ ...prev!, imageUrl: data.url }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -281,6 +292,15 @@ const AdminPanel = () => {
             margin="normal"
             required
           />
+          <Button variant="outlined" component="label" sx={{ mt: 1 }}>
+            Загрузить изображение
+            <input type="file" hidden accept="image/*" ref={fileInputRef} onChange={handleImageUpload} />
+          </Button>
+          {editingProduct?.imageUrl && (
+            <Box sx={{ mt: 1 }}>
+              <img src={editingProduct.imageUrl} alt="preview" style={{ maxWidth: 200, maxHeight: 120 }} />
+            </Box>
+          )}
           
           <TextField
             fullWidth

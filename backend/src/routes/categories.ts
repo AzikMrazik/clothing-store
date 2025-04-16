@@ -1,6 +1,9 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { Category } from '../models/Category';
 import mongoose from 'mongoose';
+import { uploadToYOS, deleteFromYOS } from '../services/yos';
+import { upload, validateUploadedFiles } from '../middleware/fileUpload';
+import fs from 'fs';
 
 const router = express.Router();
 
@@ -55,6 +58,19 @@ router.put('/order', asyncHandler(async (req: Request, res: Response): Promise<a
   } catch (error) {
     console.error('Error updating category order:', error);
     res.status(500).json({ message: 'Failed to update category order' });
+  }
+}));
+
+// Upload category image to YOS
+router.post('/upload', upload.single('file'), validateUploadedFiles, asyncHandler(async (req: Request, res: Response) => {
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+  try {
+    const url = await uploadToYOS(req.file.path);
+    fs.unlinkSync(req.file.path);
+    res.json({ url });
+  } catch (e) {
+    fs.unlinkSync(req.file.path);
+    res.status(500).json({ error: 'Upload to YOS failed' });
   }
 }));
 
@@ -134,6 +150,12 @@ router.put('/:id', asyncHandler(async (req: Request, res: Response): Promise<any
     if (req.body.order !== undefined) updateData.order = req.body.order;
     if (req.body.isActive !== undefined) updateData.isActive = req.body.isActive;
     
+    // Удаление старого изображения из YOS при замене
+    const oldCategory = await Category.findById(req.params.id);
+    if (oldCategory && oldCategory.imageUrl && oldCategory.imageUrl !== req.body.imageUrl) {
+      try { await deleteFromYOS(oldCategory.imageUrl); } catch {}
+    }
+    
     const category = await Category.findByIdAndUpdate(
       req.params.id,
       updateData,
@@ -177,6 +199,11 @@ router.delete('/:id', asyncHandler(async (req: Request, res: Response): Promise<
     
     if (!category) {
       return res.status(404).json({ message: 'Category not found' });
+    }
+    
+    // Удаление изображения из YOS
+    if (category && category.imageUrl) {
+      try { await deleteFromYOS(category.imageUrl); } catch {}
     }
     
     console.log('Category deleted successfully:', req.params.id);
