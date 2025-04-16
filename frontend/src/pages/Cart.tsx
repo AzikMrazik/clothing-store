@@ -39,8 +39,8 @@ const Cart = () => {
   const [promoError, setPromoError] = useState<string | null>(null);
   const [promoSuccess, setPromoSuccess] = useState<string | null>(null);
   const [isApplyingPromo, setIsApplyingPromo] = useState(false);
-  // Цена доставки теперь по умолчанию 700
-  const [deliverySettings, setDeliverySettings] = useState<DeliverySettings>({
+  // Жестко задаём стоимость доставки и не делаем запросов к PromoService.getDeliverySettings()
+  const [deliverySettings] = useState<DeliverySettings>({
     defaultCost: 700,
     freeDeliveryThreshold: 5000
   });
@@ -49,20 +49,6 @@ const Cart = () => {
     cart.items.reduce((sum, item) => sum + item.price * item.quantity, 0),
     [cart.items]
   );
-
-  // Загружаем настройки доставки при загрузке компонента
-  useEffect(() => {
-    const loadDeliverySettings = async () => {
-      try {
-        const settings = await PromoService.getDeliverySettings();
-        setDeliverySettings(settings);
-      } catch (error) {
-        console.error('Failed to load delivery settings:', error);
-      }
-    };
-    
-    loadDeliverySettings();
-  }, []);
 
   // Вычисляем стоимость доставки
   const delivery = useMemo(() => {
