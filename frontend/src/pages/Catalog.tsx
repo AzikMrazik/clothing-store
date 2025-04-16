@@ -54,7 +54,7 @@ const Catalog = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   const categories = useMemo(() => {
-    const uniqueCategories = [...new Set(products.map(p => p.category))];
+    const uniqueCategories = [...new Set(products.flatMap(p => p.categories || []))];
     return uniqueCategories.sort();
   }, [products]);
 
@@ -143,7 +143,6 @@ const Catalog = () => {
         (!selectedCategory || 
           product.category === categoryMap[selectedCategory] || 
           product.category === selectedCategory ||
-          (product.categories && product.categories.includes(categoryMap[selectedCategory])) ||
           (product.categories && product.categories.includes(selectedCategory))
         ) &&
         product.price >= priceRange[0] &&
@@ -335,10 +334,10 @@ const Catalog = () => {
                       alignItems: 'center'
                     }}
                   >
-                    {product.imageUrl ? (
+                    {product.images?.[0] ? (
                       <CardMedia
                         component="img"
-                        image={product.imageUrl}
+                        image={product.images?.[0] || '/placeholder-product.jpg'}
                         alt={product.name}
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = '/placeholder-product.jpg';

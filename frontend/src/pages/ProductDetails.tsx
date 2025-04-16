@@ -61,12 +61,8 @@ const ProductDetails = () => {
   const fetchRelatedProducts = async () => {
     if (!product) return;
     
-    let categoryToUse = product.category;
-    
-    // Если у продукта есть массив категорий, используем первую категорию из него
-    if (product.categories && product.categories.length > 0) {
-      categoryToUse = product.categories[0];
-    }
+    // Использовать только categories (массив) вместо category
+    let categoryToUse = product.categories?.[0] || '';
     
     try {
       const result = await call(
@@ -330,10 +326,10 @@ const ProductDetails = () => {
                         alignItems: 'center'
                       }}
                     >
-                      {relatedProduct.imageUrl ? (
+                      {relatedProduct.images?.[0] ? (
                         <CardMedia
                           component="img"
-                          image={relatedProduct.imageUrl}
+                          image={relatedProduct.images?.[0] || '/placeholder-product.jpg'}
                           alt={relatedProduct.name}
                           onError={(e) => {
                             (e.target as HTMLImageElement).src = '/placeholder-product.jpg';

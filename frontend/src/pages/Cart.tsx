@@ -243,7 +243,7 @@ const Cart = () => {
                     >
                       <Box
                         component="img"
-                        src={item.imageUrl}
+                        src={item.images?.[0] || '/placeholder-product.jpg'}
                         alt={item.name}
                         sx={{
                           width: 80,

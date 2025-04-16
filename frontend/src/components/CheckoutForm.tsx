@@ -138,7 +138,7 @@ const CheckoutForm = () => {
           name: item.name,
           price: item.price,
           quantity: item.quantity,
-          imageUrl: item.imageUrl
+          imageUrl: item.images?.[0] || '/placeholder-product.jpg'
         })),
         customerInfo: formData,
         subtotal: cart.subtotal || cart.items.reduce((sum, item) => sum + item.price * item.quantity, 0),
