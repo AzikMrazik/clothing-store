@@ -10,12 +10,17 @@ import {
   Menu,
   MenuItem,
   Divider,
-  ListItemText
+  ListItemText,
+  useTheme,
+  useMediaQuery,
+  Drawer,
+  IconButton as MuiIconButton
 } from '@mui/material';
 import { 
   ShoppingCart, 
   KeyboardArrowDown, 
-  Category as CategoryIcon
+  Category as CategoryIcon,
+  Search as SearchIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
@@ -28,6 +33,9 @@ const Navigation = () => {
   const { cart } = useCart();
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [categories, setCategories] = useState<Category[]>([]);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [searchDrawerOpen, setSearchDrawerOpen] = useState(false);
 
   // Загрузка категорий при монтировании компонента
   useEffect(() => {
@@ -119,18 +127,30 @@ const Navigation = () => {
           </Menu>
         </Box>
 
-        <Box sx={{ flexGrow: 1, mx: 2, maxWidth: 600 }}>
+        {/* Поиск: на мобильном только иконка, на десктопе — строка */}
+        <Box sx={{ flexGrow: 1, mx: 2, maxWidth: 600, display: isMobile ? 'none' : 'block' }}>
           <SearchBar />
         </Box>
-
+        {isMobile && (
+          <MuiIconButton color="inherit" onClick={() => setSearchDrawerOpen(true)} sx={{ ml: 'auto', mr: 1 }}>
+            <SearchIcon />
+          </MuiIconButton>
+        )}
         <IconButton 
           color="inherit"
           onClick={() => navigate('/cart')}
+          sx={{ ml: isMobile ? 0 : 2 }}
         >
           <Badge badgeContent={cart?.items?.length || 0} color="secondary">
             <ShoppingCart />
           </Badge>
         </IconButton>
+        {/* Drawer для поиска на мобильном */}
+        <Drawer anchor="top" open={searchDrawerOpen} onClose={() => setSearchDrawerOpen(false)}>
+          <Box sx={{ p: 2 }}>
+            <SearchBar />
+          </Box>
+        </Drawer>
       </Toolbar>
     </AppBar>
   );
