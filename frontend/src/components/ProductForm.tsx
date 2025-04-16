@@ -23,16 +23,14 @@ interface ProductFormData {
   name: string;
   description: string;
   price: string;
-  imageUrl: string;
-  additionalImages: string[];
+  images: string[];
 }
 
 const ProductForm = ({ onSubmit }: ProductFormProps) => {
   const [productName, setProductName] = useState('');
   const [productDescription, setProductDescription] = useState('');
   const [productPrice, setProductPrice] = useState('');
-  const [productImage, setProductImage] = useState('');
-  const [additionalImages, setAdditionalImages] = useState<string[]>([]);
+  const [images, setImages] = useState<string[]>([]);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -41,21 +39,20 @@ const ProductForm = ({ onSubmit }: ProductFormProps) => {
         name: productName,
         description: productDescription,
         price: productPrice,
-        imageUrl: productImage,
-        additionalImages
+        images
       });
     }
   };
 
-  // Улучшенный обработчик для дополнительных изображений, с правильной поддержкой Enter
-  const handleAdditionalImagesChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+  // Улучшенный обработчик для изображений, с правильной поддержкой Enter
+  const handleImagesChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const text = e.target.value;
     // Разделяем строки только по переводам строк
     const urls = text
       .split(/\n/)
       .map(url => url.trim())
       .filter(url => url.length > 0);
-    setAdditionalImages(urls);
+    setImages(urls);
   };
 
   return (
@@ -95,22 +92,12 @@ const ProductForm = ({ onSubmit }: ProductFormProps) => {
         <GridItem>
           <TextField
             fullWidth
-            label="URL изображения продукта"
-            value={productImage}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => setProductImage(e.target.value)}
-            required
-            placeholder="https://example.com/image.jpg"
-          />
-        </GridItem>
-        <GridItem>
-          <TextField
-            fullWidth
             multiline
             rows={4}
-            label="Дополнительные изображения"
+            label="Изображения продукта"
             placeholder="Вставьте URL изображений, по одному на строку"
-            value={additionalImages.join('\n')}
-            onChange={handleAdditionalImagesChange}
+            value={images.join('\n')}
+            onChange={handleImagesChange}
             sx={{
               '.MuiInputBase-root': {
                 height: 'auto',

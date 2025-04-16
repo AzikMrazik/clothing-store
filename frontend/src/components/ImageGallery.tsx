@@ -11,6 +11,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ mainImage, additionalImages
   const [currentIndex, setCurrentIndex] = useState(0);
   const [open, setOpen] = useState(false);
 
+  // Использовать mainImage и additionalImages как массив images[]
   const allImages = [mainImage, ...additionalImages].filter(Boolean);
 
   const handleNext = (e: React.MouseEvent) => {

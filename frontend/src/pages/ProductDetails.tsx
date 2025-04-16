@@ -150,10 +150,7 @@ const ProductDetails = () => {
               width: '100%'
             }
           }}>
-            <ImageGallery
-              mainImage={product.imageUrl}
-              additionalImages={product.additionalImages || []}
-            />
+            <ImageGallery mainImage={product.images?.[0]} additionalImages={product.images?.slice(1) || []} />
           </Box>
 
           {/* Product info section */}

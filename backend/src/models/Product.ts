@@ -38,6 +38,11 @@ const ProductSchema = new mongoose.Schema({
   category: {
     type: String,
     trim: true
+  },
+  images: {
+    type: [String],
+    default: [],
+    required: true
   }
 }, {
   timestamps: true
@@ -45,6 +50,14 @@ const ProductSchema = new mongoose.Schema({
 
 // Middleware для обеспечения обратной совместимости
 ProductSchema.pre('save', function(next) {
+  // Миграция старых полей в images
+  if (!this.images || !Array.isArray(this.images)) this.images = [];
+  if (this.imageUrl && !this.images.includes(this.imageUrl)) this.images.unshift(this.imageUrl);
+  if (this.additionalImages && Array.isArray(this.additionalImages)) {
+    this.additionalImages.forEach((img: string) => {
+      if (img && !this.images.includes(img)) this.images.push(img);
+    });
+  }
   // Если указана основная категория, но нет массива категорий или он пуст
   if (this.category && (!this.categories || this.categories.length === 0)) {
     this.categories = [this.category];

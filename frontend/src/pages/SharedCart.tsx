@@ -43,26 +43,12 @@ const SharedCart = () => {
 
   // Получаем корректный URL изображения
   const getImageUrl = (item: any): string => {
-    // Проверяем различные варианты полей с изображениями
+    if (item.images && item.images.length > 0) return item.images[0];
     const imageSource = item.imageUrl || item.image || item.img;
-    
-    // Если изображение не найдено, возвращаем заглушку
     if (!imageSource) return '/placeholder-product.jpg';
-    
-    // Проверка абсолютного URL (начинается с http, https или //)
-    if (/^(https?:\/\/|\/\/)/.test(imageSource)) {
-      return imageSource;
-    }
-    
-    // Обработка относительных путей
+    if (/^(https?:\/\/|\/\/)/.test(imageSource)) return imageSource;
     const baseUrl = window.location.origin;
-    
-    // Если URL начинается с /, считаем его относительным от корня
-    if (imageSource.startsWith('/')) {
-      return `${baseUrl}${imageSource}`;
-    }
-    
-    // В остальных случаях добавляем слеш и возвращаем полный путь
+    if (imageSource.startsWith('/')) return `${baseUrl}${imageSource}`;
     return `${baseUrl}/${imageSource}`;
   };
 

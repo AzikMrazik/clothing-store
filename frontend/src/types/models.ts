@@ -3,14 +3,9 @@ export interface Product {
   name: string;
   price: number;
   description: string;
-  imageUrl: string;
-  category: string;
-  categories?: string[]; // Добавляем поддержку множественных категорий
-  characteristics?: Array<{
-    name: string;
-    value: string;
-  }>;
-  additionalImages?: string[];
+  images: string[]; // Новый массив фото, первая — основная
+  categories?: string[];
+  characteristics?: Array<{ name: string; value: string }>;
   videoUrl?: string;
 }
 

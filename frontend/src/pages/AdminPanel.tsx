@@ -32,6 +32,13 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { Add, Edit, Delete } from '@mui/icons-material';
 import { API_URL } from '../config';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import CategoryManager from '../components/admin/CategoryManager';
+import PromoManager from '../components/admin/PromoManager';
+import PromoCodeManager from '../components/admin/PromoCodeManager';
+import OrdersTab from '../components/admin/OrdersTab';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 
 interface Product {
   _id: string;
@@ -45,10 +52,22 @@ interface Product {
   categories?: string[];
 }
 
+type ProductForm = {
+  _id?: string;
+  name: string;
+  price: number;
+  description: string;
+  images: string[];
+  videoUrl?: string;
+  categories: string[];
+  newCategory?: string;
+  newCategorySelected?: boolean;
+};
+
 const AdminPanel = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [open, setOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Partial<Product & { newCategory?: string; newCategorySelected?: boolean }> | null>(null);
+  const [editingProduct, setEditingProduct] = useState<ProductForm | null>(null);
   const [notification, setNotification] = useState<{ open: boolean; message: string; type: 'success' | 'error' }>({ 
     open: false, 
     message: '', 
@@ -58,6 +77,7 @@ const AdminPanel = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [tab, setTab] = useState(0);
 
   useEffect(() => {
     fetchProducts();
@@ -91,22 +111,25 @@ const AdminPanel = () => {
     }
   };
 
-  const handleOpen = (product?: Product) => {
+  const handleOpen = (product?: any) => {
     if (product) {
       setEditingProduct({
-        ...product,
-        categories: product.categories || [product.category]
+        _id: product._id,
+        name: product.name,
+        price: product.price,
+        description: product.description,
+        images: product.images || [],
+        videoUrl: product.videoUrl,
+        categories: product.categories || [],
       });
     } else {
       setEditingProduct({
         name: '',
         price: 0,
         description: '',
-        imageUrl: '',
-        additionalImages: [],
+        images: [],
         videoUrl: '',
-        category: '',
-        categories: []
+        categories: [],
       });
     }
     setOpen(true);
@@ -153,23 +176,41 @@ const AdminPanel = () => {
     }
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append('file', file);
-    const res = await fetch('/api/products/upload', { method: 'POST', body: formData });
-    const data = await res.json();
-    setEditingProduct(prev => ({ ...prev!, imageUrl: data.url }));
+  const handleImagesUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    const files = Array.from(e.target.files);
+    const uploaded: string[] = [];
+    for (const file of files) {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetch('/api/products/upload', { method: 'POST', body: formData });
+      const data = await res.json();
+      uploaded.push(data.url);
+    }
+    setEditingProduct(prev => prev ? { ...prev, images: [...(prev.images || []), ...uploaded] } : null);
+  };
+
+  const handleImageDelete = (idx: number) => {
+    setEditingProduct(prev => prev ? { ...prev, images: prev.images.filter((_, i) => i !== idx) } : null);
+  };
+
+  const handleImagesDragEnd = (result: any) => {
+    if (!result.destination) return;
+    setEditingProduct(prev => {
+      if (!prev) return prev;
+      const imgs = Array.from(prev.images);
+      const [removed] = imgs.splice(result.source.index, 1);
+      imgs.splice(result.destination.index, 0, removed);
+      return { ...prev, images: imgs };
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!editingProduct?.name || !editingProduct?.price || !editingProduct?.description || 
-        !editingProduct?.imageUrl || 
-        !(editingProduct?.categories && editingProduct?.categories.length > 0)) {
-      showNotification('Please fill in all required fields and select at least one category', 'error');
+        !editingProduct?.images?.length || !(editingProduct?.categories && editingProduct.categories.length > 0)) {
+      showNotification('Заполните все обязательные поля и добавьте хотя бы одно фото', 'error');
       return;
     }
 
@@ -177,7 +218,6 @@ const AdminPanel = () => {
       const finalData = {
         ...editingProduct,
         category: editingProduct.categories[0],
-        additionalImages: editingProduct.additionalImages || []
       };
 
       const url = editingProduct._id 
@@ -213,12 +253,12 @@ const AdminPanel = () => {
       await fetchProducts();
       handleClose();
       showNotification(
-        `Product ${editingProduct._id ? 'updated' : 'created'} successfully`, 
+        `Товар ${editingProduct._id ? 'обновлен' : 'создан'} успешно`, 
         'success'
       );
     } catch (err) {
       console.error('Error saving product:', err);
-      showNotification(err instanceof Error ? err.message : 'Failed to save product', 'error');
+      showNotification(err instanceof Error ? err.message : 'Ошибка сохранения товара', 'error');
     }
   };
 
@@ -258,7 +298,7 @@ const AdminPanel = () => {
             fullWidth
             label="Название"
             value={editingProduct?.name || ''}
-            onChange={(e) => setEditingProduct(prev => ({ ...prev!, name: e.target.value }))}
+            onChange={(e) => setEditingProduct(prev => prev ? { ...prev, name: e.target.value } : null)}
             margin="normal"
             required
           />
@@ -268,7 +308,7 @@ const AdminPanel = () => {
             label="Цена"
             type="number"
             value={editingProduct?.price || ''}
-            onChange={(e) => setEditingProduct(prev => ({ ...prev!, price: Number(e.target.value) }))}
+            onChange={(e) => setEditingProduct(prev => prev ? { ...prev, price: Number(e.target.value) } : null)}
             margin="normal"
             required
           />
@@ -279,45 +319,38 @@ const AdminPanel = () => {
             rows={4}
             label="Описание"
             value={editingProduct?.description || ''}
-            onChange={(e) => setEditingProduct(prev => ({ ...prev!, description: e.target.value }))}
+            onChange={(e) => setEditingProduct(prev => prev ? { ...prev, description: e.target.value } : null)}
             margin="normal"
             required
           />
           
-          <TextField
-            fullWidth
-            label="URL изображения"
-            value={editingProduct?.imageUrl || ''}
-            onChange={(e) => setEditingProduct(prev => ({ ...prev!, imageUrl: e.target.value }))}
-            margin="normal"
-            required
-          />
-          <Button variant="outlined" component="label" sx={{ mt: 1 }}>
-            Загрузить изображение
-            <input type="file" hidden accept="image/*" ref={fileInputRef} onChange={handleImageUpload} />
-          </Button>
-          {editingProduct?.imageUrl && (
-            <Box sx={{ mt: 1 }}>
-              <img src={editingProduct.imageUrl} alt="preview" style={{ maxWidth: 200, maxHeight: 120 }} />
-            </Box>
-          )}
-          
-          <TextField
-            fullWidth
-            multiline
-            rows={4}
-            label="Дополнительные изображения"
-            value={(editingProduct?.additionalImages || []).join('\n')}
-            onChange={(e) => {
-              const links = e.target.value
-                .split('\n')
-                .map(link => link.trim())
-                .filter(link => link.length > 0);
-              setEditingProduct(prev => ({ ...prev!, additionalImages: links }));
-            }}
-            margin="normal"
-            helperText="Добавьте ссылки на дополнительные изображения, по одной на строку"
-          />
+          <Box sx={{ mt: 2, mb: 2 }}>
+            <Typography variant="subtitle1">Фотографии товара</Typography>
+            <Button variant="outlined" component="label" sx={{ mt: 1 }}>
+              Загрузить фото
+              <input type="file" hidden multiple accept="image/*" onChange={handleImagesUpload} />
+            </Button>
+            <DragDropContext onDragEnd={handleImagesDragEnd}>
+              <Droppable droppableId="images-droppable" direction="horizontal">
+                {provided => (
+                  <Box ref={provided.innerRef} {...provided.droppableProps} sx={{ display: 'flex', gap: 2, mt: 2, flexWrap: 'wrap' }}>
+                    {editingProduct?.images?.map((img, idx) => (
+                      <Draggable key={img} draggableId={img} index={idx}>
+                        {providedDraggable => (
+                          <Box ref={providedDraggable.innerRef} {...providedDraggable.draggableProps} {...providedDraggable.dragHandleProps} sx={{ position: 'relative' }}>
+                            <img src={img} alt={`Фото ${idx + 1}`} style={{ width: 100, height: 100, objectFit: 'cover', border: idx === 0 ? '2px solid #1976d2' : '1px solid #ccc', borderRadius: 4 }} />
+                            <Button size="small" color="error" sx={{ position: 'absolute', top: 2, right: 2, minWidth: 0, p: 0.5 }} onClick={() => handleImageDelete(idx)}>×</Button>
+                            {idx === 0 && <Typography variant="caption" sx={{ position: 'absolute', left: 2, bottom: 2, bgcolor: 'white', px: 0.5, borderRadius: 1 }}>Главное</Typography>}
+                          </Box>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </Box>
+                )}
+              </Droppable>
+            </DragDropContext>
+          </Box>
           
           <FormControl fullWidth margin="normal">
             <InputLabel>Категории</InputLabel>
@@ -352,7 +385,7 @@ const AdminPanel = () => {
                 fullWidth
                 label="Название новой категории"
                 value={editingProduct?.newCategory || ''}
-                onChange={(e) => setEditingProduct(prev => ({ ...prev!, newCategory: e.target.value }))}
+                onChange={(e) => setEditingProduct(prev => prev ? { ...prev, newCategory: e.target.value } : null)}
                 required
               />
               <Button 
@@ -448,12 +481,11 @@ const AdminPanel = () => {
                   exit={{ opacity: 0 }}
                 >
                   <TableCell>
-                    <Box
-                      component="img"
-                      src={product.imageUrl}
-                      alt={product.name}
-                      sx={{ width: 50, height: 50, objectFit: 'cover' }}
-                    />
+                    {product.images && product.images.length > 0 ? (
+                      <Box component="img" src={product.images[0]} alt={product.name} sx={{ width: 50, height: 50, objectFit: 'cover' }} />
+                    ) : (
+                      <Box sx={{ width: 50, height: 50, bgcolor: '#eee', borderRadius: 1 }} />
+                    )}
                   </TableCell>
                   <TableCell>{product.name}</TableCell>
                   <TableCell>
@@ -496,22 +528,23 @@ const AdminPanel = () => {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Box sx={{ mb: 4 }}>
-        <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h5">Управление товарами</Typography>
-          <Button
-            variant="contained"
-            startIcon={<Add />}
-            onClick={() => handleOpen()}
-          >
-            Добавить товар
-          </Button>
+      <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mb: 3 }}>
+        <Tab label="Товары" />
+        <Tab label="Категории" />
+        <Tab label="Промо-акции" />
+        <Tab label="Промокоды" />
+        <Tab label="Заказы" />
+      </Tabs>
+      {tab === 0 && (
+        <Box>
+          {renderProductsTable()}
+          {renderProductDialog()}
         </Box>
-
-        {renderProductsTable()}
-      </Box>
-
-      {renderProductDialog()}
+      )}
+      {tab === 1 && <CategoryManager />}
+      {tab === 2 && <PromoManager />}
+      {tab === 3 && <PromoCodeManager />}
+      {tab === 4 && <OrdersTab />}
 
       <Snackbar
         open={notification.open}
