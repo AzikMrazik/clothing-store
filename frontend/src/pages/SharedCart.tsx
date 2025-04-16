@@ -44,23 +44,23 @@ const SharedCart = () => {
 
   // Получаем корректный URL изображения
   const getImageUrl = (item: any): string => {
-    // Если есть images (массив), берем первый элемент
+    let url = '';
     if (item.images && Array.isArray(item.images) && item.images.length > 0) {
-      return getImageUrlHelper(item.images[0]);
+      url = item.images[0];
+    } else if (item.imageUrl) {
+      url = item.imageUrl;
+    } else if (item.image) {
+      url = item.image;
+    } else if (item.img) {
+      url = item.img;
     }
-    // Если есть image (строка)
-    if (item.image) {
-      return getImageUrlHelper(item.image);
-    }
-    // Если есть imageUrl (строка)
-    if (item.imageUrl) {
-      return getImageUrlHelper(item.imageUrl);
-    }
-    // Если есть img (строка)
-    if (item.img) {
-      return getImageUrlHelper(item.img);
-    }
-    return '/placeholder-product.jpg';
+    // Если url абсолютный, возвращаем как есть
+    if (url && /^(https?:\/\/|\/\/)/.test(url)) return url;
+    // Если url начинается с /, добавляем window.location.origin
+    if (url && url.startsWith('/')) return window.location.origin + url;
+    // Если url не пустой, добавляем / перед ним
+    if (url) return window.location.origin + '/' + url.replace(/^\/+/, '');
+    return window.location.origin + '/placeholder-product.jpg';
   };
 
   useEffect(() => {
