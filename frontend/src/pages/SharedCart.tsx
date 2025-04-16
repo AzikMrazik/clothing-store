@@ -20,6 +20,7 @@ import { ShoppingBag, AddShoppingCart } from '@mui/icons-material';
 import { useCart } from '../contexts/CartContext';
 import { useNotification } from '../contexts/NotificationContext';
 import { API_URL } from '../config';
+import { getImageUrl as getImageUrlHelper } from '../utils/getImageUrl';
 
 const SharedCart = () => {
   const { id } = useParams();
@@ -43,13 +44,23 @@ const SharedCart = () => {
 
   // Получаем корректный URL изображения
   const getImageUrl = (item: any): string => {
-    if (item.images && item.images.length > 0) return item.images[0];
-    const imageSource = item.imageUrl || item.image || item.img;
-    if (!imageSource) return '/placeholder-product.jpg';
-    if (/^(https?:\/\/|\/\/)/.test(imageSource)) return imageSource;
-    const baseUrl = window.location.origin;
-    if (imageSource.startsWith('/')) return `${baseUrl}${imageSource}`;
-    return `${baseUrl}/${imageSource}`;
+    // Если есть images (массив), берем первый элемент
+    if (item.images && Array.isArray(item.images) && item.images.length > 0) {
+      return getImageUrlHelper(item.images[0]);
+    }
+    // Если есть image (строка)
+    if (item.image) {
+      return getImageUrlHelper(item.image);
+    }
+    // Если есть imageUrl (строка)
+    if (item.imageUrl) {
+      return getImageUrlHelper(item.imageUrl);
+    }
+    // Если есть img (строка)
+    if (item.img) {
+      return getImageUrlHelper(item.img);
+    }
+    return '/placeholder-product.jpg';
   };
 
   useEffect(() => {
