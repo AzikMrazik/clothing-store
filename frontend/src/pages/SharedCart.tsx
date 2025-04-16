@@ -20,7 +20,6 @@ import { ShoppingBag, AddShoppingCart } from '@mui/icons-material';
 import { useCart } from '../contexts/CartContext';
 import { useNotification } from '../contexts/NotificationContext';
 import { API_URL } from '../config';
-import { getImageUrl as getImageUrlHelper } from '../utils/getImageUrl';
 
 const SharedCart = () => {
   const { id } = useParams();
