@@ -180,7 +180,7 @@ router.put('/:id', asyncHandler(async (req: Request, res: Response): Promise<any
     res.json(product);
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
-      return res.status 400).json({ 
+      return res.status(400).json({ 
         message: 'Validation failed',
         errors: Object.values(error.errors).map(err => err.message)
       });
