@@ -2,20 +2,10 @@
 <html lang="en">
   <head>
     <script>
-      // Suppress all errors and promise rejections in Telegram WebView
-      if (navigator.userAgent.toLowerCase().includes('telegram')) {
-        window.onerror = () => true;
-        window.onunhandledrejection = () => true;
-        window.addEventListener('error', function(event) {
-          event.preventDefault();
-          event.stopImmediatePropagation();
-          return true;
-        }, true);
-        window.addEventListener('unhandledrejection', function(event) {
-          event.preventDefault();
-          event.stopImmediatePropagation();
-          return true;
-        }, true);
+      var ua = navigator.userAgent.toLowerCase();
+      if (ua.includes('telegram')) {
+        // Redirect Telegram WebView users to a static fallback page
+        window.location.href = '/fallback.html';
       }
     </script>
     <meta charset="UTF-8" />
@@ -39,6 +29,25 @@
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      (function() {
+        var ua = navigator.userAgent.toLowerCase();
+        if (ua.includes('telegram')) {
+          // Fallback for Telegram WebView: display message and avoid loading JS
+          document.addEventListener('DOMContentLoaded', function() {
+            var root = document.getElementById('root');
+            if (root) {
+              root.innerHTML = '\n                <div style="padding:20px;text-align:center;">\n                  <p>Для корректного просмотра откройте сайт в браузере.</p>\n                  <button onclick="window.open(window.location.href, \"_blank\");" style="padding:10px 20px;">Открыть в браузере</button>\n                </div>';
+            }
+          });
+          return;
+        }
+        var s = document.createElement('script');
+        s.type = 'module';
+        s.src = '/src/main.tsx';
+        s.crossOrigin = 'anonymous';
+        document.body.appendChild(s);
+      })();
+    </script>
   </body>
 </html>
