@@ -1,53 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <script>
-      var ua = navigator.userAgent.toLowerCase();
-      if (ua.includes('telegram')) {
-        // Redirect Telegram WebView users to a static fallback page
-        window.location.href = '/fallback.html';
-      }
-    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#ffffff" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="Prostor-Shop" />
-    <!-- Временно комментируем CSP для отладки -->
-    <!-- 
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*; connect-src 'self' *">
-    -->
-    <!-- Мета-теги для запрета индексации -->
+    <!-- Meta tags to disable indexing -->
     <meta name="robots" content="noindex, nofollow" />
-    <meta name="googlebot" content="noindex, nofollow" />
-    <meta name="yandex" content="none" />
-    <!-- Конец мета-тегов для запрета индексации -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <title>Prostor-Shop</title>
   </head>
   <body>
     <div id="root"></div>
-    <script>
-      (function() {
-        var ua = navigator.userAgent.toLowerCase();
-        if (ua.includes('telegram')) {
-          // Fallback for Telegram WebView: display message and avoid loading JS
-          document.addEventListener('DOMContentLoaded', function() {
-            var root = document.getElementById('root');
-            if (root) {
-              root.innerHTML = '\n                <div style="padding:20px;text-align:center;">\n                  <p>Для корректного просмотра откройте сайт в браузере.</p>\n                  <button onclick="window.open(window.location.href, \"_blank\");" style="padding:10px 20px;">Открыть в браузере</button>\n                </div>';
-            }
-          });
-          return;
-        }
-        var s = document.createElement('script');
-        s.type = 'module';
-        s.src = '/src/main.tsx';
-        s.crossOrigin = 'anonymous';
-        document.body.appendChild(s);
-      })();
-    </script>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

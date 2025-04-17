@@ -16,6 +16,7 @@ import { CartProvider } from './contexts/CartContext';
 import { LoadingProvider } from './contexts/LoadingContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { AuthProvider } from './contexts/AuthContext';
+import TelegramFallback from './components/TelegramFallback';
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -43,27 +44,30 @@ const AnimatedRoutes = () => {
 
 function App() {
   return (
-    <ErrorBoundary>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <NotificationProvider>
-          <LoadingProvider>
-            <AuthProvider>
-              <CartProvider>
-                {/* Оборачиваем SecurityInitializer в отдельный ErrorBoundary */}
-                <ErrorBoundary fallback={<div>Ошибка инициализации безопасности, но приложение продолжает работать</div>}>
-                  <SecurityInitializer />
-                </ErrorBoundary>
-                <BrowserRouter>
-                  <Navigation />
-                  <AnimatedRoutes />
-                </BrowserRouter>
-              </CartProvider>
-            </AuthProvider>
-          </LoadingProvider>
-        </NotificationProvider>
-      </ThemeProvider>
-    </ErrorBoundary>
+    <>
+      <TelegramFallback />
+      <ErrorBoundary>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <NotificationProvider>
+            <LoadingProvider>
+              <AuthProvider>
+                <CartProvider>
+                  {/* Оборачиваем SecurityInitializer в отдельный ErrorBoundary */}
+                  <ErrorBoundary fallback={<div>Ошибка инициализации безопасности, но приложение продолжает работать</div>}>
+                    <SecurityInitializer />
+                  </ErrorBoundary>
+                  <BrowserRouter>
+                    <Navigation />
+                    <AnimatedRoutes />
+                  </BrowserRouter>
+                </CartProvider>
+              </AuthProvider>
+            </LoadingProvider>
+          </NotificationProvider>
+        </ThemeProvider>
+      </ErrorBoundary>
+    </>
   );
 }
 
