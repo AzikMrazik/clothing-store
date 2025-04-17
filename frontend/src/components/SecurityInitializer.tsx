@@ -46,8 +46,11 @@ const SecurityInitializer: React.FC = () => {
    * Дополнительные настройки безопасности
    */
   const setupAdditionalSecurity = () => {
-    // Защита от кликджекинга
-    if (window.self !== window.top && window.location.hostname !== 'localhost') {
+    // Защита от кликджекинга, но пропускаем Telegram WebView
+    const ua = navigator.userAgent.toLowerCase();
+    const anyWin = window as any;
+    const inTelegramWebView = ua.includes('telegram') || (!!anyWin.Telegram && !!anyWin.Telegram.WebApp);
+    if (window.self !== window.top && window.location.hostname !== 'localhost' && !inTelegramWebView) {
       console.warn('Сайт загружен в iframe. Возможна атака кликджекинга.');
       document.body.style.display = 'none';
     }

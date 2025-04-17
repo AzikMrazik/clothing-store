@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Box, Typography, Button } from '@mui/material';
 
 const TelegramFallback: React.FC = () => {
-  // Detect only Telegram WebApp environment
+  // Show fallback only inside Telegram WebApp (SDK must exist)
   if (typeof window === 'undefined') return null;
   const anyWin = window as any;
   if (!anyWin.Telegram || !anyWin.Telegram.WebApp) return null;
