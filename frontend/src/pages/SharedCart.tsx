@@ -75,7 +75,8 @@ const SharedCart = () => {
       const productToAdd = {
         ...item,
         _id: item._id || `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-        imageUrl: item.processedImageUrl || item.imageUrl || '/placeholder-product.jpg',
+        // Do not use placeholder fallback to avoid 404 and script errors
+        imageUrl: item.processedImageUrl || item.imageUrl || '',
         quantity: item.quantity
       };
       addToCart(productToAdd);
@@ -88,7 +89,8 @@ const SharedCart = () => {
     const productToAdd = {
       ...item,
       _id: item._id || `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-      imageUrl: item.processedImageUrl || item.imageUrl || '/placeholder-product.jpg',
+      // Avoid placeholder to prevent script errors
+      imageUrl: item.processedImageUrl || item.imageUrl || '',
       quantity: item.quantity
     };
     addToCart(productToAdd);

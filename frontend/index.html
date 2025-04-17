@@ -2,10 +2,20 @@
 <html lang="en">
   <head>
     <script>
-      // Подавление ошибок в Telegram WebView до загрузки React
+      // Suppress all errors and promise rejections in Telegram WebView
       if (navigator.userAgent.toLowerCase().includes('telegram')) {
         window.onerror = () => true;
         window.onunhandledrejection = () => true;
+        window.addEventListener('error', function(event) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          return true;
+        }, true);
+        window.addEventListener('unhandledrejection', function(event) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          return true;
+        }, true);
       }
     </script>
     <meta charset="UTF-8" />

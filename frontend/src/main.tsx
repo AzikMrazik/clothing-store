@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
+import ErrorBoundary from './components/ErrorBoundary';
 
 // Глобальная обработка ошибок и подавление их в Telegram WebView
 if (navigator.userAgent.includes('Telegram')) {
@@ -26,6 +27,8 @@ if (navigator.userAgent.includes('Telegram')) {
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <App />
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
   </React.StrictMode>
 );
