@@ -12,8 +12,7 @@ import {
   Divider,
   Button,
   CircularProgress,
-  Alert,
-  Skeleton
+  Alert
 } from '@mui/material';
 import { motion } from 'framer-motion';
 import { ShoppingBag, AddShoppingCart } from '@mui/icons-material';
@@ -31,9 +30,10 @@ const SharedCart = () => {
   const { showNotification } = useNotification();
   const [imageLoadingStatus, setImageLoadingStatus] = useState<Record<string, boolean>>({});
 
-  // Обрабатываем ошибки загрузки изображений
+  // Обрабатываем ошибки загрузки изображений: убираем placeholder и ошибки
   const handleImageError = (itemId: string) => (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    e.currentTarget.src = '/placeholder-product.jpg'; // Путь к запасному изображению
+    // Просто скрываем неудавшееся изображение
+    (e.currentTarget as HTMLImageElement).style.display = 'none';
     setImageLoadingStatus(prev => ({ ...prev, [itemId]: true }));
   };
 
@@ -193,27 +193,19 @@ const SharedCart = () => {
               >
                 <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                   <Box sx={{ position: 'relative', width: 80, height: 80, mr: 2 }}>
-                    {!imageLoadingStatus[item._id || index] && (
-                      <Skeleton variant="rectangular" width={80} height={80} />
+                    {item.processedImageUrl && (
+                      <Box
+                        component="img"
+                        src={item.processedImageUrl}
+                        alt={item.name}
+                        sx={{
+                          width: 80,
+                          height: 80,
+                          objectFit: 'cover',
+                          borderRadius: 1
+                        }}
+                      />
                     )}
-                    <Box
-                      component="img"
-                      src={item.processedImageUrl}
-                      alt={item.name}
-                      onError={handleImageError(item._id || index)}
-                      onLoad={handleImageLoad(item._id || index)}
-                      sx={{
-                        width: 80,
-                        height: 80,
-                        objectFit: 'cover',
-                        borderRadius: 1,
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        opacity: imageLoadingStatus[item._id || index] ? 1 : 0,
-                        transition: 'opacity 0.3s'
-                      }}
-                    />
                   </Box>
                   <Box sx={{ flexGrow: 1, minWidth: 0 }}>
                     <ListItemText
