@@ -38,6 +38,7 @@ import CategoryManager from '../components/admin/CategoryManager';
 import PromoManager from '../components/admin/PromoManager';
 import PromoCodeManager from '../components/admin/PromoCodeManager';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import { getCsrfToken } from '../utils/config';
 
 interface Product {
   _id: string;
@@ -182,7 +183,13 @@ const AdminPanel = () => {
     for (const file of files) {
       const formData = new FormData();
       formData.append('file', file);
-      const res = await fetch('/api/products/upload', { method: 'POST', body: formData });
+      const csrfToken = getCsrfToken();
+      const res = await fetch('/api/products/upload', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'X-CSRF-Token': csrfToken || '' },
+        body: formData
+      });
       const data = await res.json();
       uploaded.push(data.url);
     }
@@ -222,31 +229,24 @@ const AdminPanel = () => {
       const url = editingProduct._id 
         ? `${API_URL}/products/${editingProduct._id}`
         : `${API_URL}/products`;
-
+      const csrfToken = getCsrfToken();
       const response = await fetch(url, {
         method: editingProduct._id ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken || ''
+        },
         body: JSON.stringify(finalData)
       });
-
       if (!response.ok) {
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-          try {
-            const responseText = await response.text();
-            if (responseText) {
-              const error = JSON.parse(responseText);
-              throw new Error(error.message || 'Failed to save product');
-            } else {
-              throw new Error(`Server error: ${response.status} ${response.statusText}`);
-            }
-          } catch (jsonError) {
-            console.error('Error parsing response:', jsonError);
-            throw new Error(`Server error: ${response.status} ${response.statusText}`);
-          }
-        } else {
-          throw new Error(`Server error: ${response.status} ${response.statusText}`);
-        }
+        const errorData = await response.json().catch(() => null);
+        console.error('Server error creating/updating product:', errorData);
+        const message = Array.isArray(errorData?.errors)
+          ? errorData.errors.join(', ')
+          : errorData?.message || 'Ошибка при сохранении товара';
+        showNotification(message, 'error');
+        return;
       }
 
       await fetchProducts();

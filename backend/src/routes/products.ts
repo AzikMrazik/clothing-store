@@ -108,6 +108,7 @@ router.post('/', asyncHandler(async (req: Request, res: Response): Promise<any> 
       name,
       price,
       description,
+      imageUrl: images[0], // добавляем главное изображение для совместимости с моделью
       images,
       category: finalCategories[0],
       categories: finalCategories,
@@ -164,6 +165,7 @@ router.put('/:id', asyncHandler(async (req: Request, res: Response): Promise<any
       name,
       price,
       description,
+      imageUrl: images[0], // добавляем главное изображение
       images,
       category: finalCategories[0],
       categories: finalCategories,
