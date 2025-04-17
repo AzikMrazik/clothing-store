@@ -197,7 +197,7 @@ const SharedCart = () => {
                     )}
                     <Box
                       component="img"
-                      src={item.images && item.images.length > 0 ? item.images[0] : (item.processedImageUrl || '/placeholder-product.jpg')}
+                      src={item.processedImageUrl}
                       alt={item.name}
                       onError={handleImageError(item._id || index)}
                       onLoad={handleImageLoad(item._id || index)}
