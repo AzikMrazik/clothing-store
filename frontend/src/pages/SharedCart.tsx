@@ -28,18 +28,6 @@ const SharedCart = () => {
   const [error, setError] = useState<string | null>(null);
   const { addToCart } = useCart();
   const { showNotification } = useNotification();
-  const [imageLoadingStatus, setImageLoadingStatus] = useState<Record<string, boolean>>({});
-
-  // Обрабатываем ошибки загрузки изображений: убираем placeholder и ошибки
-  const handleImageError = (itemId: string) => (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    // Просто скрываем неудавшееся изображение
-    (e.currentTarget as HTMLImageElement).style.display = 'none';
-    setImageLoadingStatus(prev => ({ ...prev, [itemId]: true }));
-  };
-
-  const handleImageLoad = (itemId: string) => () => {
-    setImageLoadingStatus(prev => ({ ...prev, [itemId]: true }));
-  };
 
   // Получаем корректный URL изображения
   const getImageUrl = (item: any): string => {
