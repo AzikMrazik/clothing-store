@@ -37,7 +37,8 @@ const CategoryManager: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
-    isActive: true
+    isActive: true,
+    imageUrl: ''
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { showNotification } = useNotification();
@@ -52,7 +53,8 @@ const CategoryManager: React.FC = () => {
       setFormData({
         name: editingCategory.name,
         slug: editingCategory.slug,
-        isActive: editingCategory.isActive
+        isActive: editingCategory.isActive,
+        imageUrl: editingCategory.imageUrl || ''
       });
     } else {
       resetForm();
@@ -77,7 +79,8 @@ const CategoryManager: React.FC = () => {
     setFormData({
       name: '',
       slug: '',
-      isActive: true
+      isActive: true,
+      imageUrl: ''
     });
     setErrors({});
   };
