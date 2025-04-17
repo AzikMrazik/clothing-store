@@ -8,7 +8,7 @@ import { logSecurityEvent, SecurityEventType } from '../utils/logger';
 // Получаем максимальный размер файла из переменных окружения или используем значение по умолчанию
 const MAX_FILE_SIZE = process.env.MAX_FILE_SIZE 
   ? parseInt(process.env.MAX_FILE_SIZE) 
-  : 5 * 1024 * 1024; // 5MB по умолчанию
+  : 10 * 1024 * 1024; // 10MB по умолчанию
 
 // Получаем разрешенные типы файлов
 const ALLOWED_FILE_TYPES = (process.env.ALLOWED_FILE_TYPES || 'image/jpeg,image/png,image/webp')
