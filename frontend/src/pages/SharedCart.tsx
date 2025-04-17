@@ -54,12 +54,13 @@ const SharedCart = () => {
       url = item.img;
     }
     // Если url абсолютный, возвращаем как есть
-    if (url && /^(https?:\/\/|\/\/)/.test(url)) return url;
+    if (/^(https?:\/\/|\/\/)/.test(url)) return url;
     // Если url начинается с /, добавляем window.location.origin
-    if (url && url.startsWith('/')) return window.location.origin + url;
+    if (url.startsWith('/')) return window.location.origin + url;
     // Если url не пустой, добавляем / перед ним
     if (url) return window.location.origin + '/' + url.replace(/^\/+/, '');
-    return window.location.origin + '/placeholder-product.jpg';
+    // Если изображения нет, возвращаем пустую строку (не использовать placeholder)
+    return '';
   };
 
   useEffect(() => {
