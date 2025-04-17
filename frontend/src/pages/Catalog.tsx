@@ -422,38 +422,27 @@ const Catalog = () => {
                   </Box>
                   
                   {/* Блок с ценой и кнопкой всегда внизу карточки */}
-                  <Box sx={{ 
-                    display: 'flex', 
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
+                  <Box sx={{
                     pt: 1,
                     borderTop: '1px solid',
                     borderColor: 'divider',
-                    mt: 'auto'
+                    mt: 'auto',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 1
                   }}>
-                    <Typography 
-                      variant="h6" 
-                      color="primary" 
-                      sx={{ 
-                        fontSize: { xs: '1rem', sm: '1.1rem' },
-                        fontWeight: 600
-                      }}
+                    <Typography
+                      variant="h6"
+                      color="primary"
+                      sx={{ fontWeight: 600 }}
                     >
                       {Math.round(product.price)} ₽
                     </Typography>
                     <Button
                       variant="contained"
-                      size="small"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleAddToCart(product);
-                      }}
-                      sx={{ 
-                        minWidth: 'auto',
-                        px: { xs: 1, sm: 2 },
-                        py: 0.5,
-                        fontSize: { xs: '0.75rem', sm: '0.8rem' }
-                      }}
+                      fullWidth
+                      onClick={(e) => { e.stopPropagation(); handleAddToCart(product); }}
+                      sx={{ fontSize: { xs: '0.75rem', sm: '0.8rem' } }}
                     >
                       В корзину
                     </Button>
