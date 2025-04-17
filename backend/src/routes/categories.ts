@@ -65,10 +65,16 @@ router.put('/order', asyncHandler(async (req: Request, res: Response): Promise<a
 router.post('/upload', upload.single('file'), validateUploadedFiles, asyncHandler(async (req: Request, res: Response) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
   try {
+    // Если YOS не настроен, используем локальный URL
+    if (!process.env.YOS_BUCKET || !process.env.YOS_ENDPOINT) {
+      const localUrl = `/uploads/${req.file.filename}`;
+      return res.json({ url: localUrl });
+    }
     const url = await uploadToYOS(req.file.path);
     fs.unlinkSync(req.file.path);
     res.json({ url });
   } catch (e) {
+    console.error('Error uploading category image:', e);
     fs.unlinkSync(req.file.path);
     res.status(500).json({ error: 'Upload to YOS failed' });
   }

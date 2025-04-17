@@ -151,7 +151,12 @@ const CategoryManager: React.FC = () => {
     const file = e.target.files[0];
     const formData = new FormData();
     formData.append('file', file);
-    const res = await fetch('/api/categories/upload', { method: 'POST', body: formData });
+    const res = await fetch('/api/categories/upload', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'X-CSRF-Token': getCsrfToken() || '' },
+      body: formData
+    });
     const data = await res.json();
     setFormData(prev => ({ ...prev, imageUrl: data.url }));
   };
