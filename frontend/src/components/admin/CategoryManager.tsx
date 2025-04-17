@@ -28,6 +28,7 @@ import { Category } from '../../types/models';
 import { CategoryService } from '../../services/CategoryService';
 import { useNotification } from '../../contexts/NotificationContext';
 import Loading from '../Loading';
+import { getCsrfToken } from '../../utils/config';
 
 const CategoryManager: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
