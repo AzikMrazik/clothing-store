@@ -18,7 +18,6 @@ import { motion } from 'framer-motion';
 import { ShoppingBag, AddShoppingCart } from '@mui/icons-material';
 import { useCart } from '../contexts/CartContext';
 import { useNotification } from '../contexts/NotificationContext';
-import { API_URL } from '../config';
 
 const SharedCart = () => {
   const { id } = useParams();
@@ -31,28 +30,23 @@ const SharedCart = () => {
 
   // Получаем корректный URL изображения
   const getImageUrl = (item: any): string => {
-    let url = '';
-    if (item.images && Array.isArray(item.images) && item.images.length > 0) {
-      url = item.images[0];
-    } else if (item.imageUrl) {
-      url = item.imageUrl;
-    } else if (item.image) {
-      url = item.image;
-    } else if (item.img) {
-      url = item.img;
+    const src = (item.images?.[0] || item.imageUrl || item.image || item.img || '').trim();
+    if (!src) return '';
+    if (/^https?:\/\//.test(src)) {
+      return src;
     }
-    // Если url абсолютный, возвращаем как есть
-    if (/^(https?:\/\/|\/\/)/.test(url)) return url;
-    // Если url начинается с /, добавляем window.location.origin
-    if (url.startsWith('/')) return window.location.origin + url;
-    // Если url не пустой, добавляем / перед ним
-    if (url) return window.location.origin + '/' + url.replace(/^\/+/, '');
-    // Если изображения нет, возвращаем пустую строку (не использовать placeholder)
-    return '';
+    // относительный путь — используем origin
+    const origin = window.location.origin.replace(/\/$/, '');
+    if (src.startsWith('/')) {
+      return origin + src;
+    }
+    return origin + '/' + src;
   };
 
   useEffect(() => {
-    fetch(`${API_URL}/cart/${id}`)
+    // Use absolute URL for API in all environments
+    const apiBase = window.location.origin;
+    fetch(`${apiBase}/api/cart/${id}`)
       .then(res => {
         if (!res.ok) throw new Error('Корзина не найдена');
         return res.json();

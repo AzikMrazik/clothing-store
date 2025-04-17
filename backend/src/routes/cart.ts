@@ -62,7 +62,16 @@ router.put('/:cartId', async (req, res) => {
       return res.status(404).json({ error: 'Cart not found' });
     }
     
-    cart.items = req.body.items || cart.items;
+    // Update items, mapping to include `image` field
+    if (req.body.items) {
+      cart.items = req.body.items.map((item: any) => ({
+        productId: item.productId,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        image: item.imageUrl || item.image || (Array.isArray(item.images) && item.images[0]) || ''
+      }));
+    }
     
     if (req.body.metadata) {
       cart.metadata = {
@@ -91,8 +100,16 @@ router.put('/:cartId', async (req, res) => {
 router.post('/share', async (req, res) => {
   try {
     const shareId = Math.random().toString(36).substr(2, 9);
+    // Map incoming items to schema fields, ensure `image` field is set
+    const itemsForDb = (req.body.items || []).map((item: any) => ({
+      productId: item.productId,
+      name: item.name,
+      price: item.price,
+      quantity: item.quantity,
+      image: item.imageUrl || item.image || (Array.isArray(item.images) && item.images[0]) || ''
+    }));
     const cart = new Cart({
-      items: req.body.items,
+      items: itemsForDb,
       metadata: req.body.metadata || {},
       shareId
     });
