@@ -37,7 +37,6 @@ import Tab from '@mui/material/Tab';
 import CategoryManager from '../components/admin/CategoryManager';
 import PromoManager from '../components/admin/PromoManager';
 import PromoCodeManager from '../components/admin/PromoCodeManager';
-import OrdersTab from '../components/admin/OrdersTab';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 
 interface Product {
@@ -533,10 +532,17 @@ const AdminPanel = () => {
         <Tab label="Категории" />
         <Tab label="Промо-акции" />
         <Tab label="Промокоды" />
-        <Tab label="Заказы" />
       </Tabs>
       {tab === 0 && (
         <Box>
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ mb: 2 }}
+            onClick={() => handleOpen()}
+          >
+            Добавить товар
+          </Button>
           {renderProductsTable()}
           {renderProductDialog()}
         </Box>
@@ -544,7 +550,6 @@ const AdminPanel = () => {
       {tab === 1 && <CategoryManager />}
       {tab === 2 && <PromoManager />}
       {tab === 3 && <PromoCodeManager />}
-      {tab === 4 && <OrdersTab />}
 
       <Snackbar
         open={notification.open}

@@ -37,8 +37,6 @@ const CategoryManager: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
-    description: '',
-    imageUrl: '',
     isActive: true
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -54,8 +52,6 @@ const CategoryManager: React.FC = () => {
       setFormData({
         name: editingCategory.name,
         slug: editingCategory.slug,
-        description: editingCategory.description || '',
-        imageUrl: editingCategory.imageUrl || '',
         isActive: editingCategory.isActive
       });
     } else {
@@ -81,8 +77,6 @@ const CategoryManager: React.FC = () => {
     setFormData({
       name: '',
       slug: '',
-      description: '',
-      imageUrl: '',
       isActive: true
     });
     setErrors({});
@@ -115,10 +109,6 @@ const CategoryManager: React.FC = () => {
       newErrors.slug = 'URL-имя категории обязательно';
     } else if (!/^[a-z0-9-]+$/.test(formData.slug)) {
       newErrors.slug = 'URL-имя может содержать только строчные буквы латинского алфавита, цифры и дефисы';
-    }
-    
-    if (formData.imageUrl && !/^(https?:\/\/|\/\/).+$/i.test(formData.imageUrl)) {
-      newErrors.imageUrl = 'URL изображения должен начинаться с http://, https:// или //';
     }
     
     setErrors(newErrors);
@@ -393,28 +383,6 @@ const CategoryManager: React.FC = () => {
                 error={!!errors.slug}
                 helperText={errors.slug || 'Например: winter-collection, t-shirts, new-arrivals'}
                 required
-              />
-            </Box>
-            <Box sx={{ flex: '1 1 100%' }}>
-              <TextField
-                name="description"
-                label="Описание"
-                fullWidth
-                multiline
-                rows={3}
-                value={formData.description}
-                onChange={handleInputChange}
-              />
-            </Box>
-            <Box sx={{ flex: '1 1 100%' }}>
-              <TextField
-                name="imageUrl"
-                label="URL изображения"
-                fullWidth
-                value={formData.imageUrl}
-                onChange={handleInputChange}
-                error={!!errors.imageUrl}
-                helperText={errors.imageUrl}
               />
             </Box>
             <Box sx={{ mb: 2 }}>
