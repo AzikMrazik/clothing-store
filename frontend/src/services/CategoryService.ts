@@ -1,5 +1,6 @@
 import { API_URL, API_DEBUG } from '../config';
 import { Category } from '../types/models';
+import { getCsrfToken } from '../utils/config';
 
 export class CategoryService {
   static async fetchCategories(): Promise<Category[]> {
@@ -66,11 +67,14 @@ export class CategoryService {
     }
 
     try {
+      const csrfToken = getCsrfToken();
       const response = await fetch(`${API_URL}/categories`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
+          'X-CSRF-Token': csrfToken || ''
         },
         body: JSON.stringify(category)
       });
@@ -92,11 +96,14 @@ export class CategoryService {
     }
 
     try {
+      const csrfToken = getCsrfToken();
       const response = await fetch(`${API_URL}/categories/${id}`, {
         method: 'PUT',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
+          'X-CSRF-Token': csrfToken || ''
         },
         body: JSON.stringify(category)
       });
@@ -122,8 +129,13 @@ export class CategoryService {
     }
 
     try {
+      const csrfToken = getCsrfToken();
       const response = await fetch(`${API_URL}/categories/${id}`, {
         method: 'DELETE',
+        credentials: 'include',
+        headers: {
+          'X-CSRF-Token': csrfToken || ''
+        }
       });
 
       if (!response.ok) {
