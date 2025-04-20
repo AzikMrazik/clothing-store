@@ -294,9 +294,9 @@ const ProductDetails = () => {
               >
                 Узнать размер
               </Button>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: 'center', gap: 2 }}>
                 {/* Quantity controls */}
-                <Box sx={{ display: 'flex', alignItems: 'center', border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', border: '1px solid', borderColor: 'divider', borderRadius: 1, mb: { xs: 1, sm: 0 } }}>
                   <IconButton onClick={() => setQuantity(Math.max(1, quantity - 1))} size="small">
                     <Remove />
                   </IconButton>
