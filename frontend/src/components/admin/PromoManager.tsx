@@ -449,25 +449,6 @@ const PromoManager: React.FC = () => {
               </Box>
               <Box sx={{ mb: 2 }}>
                 <TextField
-                  name="imageUrl"
-                  label="URL изображения"
-                  fullWidth
-                  value={formData.imageUrl}
-                  onChange={handleInputChange}
-                  error={!!errors.imageUrl}
-                  helperText={errors.imageUrl}
-                  required
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <LinkIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Box>
-              <Box sx={{ mb: 2 }}>
-                <TextField
                   name="targetUrl"
                   label="URL перехода (куда ведёт баннер)"
                   fullWidth
@@ -507,18 +488,6 @@ const PromoManager: React.FC = () => {
                   }
                   label="Акция активна"
                 />
-              </Box>
-
-              <Box sx={{ mb: 2 }}>
-                <Button variant="outlined" component="label">
-                  Загрузить изображение
-                  <input type="file" hidden accept="image/*" ref={fileInputRef} onChange={handleImageUpload} />
-                </Button>
-                {formData.imageUrl && (
-                  <Box sx={{ mt: 1 }}>
-                    <img src={formData.imageUrl} alt="preview" style={{ maxWidth: 200, maxHeight: 120 }} />
-                  </Box>
-                )}
               </Box>
 
               {formData.imageUrl && (

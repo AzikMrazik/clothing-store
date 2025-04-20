@@ -425,20 +425,30 @@ const Catalog = () => {
                     borderColor: 'divider',
                     mt: 'auto',
                     display: 'flex',
-                    flexDirection: 'column',
-                    gap: 1
+                    flexDirection: { xs: 'row', sm: 'column' },
+                    alignItems: { xs: 'center', sm: 'stretch' },
+                    gap: 1,
+                    position: { xs: 'sticky', sm: 'static' },
+                    bottom: { xs: 0, sm: 'unset' },
+                    bgcolor: { xs: 'background.paper', sm: 'unset' },
+                    zIndex: 2
                   }}>
                     <Typography
                       variant="h6"
                       color="primary"
-                      sx={{ fontWeight: 600 }}
+                      sx={{ fontWeight: 600, mr: { xs: 2, sm: 0 } }}
                     >
                       {Math.round(product.price)} ₽
                     </Typography>
                     <Button
                       variant="contained"
                       fullWidth
-                      sx={{ position: 'sticky', bottom: 0, mt: 'auto' }}
+                      sx={{
+                        mt: { xs: 0, sm: 'auto' },
+                        position: { xs: 'sticky', sm: 'static' },
+                        bottom: { xs: 0, sm: 'unset' },
+                        zIndex: 2
+                      }}
                       onClick={(e) => { e.stopPropagation(); handleAddToCart(product); }}
                     >
                       В корзину

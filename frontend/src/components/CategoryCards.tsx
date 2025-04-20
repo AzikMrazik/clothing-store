@@ -139,8 +139,8 @@ const CategoryCards: React.FC<CategoryCardsProps> = ({ onCategoryChange }) => {
                     cursor: 'pointer',
                     display: 'flex',
                     flexDirection: 'column',
-                    height: '100%',
-                    // Исправление перекрытия и запада
+                    height: { xs: 180, sm: 220, md: 260, lg: 300 }, // увеличена высота карточки
+                    minHeight: { xs: 180, sm: 220, md: 260, lg: 300 },
                     boxShadow: 1,
                     '&:hover': { zIndex: 10, transform: 'translateY(-5px)', boxShadow: 6, transition: 'transform 0.3s ease' }
                   }}
