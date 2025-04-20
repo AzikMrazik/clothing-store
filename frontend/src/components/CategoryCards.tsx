@@ -141,7 +141,7 @@ const CategoryCards: React.FC<CategoryCardsProps> = ({ onCategoryChange }) => {
                 }}
                 onClick={() => handleCategoryClick(category._id)}
               >
-                <Box sx={{ position: 'relative', paddingTop: { xs: '70%', sm: '90%' }, overflow: 'hidden' }}>
+                <Box sx={{ position: 'relative', paddingTop: { xs: '80%', sm: '95%' }, overflow: 'hidden' }}>
                   {category.imageUrl && (
                     <CardMedia
                       component="img"
