@@ -27,7 +27,8 @@ import {
   OutlinedInput,
   Checkbox,
   ListItemText,
-  SelectChangeEvent
+  SelectChangeEvent,
+  Autocomplete
 } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Edit, Delete } from '@mui/icons-material';
@@ -61,11 +62,16 @@ type ProductForm = {
   images: string[];
   videoUrl?: string;
   categories: string[];
+  sizes?: string[];    // available sizes
+  colors?: string[];   // available colors
   newCategory?: string;
   newCategorySelected?: boolean;
 };
 
 const AdminPanel = () => {
+  // Static options for sizes and colors
+  const sizeOptions = ['XS','S','M','L','XL','XXL'];
+  const colorOptions = ['Белый','Черный','Красный','Синий','Зеленый','Желтый'];
   const [products, setProducts] = useState<Product[]>([]);
   const [open, setOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<ProductForm | null>(null);
@@ -121,6 +127,8 @@ const AdminPanel = () => {
         images: product.images || [],
         videoUrl: product.videoUrl,
         categories: product.categories || [],
+        sizes: product.sizes || [],
+        colors: product.colors || []
       });
     } else {
       setEditingProduct({
@@ -130,6 +138,8 @@ const AdminPanel = () => {
         images: [],
         videoUrl: '',
         categories: [],
+        sizes: [],
+        colors: []
       });
     }
     setOpen(true);
@@ -215,7 +225,9 @@ const AdminPanel = () => {
     e.preventDefault();
     
     if (!editingProduct?.name || !editingProduct?.price || !editingProduct?.description || 
-        !editingProduct?.images?.length || !(editingProduct?.categories && editingProduct.categories.length > 0)) {
+        !editingProduct?.images?.length || !(editingProduct?.categories && editingProduct.categories.length > 0) ||
+        !(editingProduct?.sizes && editingProduct.sizes.length > 0) ||
+        !(editingProduct?.colors && editingProduct.colors.length > 0)) {
       showNotification('Заполните все обязательные поля и добавьте хотя бы одно фото', 'error');
       return;
     }
@@ -224,6 +236,8 @@ const AdminPanel = () => {
       const finalData = {
         ...editingProduct,
         category: editingProduct.categories[0],
+        sizes: editingProduct.sizes,
+        colors: editingProduct.colors
       };
 
       const url = editingProduct._id 
@@ -396,6 +410,27 @@ const AdminPanel = () => {
               </Button>
             </Box>
           )}
+
+          <Autocomplete
+            multiple
+            freeSolo
+            options={sizeOptions}
+            value={editingProduct?.sizes || []}
+            onChange={(_, v) => setEditingProduct(prev => prev ? { ...prev, sizes: v } : prev)}
+            renderInput={(params) => (
+              <TextField {...params} label="Размеры" margin="normal" />
+            )}
+          />
+          <Autocomplete
+            multiple
+            freeSolo
+            options={colorOptions}
+            value={editingProduct?.colors || []}
+            onChange={(_, v) => setEditingProduct(prev => prev ? { ...prev, colors: v } : prev)}
+            renderInput={(params) => (
+              <TextField {...params} label="Цвета" margin="normal" />
+            )}
+          />
         </Box>
       </DialogContent>
       <DialogActions>

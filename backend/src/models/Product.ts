@@ -43,6 +43,15 @@ const ProductSchema = new mongoose.Schema({
     type: [String],
     default: [],
     required: true
+  },
+  // New fields for sizes and colors
+  sizes: {
+    type: [String],
+    default: []
+  },
+  colors: {
+    type: [String],
+    default: []
   }
 }, {
   timestamps: true

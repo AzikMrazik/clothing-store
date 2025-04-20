@@ -5,12 +5,16 @@ export interface Product {
   description: string;
   images: string[]; // Новый массив фото, первая — основная
   categories?: string[];
+  sizes?: string[];  // available sizes
+  colors?: string[]; // available colors
   characteristics?: Array<{ name: string; value: string }>;
   videoUrl?: string;
 }
 
 export interface CartItem extends Product {
   quantity: number;
+  selectedSize?: string;  // chosen size
+  selectedColor?: string; // chosen color
 }
 
 // Обновляем интерфейс корзины, добавляем поля для работы с доставкой и промокодами

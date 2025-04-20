@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect, useState } from 'react';
 import { useNotification } from './NotificationContext';
-import { Cart, CartItem, Product, PromoCode } from '../types/models';
+import { Cart, CartItem, PromoCode } from '../types/models';
 import { CartStorageService } from '../services/CartStorageService';
 
 interface CartState extends Cart {
@@ -31,7 +31,7 @@ type CartAction =
 
 const CartContext = createContext<{
   cart: CartState;
-  addToCart: (product: Product & { quantity: number }) => void;
+  addToCart: (product: CartItem) => void;
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
@@ -201,7 +201,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => clearTimeout(timeoutId);
   }, [cart.items, cart.appliedPromoCode, cart.discount, cart.deliveryCost, initialized]);
 
-  const addToCart = async (product: Product & { quantity: number }) => {
+  const addToCart = async (product: CartItem) => {
     try {
       // Optimistic update
       dispatch({ type: 'ADD_ITEM', payload: product });

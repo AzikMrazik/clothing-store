@@ -90,7 +90,7 @@ router.get('/:id', asyncHandler(async (req: Request, res: Response): Promise<any
 router.post('/', asyncHandler(async (req: Request, res: Response): Promise<any> => {
   try {
     console.log('POST /products - Creating new product with data:', JSON.stringify(req.body, null, 2));
-    const { name, price, description, images, categories, newCategory, videoUrl } = req.body;
+    const { name, price, description, images, categories, newCategory, videoUrl, sizes, colors } = req.body;
 
     let finalCategories: string[] = [];
     if (categories && Array.isArray(categories) && categories.length > 0) {
@@ -104,6 +104,10 @@ router.post('/', asyncHandler(async (req: Request, res: Response): Promise<any> 
     if (!images || !Array.isArray(images) || images.length === 0) {
       return res.status(400).json({ message: 'At least one image is required' });
     }
+    // Process sizes and colors
+    const finalSizes: string[] = Array.isArray(sizes) ? sizes as string[] : [];
+    const finalColors: string[] = Array.isArray(colors) ? colors as string[] : [];
+
     const productData: any = {
       name,
       price,
@@ -112,7 +116,9 @@ router.post('/', asyncHandler(async (req: Request, res: Response): Promise<any> 
       images,
       category: finalCategories[0],
       categories: finalCategories,
-      videoUrl
+      videoUrl,
+      sizes: finalSizes,
+      colors: finalColors
     };
     const product = new Product(productData);
     const validationError = product.validateSync();
@@ -148,7 +154,7 @@ router.post('/upload', upload.single('file'), validateUploadedFiles, asyncHandle
 // Update a product
 router.put('/:id', asyncHandler(async (req: Request, res: Response): Promise<any> => {
   try {
-    const { name, price, description, images, categories, newCategory, videoUrl } = req.body;
+    const { name, price, description, images, categories, newCategory, videoUrl, sizes, colors } = req.body;
     let finalCategories: string[] = [];
     if (categories && Array.isArray(categories) && categories.length > 0) {
       finalCategories = categories as string[];
@@ -161,6 +167,9 @@ router.put('/:id', asyncHandler(async (req: Request, res: Response): Promise<any
     if (!images || !Array.isArray(images) || images.length === 0) {
       return res.status(400).json({ message: 'At least one image is required' });
     }
+    // Process sizes and colors
+    const finalSizes: string[] = Array.isArray(sizes) ? sizes as string[] : [];
+    const finalColors: string[] = Array.isArray(colors) ? colors as string[] : [];
     const updateData: any = {
       name,
       price,
@@ -169,7 +178,9 @@ router.put('/:id', asyncHandler(async (req: Request, res: Response): Promise<any
       images,
       category: finalCategories[0],
       categories: finalCategories,
-      videoUrl
+      videoUrl,
+      sizes: finalSizes,
+      colors: finalColors
     };
     const product = await Product.findByIdAndUpdate(
       req.params.id,

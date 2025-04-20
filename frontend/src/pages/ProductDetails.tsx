@@ -28,6 +28,9 @@ const ProductDetails = () => {
   const [product, setProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [quantity, setQuantity] = useState(1);
+  // New states for selected size and color
+  const [selectedSize, setSelectedSize] = useState<string>('');
+  const [selectedColor, setSelectedColor] = useState<string>('');
   const { addToCart } = useCart();
   const { call, error } = useApi();
   const { showNotification } = useNotification();
@@ -40,6 +43,9 @@ const ProductDetails = () => {
     // Загружаем похожие товары, если у нас есть информация о текущем товаре
     if (product) {
       fetchRelatedProducts();
+      // Initialize default size and color
+      if (product.sizes && product.sizes.length) setSelectedSize(product.sizes[0]);
+      if (product.colors && product.colors.length) setSelectedColor(product.colors[0]);
     }
   }, [product]);
 
@@ -87,7 +93,7 @@ const ProductDetails = () => {
 
   const handleAddToCart = () => {
     if (product) {
-      addToCart({ ...product, quantity });
+      addToCart({ ...product, quantity, selectedSize, selectedColor });
       showNotification('Товар добавлен в корзину', 'success');
       navigate('/cart');
     }
@@ -212,6 +218,41 @@ const ProductDetails = () => {
             >
               {product.description}
             </Typography>
+
+            {/* Size selector */}
+            {product.sizes && product.sizes.length > 0 && (
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="subtitle1">Размер:</Typography>
+                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
+                  {product.sizes.map(size => (
+                    <Chip
+                      key={size}
+                      label={size}
+                      clickable
+                      color={selectedSize === size ? 'primary' : 'default'}
+                      onClick={() => setSelectedSize(size)}
+                    />
+                  ))}
+                </Box>
+              </Box>
+            )}
+            {/* Color selector */}
+            {product.colors && product.colors.length > 0 && (
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="subtitle1">Цвет:</Typography>
+                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
+                  {product.colors.map(color => (
+                    <Chip
+                      key={color}
+                      label={color}
+                      clickable
+                      variant={selectedColor === color ? 'filled' : 'outlined'}
+                      onClick={() => setSelectedColor(color)}
+                    />
+                  ))}
+                </Box>
+              </Box>
+            )}
 
             {/* Add to cart section */}
             <Box sx={{ 
