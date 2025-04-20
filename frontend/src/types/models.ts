@@ -54,10 +54,7 @@ export interface Category {
 export interface PromoOffer {
   _id: string;
   title: string;
-  description: string;
   imageUrl: string;
-  linkUrl: string;
-  buttonText: string;
   order: number;
   startDate: Date;
   endDate: Date;

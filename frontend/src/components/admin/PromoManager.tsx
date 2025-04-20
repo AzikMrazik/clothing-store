@@ -33,7 +33,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import ImageIcon from '@mui/icons-material/Image';
-import LinkIcon from '@mui/icons-material/Link';
 import { API_URL } from '../../config';
 
 import { PromoOffer } from '../../types/models';
@@ -510,7 +509,7 @@ const PromoManager: React.FC = () => {
               {formData.imageUrl && (
                 <Box sx={{ mb: 2 }}>
                   <Typography variant="subtitle2" gutterBottom>
-                    Предпросмотр:
+                    Предпросмотр баннера:
                   </Typography>
                   <Card sx={{ maxWidth: 600, mx: 'auto' }}>
                     <CardMedia
@@ -521,14 +520,6 @@ const PromoManager: React.FC = () => {
                     />
                     <CardContent>
                       <Typography variant="h6">{formData.title}</Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {formData.description}
-                      </Typography>
-                      <Box sx={{ mt: 2 }}>
-                        <Button variant="contained" size="small">
-                          {formData.buttonText || 'Подробнее'}
-                        </Button>
-                      </Box>
                     </CardContent>
                   </Card>
                 </Box>
