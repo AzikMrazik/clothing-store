@@ -9,6 +9,8 @@ import {
   Container
 } from '@mui/material';
 import Slider from 'react-slick';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { motion } from 'framer-motion';
@@ -58,6 +60,34 @@ const CategoryCards: React.FC<CategoryCardsProps> = ({ onCategoryChange }) => {
     }
   };
 
+  // Custom arrow components for manual scroll
+  const NextArrow = (props: any) => {
+    const { className, style, onClick } = props;
+    return (
+      <Box
+        className={className}
+        sx={{ zIndex: 2, '&:hover': { color: 'primary.main' } }}
+        style={style}
+        onClick={onClick}
+      >
+        <ArrowForwardIosIcon />
+      </Box>
+    );
+  };
+  const PrevArrow = (props: any) => {
+    const { className, style, onClick } = props;
+    return (
+      <Box
+        className={className}
+        sx={{ zIndex: 2, '&:hover': { color: 'primary.main' } }}
+        style={style}
+        onClick={onClick}
+      >
+        <ArrowBackIosNewIcon />
+      </Box>
+    );
+  };
+
   if (loading) {
     return <Box sx={{ p: 2, display: 'flex', justifyContent: 'center' }}><Loading /></Box>;
   }
@@ -70,15 +100,18 @@ const CategoryCards: React.FC<CategoryCardsProps> = ({ onCategoryChange }) => {
   const settings = {
     infinite: categories.length > 1,
     speed: 600,
-    slidesToShow: Math.min(categories.length, 4),
+    slidesToShow: Math.min(categories.length, 6),
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 5000,
     arrows: true,
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />,
     responsive: [
-      { breakpoint: 1200, settings: { slidesToShow: Math.min(categories.length, 3) } },
-      { breakpoint: 900, settings: { slidesToShow: Math.min(categories.length, 2) } },
-      { breakpoint: 600, settings: { slidesToShow: 1 } }
+      { breakpoint: 1200, settings: { slidesToShow: Math.min(categories.length, 5) } },
+      { breakpoint: 900, settings: { slidesToShow: Math.min(categories.length, 4) } },
+      { breakpoint: 600, settings: { slidesToShow: 2 } },
+      { breakpoint: 480, settings: { slidesToShow: 1 } }
     ]
   };
 
@@ -108,7 +141,7 @@ const CategoryCards: React.FC<CategoryCardsProps> = ({ onCategoryChange }) => {
                 }}
                 onClick={() => handleCategoryClick(category._id)}
               >
-                <Box sx={{ position: 'relative', paddingTop: '100%', overflow: 'hidden' }}>
+                <Box sx={{ position: 'relative', paddingTop: '80%', overflow: 'hidden' }}>
                   {category.imageUrl && (
                     <CardMedia
                       component="img"
