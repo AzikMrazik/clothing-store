@@ -136,32 +136,29 @@ const Catalog = () => {
   // Удаляем все проверки product.category, используем только product.categories (массив)
   const filteredProducts = useMemo(() => {
     return products
-      .filter(product => 
-        (!searchQuery || 
+      .filter(product => {
+        // filter by search query
+        const searchMatch = !searchQuery ||
           product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          product.description.toLowerCase().includes(searchQuery.toLowerCase())
-        ) &&
-        (!selectedCategory || 
-          (product.categories && product.categories.includes(selectedCategory))
-        ) &&
-        product.price >= priceRange[0] &&
-        product.price <= priceRange[1]
-      )
+          product.description.toLowerCase().includes(searchQuery.toLowerCase());
+        // filter by category or categories
+        const categoryMatch = selectedCategories.length > 0
+          ? (product.categories || []).some(c => selectedCategories.includes(c))
+          : (!selectedCategory || (product.categories || []).includes(selectedCategory));
+        // filter by price range
+        const priceMatch = product.price >= priceRange[0] && product.price <= priceRange[1];
+        return searchMatch && categoryMatch && priceMatch;
+      })
       .sort((a, b) => {
         switch (sortBy) {
-          case 'price_asc':
-            return a.price - b.price;
-          case 'price_desc':
-            return b.price - a.price;
-          case 'name_asc':
-            return a.name.localeCompare(b.name);
-          case 'name_desc':
-            return b.name.localeCompare(a.name);
-          default:
-            return 0;
+          case 'price_asc': return a.price - b.price;
+          case 'price_desc': return b.price - a.price;
+          case 'name_asc': return a.name.localeCompare(b.name);
+          case 'name_desc': return b.name.localeCompare(a.name);
+          default: return 0;
         }
       });
-  }, [products, searchQuery, selectedCategory, priceRange, sortBy, categoryMap]);
+  }, [products, searchQuery, selectedCategory, selectedCategories, priceRange, sortBy, categoryMap]);
 
   const handleAddToCart = (product: Product) => {
     addToCart({ ...product, quantity: 1 });

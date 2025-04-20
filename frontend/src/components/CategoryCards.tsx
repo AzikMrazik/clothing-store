@@ -1,14 +1,16 @@
 // filepath: c:\Programming\clothing-store\frontend\src\components\CategoryCards.tsx
 import React, { useState, useEffect } from 'react';
 import { 
-  Box, 
-  Grid,
+  Box,
   Card,
   CardContent,
   CardMedia,
   Typography,
   Container
 } from '@mui/material';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 import { motion } from 'framer-motion';
 import { Category } from '../types/models';
 import { CategoryService } from '../services/CategoryService';
@@ -64,86 +66,65 @@ const CategoryCards: React.FC<CategoryCardsProps> = ({ onCategoryChange }) => {
     return null;
   }
 
+  // Slider settings for horizontal scrolling categories
+  const settings = {
+    infinite: categories.length > 1,
+    speed: 600,
+    slidesToShow: Math.min(categories.length, 4),
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 5000,
+    arrows: true,
+    responsive: [
+      { breakpoint: 1200, settings: { slidesToShow: Math.min(categories.length, 3) } },
+      { breakpoint: 900, settings: { slidesToShow: Math.min(categories.length, 2) } },
+      { breakpoint: 600, settings: { slidesToShow: 1 } }
+    ]
+  };
+
   return (
     <Container maxWidth="xl">
       <Box sx={{ my: 3 }}>
         <Typography variant="h5" gutterBottom sx={{ textAlign: 'center', mb: 3 }}>
           Категории товаров
         </Typography>
-        <Grid container spacing={3} sx={{ 
-          justifyContent: 'flex-start',
-          width: '100%',
-          margin: '0 auto',
-          display: 'flex',
-          flexWrap: 'wrap'
-        }}>
+        {/* Horizontal scrollable slider for categories */}
+        <Slider {...settings}>
           {categories.map((category) => (
-            <Box key={category._id} 
+            <Box key={category._id}
               component={motion.div}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
-              sx={{ 
-                display: 'flex',
-                alignItems: 'stretch',
-                width: { xs: 'calc(50% - 16px)', sm: 'calc(33.33% - 16px)', md: 'calc(25% - 16px)', lg: 'calc(16.66% - 16px)' },
-                maxWidth: { xs: 'calc(50% - 16px)', sm: 'calc(33.33% - 16px)', md: 'calc(25% - 16px)', lg: 'calc(16.66% - 16px)' },
-                paddingLeft: '0 !important',
-                paddingTop: '0 !important',
-                marginBottom: { xs: 2, sm: 3 },
-                boxSizing: 'border-box'
-              }}
+              sx={{ px: 1 }}
             >
-              <Card 
-                sx={{ 
+              <Card
+                sx={{
                   cursor: 'pointer',
-                  width: '100%',
-                  height: '100%',
                   display: 'flex',
                   flexDirection: 'column',
-                  aspectRatio: '3/4', // Устанавливаем соотношение сторон 3:4 (ширина:высота)
-                  '&:hover': {
-                    transform: 'translateY(-5px)',
-                    boxShadow: 6,
-                    transition: 'transform 0.3s ease, box-shadow 0.3s ease'
-                  }
+                  aspectRatio: '3/4',
+                  '&:hover': { transform: 'translateY(-5px)', boxShadow: 6, transition: 'transform 0.3s ease' }
                 }}
                 onClick={() => handleCategoryClick(category._id)}
               >
-                <Box sx={{ 
-                  position: 'relative',
-                  paddingTop: '100%', // Квадратное соотношение сторон
-                  overflow: 'hidden'
-                }}>
+                <Box sx={{ position: 'relative', paddingTop: '100%', overflow: 'hidden' }}>
                   {category.imageUrl && (
                     <CardMedia
                       component="img"
                       image={category.imageUrl}
                       alt={category.name}
-                      sx={{ 
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        transition: 'transform 0.3s ease',
-                        '&:hover': {
-                          transform: 'scale(1.05)'
-                        }
-                      }}
+                      sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
                     />
                   )}
                 </Box>
                 <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>
-                  <Typography variant="h6">
-                    {category.name}
-                  </Typography>
+                  <Typography variant="h6">{category.name}</Typography>
                 </CardContent>
               </Card>
             </Box>
           ))}
-        </Grid>
+        </Slider>
       </Box>
     </Container>
   );
