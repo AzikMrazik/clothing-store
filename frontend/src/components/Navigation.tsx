@@ -84,7 +84,7 @@ const Navigation = () => {
   };
 
   return (
-    <AppBar position="sticky" elevation={2}>
+    <AppBar position="sticky" elevation={2} sx={{ overflowX: 'hidden' }}>
       <Toolbar>
         <Typography 
           variant="h6" 
