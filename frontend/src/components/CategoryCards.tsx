@@ -117,7 +117,7 @@ const CategoryCards: React.FC<CategoryCardsProps> = ({ onCategoryChange }) => {
 
   return (
     <Container maxWidth="xl">
-      <Box sx={{ my: 3 }}>
+      <Box sx={{ my: 1, mb: 4 }}>
         <Typography variant="h5" gutterBottom sx={{ textAlign: 'center', mb: 3 }}>
           Категории товаров
         </Typography>

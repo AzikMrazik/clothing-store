@@ -425,18 +425,18 @@ const Catalog = () => {
                     borderColor: 'divider',
                     mt: 'auto',
                     display: 'flex',
-                    flexDirection: { xs: 'row', sm: 'column' },
-                    alignItems: { xs: 'center', sm: 'stretch' },
+                    flexDirection: { xs: 'column', sm: 'column', md: 'column' },
+                    alignItems: { xs: 'stretch', sm: 'stretch', md: 'stretch' },
                     gap: 1,
-                    position: { xs: 'sticky', sm: 'static' },
-                    bottom: { xs: 0, sm: 'unset' },
-                    bgcolor: { xs: 'background.paper', sm: 'unset' },
+                    position: { xs: 'static', md: 'sticky' },
+                    bottom: { xs: 'unset', md: 0 },
+                    bgcolor: { xs: 'unset', md: 'background.paper' },
                     zIndex: 2
                   }}>
                     <Typography
                       variant="h6"
                       color="primary"
-                      sx={{ fontWeight: 600, mr: { xs: 2, sm: 0 } }}
+                      sx={{ fontWeight: 600, mb: { xs: 1, md: 0 }, textAlign: { xs: 'left', md: 'center' } }}
                     >
                       {Math.round(product.price)} ₽
                     </Typography>
@@ -444,9 +444,11 @@ const Catalog = () => {
                       variant="contained"
                       fullWidth
                       sx={{
-                        mt: { xs: 0, sm: 'auto' },
-                        position: { xs: 'sticky', sm: 'static' },
-                        bottom: { xs: 0, sm: 'unset' },
+                        mt: 0,
+                        width: '100%',
+                        alignSelf: 'center',
+                        position: { xs: 'static', md: 'sticky' },
+                        bottom: { xs: 'unset', md: 0 },
                         zIndex: 2
                       }}
                       onClick={(e) => { e.stopPropagation(); handleAddToCart(product); }}

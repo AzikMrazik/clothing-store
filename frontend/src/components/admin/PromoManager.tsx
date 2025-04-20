@@ -494,6 +494,30 @@ const PromoManager: React.FC = () => {
                   </Card>
                 </Box>
               )}
+              <Button variant="outlined" component="label" sx={{ mb: 2 }}>
+                Загрузить изображение
+                <input type="file" hidden accept="image/*" onChange={async (e) => {
+                  if (!e.target.files || e.target.files.length === 0) return;
+                  const file = e.target.files[0];
+                  const form = new FormData();
+                  form.append('file', file);
+                  try {
+                    const res = await fetch('/api/promos/upload', {
+                      method: 'POST',
+                      credentials: 'include',
+                      body: form
+                    });
+                    const data = await res.json();
+                    if (data.url) {
+                      setFormData(prev => ({ ...prev, imageUrl: data.url }));
+                    } else {
+                      showNotification('Ошибка загрузки изображения', 'error');
+                    }
+                  } catch (err) {
+                    showNotification('Ошибка загрузки изображения', 'error');
+                  }
+                }} />
+              </Button>
             </Box>
           </LocalizationProvider>
         </DialogContent>
