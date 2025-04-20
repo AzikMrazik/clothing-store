@@ -182,8 +182,8 @@ const Catalog = () => {
       
       {/* Отображаем карточки категорий только когда не выбрана ни одна категория */}
       {!selectedCategory && <CategoryCards onCategoryChange={setSelectedCategory} />}
-      
-      <Container maxWidth="xl" sx={{ py: 2 }}>
+      {/* Увеличиваем отступ между категориями и фильтрами */}
+      <Container maxWidth="xl" sx={{ py: 2, mt: !selectedCategory ? 0 : 0, mb: !selectedCategory ? 6 : 0 }}>
         {/* Filter and sort section */}
         <Box sx={{ 
           display: 'flex', 
@@ -400,24 +400,8 @@ const Catalog = () => {
                     >
                       {product.name}
                     </Typography>
-                    
-                    <Typography 
-                      variant="body2" 
-                      color="text.secondary"
-                      sx={{ 
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        display: '-webkit-box',
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: 'vertical',
-                        lineHeight: '1.3',
-                        fontSize: { xs: '0.75rem', sm: '0.8rem' }
-                      }}
-                    >
-                      {product.description || 'Нет описания'}
-                    </Typography>
+                    {/* Описание товара убрано */}
                   </Box>
-                  
                   {/* Блок с ценой и кнопкой всегда внизу карточки */}
                   <Box sx={{
                     pt: 1,

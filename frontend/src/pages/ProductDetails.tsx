@@ -456,24 +456,8 @@ const ProductDetails = () => {
                       >
                         {relatedProduct.name}
                       </Typography>
-                      
-                      <Typography 
-                        variant="body2" 
-                        color="text.secondary"
-                        sx={{ 
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          display: '-webkit-box',
-                          WebkitLineClamp: 2,
-                          WebkitBoxOrient: 'vertical',
-                          lineHeight: '1.3',
-                          fontSize: { xs: '0.75rem', sm: '0.8rem' }
-                        }}
-                      >
-                        {relatedProduct.description || 'Нет описания'}
-                      </Typography>
+                      {/* Описание товара убрано */}
                     </Box>
-                    
                     {/* Блок с ценой и кнопкой всегда внизу карточки */}
                     <Box sx={{ 
                       display: 'flex', 
