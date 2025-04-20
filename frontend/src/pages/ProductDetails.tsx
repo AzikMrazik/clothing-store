@@ -137,8 +137,8 @@ const ProductDetails = () => {
     return <Loading />;
   }
 
-  // Determine available groups: only shoes for shoe products, else exclude 'Обувь'
-  const sizeGroupOptions = product && ((product.categories?.includes('Обувь') || product.category === 'Обувь'))
+  // Determine available groups: if categories include 'Обувь', only show shoes, else exclude shoes
+  const sizeGroupOptions = product?.categories?.includes('Обувь')
     ? ['Обувь']
     : Object.keys(sizeGroupMapping).filter(group => group !== 'Обувь');
 
@@ -160,7 +160,7 @@ const ProductDetails = () => {
       }}>
         <Grid container spacing={{ xs: 2, md: 4 }}>
           {/* Image section */}
-          <Grid item xs={12} md={6}>
+          <Grid item component="div" xs={12} md={6}>
             <Box sx={{ 
               mb: { xs: 2, md: 0 },
               width: '100%',
@@ -175,7 +175,7 @@ const ProductDetails = () => {
           </Grid>
 
           {/* Product info section */}
-          <Grid item xs={12} md={6}>
+          <Grid item component="div" xs={12} md={6}>
             <Box sx={{
               display: 'flex',
               flexDirection: 'column',
@@ -240,14 +240,14 @@ const ProductDetails = () => {
               </Typography>
 
               {/* Size group selection */}
-              <FormControl fullWidth margin="normal" sx={{ width: '100%' }}>
+              <FormControl fullWidth margin="normal">
                 <InputLabel>Группа размеров</InputLabel>
                 <Select
+                  fullWidth
                   value={selectedGroup}
                   label="Группа размеров"
                   onChange={e => { setSelectedGroup(e.target.value); setSelectedSize(''); }}
-                  sx={{ width: '100%' }}
-                  MenuProps={{ PaperProps: { sx: { width: '100%' } } }}
+                  MenuProps={{ PaperProps: { sx: { maxWidth: '100%' } } }}
                 >
                   {sizeGroupOptions.map(gr => (
                     <MenuItem key={gr} value={gr}>{gr}</MenuItem>
@@ -256,7 +256,7 @@ const ProductDetails = () => {
               </FormControl>
               {/* Size options */}
               {selectedGroup && (
-                <Box sx={{ mb: 2, width: '100%' }}>
+                <Box sx={{ mb: 2, width: '100%', maxWidth: '100%' }}>
                   <Typography variant="subtitle1">Размер:</Typography>
                   <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
                     {sizeGroupMapping[selectedGroup].map(size => (
@@ -273,7 +273,7 @@ const ProductDetails = () => {
               )}
               {/* Color selector */}
               {product.colors && product.colors.length > 0 && (
-                <Box sx={{ mb: 2, width: '100%' }}>
+                <Box sx={{ mb: 2, width: '100%', maxWidth: '100%' }}>
                   <Typography variant="subtitle1">Цвет:</Typography>
                   <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
                     {product.colors.map(color => (
