@@ -20,8 +20,7 @@ import {
   Card,
   CardContent,
   CardMedia,
-  FormHelperText,
-  InputAdornment
+  FormHelperText
 } from '@mui/material';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
@@ -32,7 +31,6 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
-import LinkIcon from '@mui/icons-material/Link';
 import { API_URL } from '../../config';
 
 import { PromoOffer } from '../../types/models';
@@ -55,7 +53,6 @@ const PromoManager: React.FC = () => {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { showNotification } = useNotification();
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     fetchPromos();
@@ -148,16 +145,6 @@ const PromoManager: React.FC = () => {
         [name]: date
       }));
     }
-  };
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append('file', file);
-    const res = await fetch(`${API_URL}/promos/upload`, { method: 'POST', body: formData });
-    const data = await res.json();
-    setFormData(prev => ({ ...prev, imageUrl: data.url }));
   };
 
   const handleSubmit = async () => {
