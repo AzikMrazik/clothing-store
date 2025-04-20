@@ -420,16 +420,7 @@ const AdminPanel = () => {
             </Box>
           )}
 
-          <Autocomplete
-            multiple
-            freeSolo
-            options={sizeOptions}
-            value={editingProduct?.sizes || []}
-            onChange={(_, v) => setEditingProduct(prev => prev ? { ...prev, sizes: v } : prev)}
-            renderInput={(params) => (
-              <TextField {...params} label="Размеры" margin="normal" />
-            )}
-          />
+          {/* Removed manual sizes autocomplete; sizes managed by выбор группы размеров */}
           {/* Size pack selection */}
           <FormControl fullWidth margin="normal">
             <InputLabel>Группа размеров</InputLabel>

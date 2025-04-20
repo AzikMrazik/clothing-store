@@ -29,11 +29,12 @@ import { API_URL } from '../config';
 const ProductDetails = () => {
   const { id } = useParams();
   // Static size groups mapping
-  const sizeGroupOptions = ['Женские','Мужские','Детские'];
+  const sizeGroupOptions = ['Женские','Взрослые','Детские','Обувь'];
   const sizeGroupMapping: Record<string,string[]> = {
-    'Женские': ['XS','S','M','L','XL'],
-    'Мужские': ['S','M','L','XL','XXL'],
-    'Детские': ['XXS','XS','S','M']
+    'Взрослые': ['44','46','48','50','52','54','56','58','60','62','64','66','68','70'],
+    'Женские': ['38','40','42','44','46','48','50','52'],
+    'Детские': ['122','128','134','140','146','152','156','158','160','162','164'],
+    'Обувь': ['34','35','36','37','38','39','40','41','42','43','44','45','46','47'],
   };
   const navigate = useNavigate();
   const [product, setProduct] = useState<Product & { sizeGroup?: string } | null>(null);
