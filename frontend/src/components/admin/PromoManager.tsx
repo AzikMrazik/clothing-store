@@ -30,10 +30,11 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { ru } from 'date-fns/locale';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from '@mui/icons-material.Delete';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import ImageIcon from '@mui/icons-material.Image';
 import LinkIcon from '@mui/icons-material/Link';
-import ImageIcon from '@mui/icons-material/Image';
+import { API_URL } from '../../config';
 
 import { PromoOffer } from '../../types/models';
 import { PromoService } from '../../services/PromoService';
@@ -181,7 +182,7 @@ const PromoManager: React.FC = () => {
     const file = e.target.files[0];
     const formData = new FormData();
     formData.append('file', file);
-    const res = await fetch('/api/promos/upload', { method: 'POST', body: formData });
+    const res = await fetch(`${API_URL}/promos/upload`, { method: 'POST', body: formData });
     const data = await res.json();
     setFormData(prev => ({ ...prev, imageUrl: data.url }));
   };
@@ -396,25 +397,13 @@ const PromoManager: React.FC = () => {
                             <ListItemText
                               primary={
                                 <Typography variant="subtitle1" fontWeight="bold">
-                                  {promo.title} 
-                                  <Typography component="span" variant="body2" color="text.secondary" sx={{ ml: 1 }}>
-                                    ({status})
-                                  </Typography>
+                                  {promo.title} <Typography component="span" variant="body2" color="text.secondary" sx={{ ml: 1 }}>({status})</Typography>
                                 </Typography>
                               }
                               secondary={
-                                <>
-                                  <Typography variant="body2" color="text.secondary" noWrap>
-                                    {promo.description}
-                                  </Typography>
-                                  <Typography variant="body2" color="text.secondary">
-                                    С {formatDate(promo.startDate)} по {formatDate(promo.endDate)}
-                                  </Typography>
-                                  <Typography variant="body2" color="primary" component="div" sx={{ mt: 0.5 }}>
-                                    <LinkIcon fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />
-                                    {promo.linkUrl}
-                                  </Typography>
-                                </>
+                                <Typography variant="body2" color="text.secondary">
+                                  С {formatDate(promo.startDate)} по {formatDate(promo.endDate)}
+                                </Typography>
                               }
                             />
                           </Box>

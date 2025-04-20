@@ -122,42 +122,45 @@ const CategoryCards: React.FC<CategoryCardsProps> = ({ onCategoryChange }) => {
           Категории товаров
         </Typography>
         {/* Horizontal scrollable slider for categories */}
-        <Slider {...settings}>
-          {categories.map((category) => (
-            <Box key={category._id}
-              component={motion.div}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              sx={{ px: 1 }}
-            >
-              <Card
-                sx={{
-                  cursor: 'pointer',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  aspectRatio: '3/4',
-                  '&:hover': { transform: 'translateY(-5px)', boxShadow: 6, transition: 'transform 0.3s ease' }
-                }}
-                onClick={() => handleCategoryClick(category._id)}
+        <Box sx={{ '.slick-list': { overflow: 'visible !important' }, '.slick-track': { overflow: 'visible !important' } }}>
+          <Slider {...settings}>
+            {categories.map((category) => (
+              <Box key={category._id}
+                component={motion.div}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                sx={{ px: 1 }}
               >
-                <Box sx={{ position: 'relative', paddingTop: { xs: '80%', sm: '95%' }, overflow: 'hidden' }}>
-                  {category.imageUrl && (
-                    <CardMedia
-                      component="img"
-                      image={category.imageUrl}
-                      alt={category.name}
-                      sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
-                    />
-                  )}
-                </Box>
-                <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>
-                  <Typography variant="h6">{category.name}</Typography>
-                </CardContent>
-              </Card>
-            </Box>
-          ))}
-        </Slider>
+                <Card
+                  sx={{
+                    position: 'relative',
+                    zIndex: 1,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    '&:hover': { zIndex: 10, transform: 'translateY(-5px)', boxShadow: 6, transition: 'transform 0.3s ease' }
+                  }}
+                  onClick={() => handleCategoryClick(category._id)}
+                >
+                  <Box sx={{ position: 'relative', paddingTop: { xs: '80%', sm: '95%' }, overflow: 'hidden' }}>
+                    {category.imageUrl && (
+                      <CardMedia
+                        component="img"
+                        image={category.imageUrl}
+                        alt={category.name}
+                        sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    )}
+                  </Box>
+                  <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>
+                    <Typography variant="h6">{category.name}</Typography>
+                  </CardContent>
+                </Card>
+              </Box>
+            ))}
+          </Slider>
+        </Box>
       </Box>
     </Container>
   );
