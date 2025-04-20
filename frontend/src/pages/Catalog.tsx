@@ -428,10 +428,15 @@ const Catalog = () => {
                     flexDirection: { xs: 'column', sm: 'column', md: 'column' },
                     alignItems: { xs: 'stretch', sm: 'stretch', md: 'stretch' },
                     gap: 1,
-                    position: { xs: 'static', md: 'sticky' },
-                    bottom: { xs: 'unset', md: 0 },
-                    bgcolor: { xs: 'unset', md: 'background.paper' },
-                    zIndex: 2
+                    position: { xs: 'fixed', sm: 'static', md: 'static' },
+                    left: 0,
+                    bottom: 0,
+                    width: '100%',
+                    bgcolor: { xs: 'background.paper', sm: 'unset', md: 'unset' },
+                    zIndex: 2,
+                    boxShadow: { xs: 3, sm: 0, md: 0 },
+                    p: { xs: 2, sm: 0, md: 0 },
+                    borderRadius: { xs: '0 0 12px 12px', sm: 0, md: 0 }
                   }}>
                     <Typography
                       variant="h6"
@@ -447,9 +452,6 @@ const Catalog = () => {
                         mt: 0,
                         width: '100%',
                         alignSelf: 'center',
-                        position: { xs: 'static', md: 'sticky' },
-                        bottom: { xs: 'unset', md: 0 },
-                        zIndex: 2
                       }}
                       onClick={(e) => { e.stopPropagation(); handleAddToCart(product); }}
                     >

@@ -231,36 +231,52 @@ const PromoCodeManager: React.FC = () => {
 
     try {
       setLoading(true);
-
       if (editingPromoCode) {
         // Обновление существующего промокода
-        console.log(`Updating existing promo code with ID: ${editingPromoCode._id}`);
         await PromoService.updatePromoCode(editingPromoCode._id, formData);
         showNotification('Промокод успешно обновлен', 'success');
       } else {
         // Создание нового промокода
-        console.log("Creating new promo code with data:", JSON.stringify({
-          ...formData
-        }, null, 2));
-        
         try {
-          const result = await PromoService.createPromoCode({
-            ...formData
-          });
-          console.log("Promo code created successfully:", result);
+          const result = await PromoService.createPromoCode({ ...formData });
           showNotification('Промокод успешно создан', 'success');
-        } catch (innerError) {
-          console.error("Inner error during promo code creation:", innerError);
-          throw innerError;
+        } catch (innerError: any) {
+          // Если сервер вернул ошибку валидации, показать её пользователю
+          if (innerError instanceof Response) {
+            let errorText = 'Ошибка при сохранении промокода';
+            try {
+              const errJson = await innerError.json();
+              if (errJson && errJson.errors && Array.isArray(errJson.errors)) {
+                errorText = errJson.errors.join(', ');
+              } else if (errJson && errJson.message) {
+                errorText = errJson.message;
+              }
+            } catch {}
+            showNotification(errorText, 'error');
+            return;
+          }
+          showNotification(innerError?.message || 'Ошибка при сохранении промокода', 'error');
+          return;
         }
       }
-
       handleCloseDialog();
       fetchPromoCodes();
-    } catch (error) {
-      console.error('Error during promo code submission:', error);
-      console.error('Error details:', error instanceof Error ? error.message : 'Unknown error');
-      showNotification('Ошибка при сохранении промокода', 'error');
+    } catch (error: any) {
+      // Если сервер вернул ошибку валидации, показать её пользователю
+      if (error instanceof Response) {
+        let errorText = 'Ошибка при сохранении промокода';
+        try {
+          const errJson = await error.json();
+          if (errJson && errJson.errors && Array.isArray(errJson.errors)) {
+            errorText = errJson.errors.join(', ');
+          } else if (errJson && errJson.message) {
+            errorText = errJson.message;
+          }
+        } catch {}
+        showNotification(errorText, 'error');
+        return;
+      }
+      showNotification(error?.message || 'Ошибка при сохранении промокода', 'error');
     } finally {
       setLoading(false);
     }
