@@ -428,7 +428,12 @@ const AdminPanel = () => {
             value={editingProduct?.colors || []}
             onChange={(_, v) => setEditingProduct(prev => prev ? { ...prev, colors: v } : prev)}
             renderInput={(params) => (
-              <TextField {...params} label="Цвета" margin="normal" />
+              <TextField
+                {...params}
+                label="Цвета"
+                margin="normal"
+                placeholder="Выберите из списка или введите название вручную"
+              />
             )}
           />
         </Box>

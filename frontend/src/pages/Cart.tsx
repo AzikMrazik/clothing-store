@@ -244,6 +244,17 @@ const Cart = () => {
                         <Typography variant="subtitle1" gutterBottom>
                           {item.name}
                         </Typography>
+                        {/* Show chosen size and color */}
+                        {item.selectedSize && (
+                          <Typography variant="body2" color="text.secondary">
+                            Размер: {item.selectedSize}
+                          </Typography>
+                        )}
+                        {item.selectedColor && (
+                          <Typography variant="body2" color="text.secondary">
+                            Цвет: {item.selectedColor}
+                          </Typography>
+                        )}
                         <Typography variant="body2" color="text.secondary">
                           {Math.round(item.price)} ₽
                         </Typography>
