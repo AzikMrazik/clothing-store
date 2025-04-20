@@ -32,7 +32,7 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
-import ImageIcon from '@mui/icons-material/Image';
+import LinkIcon from '@mui/icons-material/Link';
 import { API_URL } from '../../config';
 
 import { PromoOffer } from '../../types/models';
@@ -50,7 +50,8 @@ const PromoManager: React.FC = () => {
     imageUrl: '',
     startDate: new Date(),
     endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // По умолчанию +30 дней
-    isActive: true
+    isActive: true,
+    targetUrl: ''
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { showNotification } = useNotification();
@@ -67,7 +68,8 @@ const PromoManager: React.FC = () => {
         imageUrl: editingPromo.imageUrl,
         startDate: new Date(editingPromo.startDate),
         endDate: new Date(editingPromo.endDate),
-        isActive: editingPromo.isActive
+        isActive: editingPromo.isActive,
+        targetUrl: editingPromo.targetUrl || ''
       });
     } else {
       resetForm();
@@ -94,7 +96,8 @@ const PromoManager: React.FC = () => {
       imageUrl: '',
       startDate: new Date(),
       endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-      isActive: true
+      isActive: true,
+      targetUrl: ''
     });
     setErrors({});
   };
@@ -170,7 +173,8 @@ const PromoManager: React.FC = () => {
           imageUrl: formData.imageUrl,
           startDate: formData.startDate,
           endDate: formData.endDate,
-          isActive: formData.isActive
+          isActive: formData.isActive,
+          targetUrl: formData.targetUrl
         });
         showNotification('Промо-акция успешно обновлена', 'success');
       } else {
@@ -185,7 +189,8 @@ const PromoManager: React.FC = () => {
           startDate: formData.startDate,
           endDate: formData.endDate,
           isActive: formData.isActive,
-          order: maxOrder + 1
+          order: maxOrder + 1,
+          targetUrl: formData.targetUrl
         });
         showNotification('Промо-акция успешно создана', 'success');
       }
@@ -455,10 +460,20 @@ const PromoManager: React.FC = () => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <ImageIcon />
+                        <LinkIcon />
                       </InputAdornment>
                     ),
                   }}
+                />
+              </Box>
+              <Box sx={{ mb: 2 }}>
+                <TextField
+                  name="targetUrl"
+                  label="URL перехода (куда ведёт баннер)"
+                  fullWidth
+                  value={formData.targetUrl || ''}
+                  onChange={handleInputChange}
+                  helperText="Укажите ссылку, куда будет вести клик по баннеру"
                 />
               </Box>
               <Box sx={{ mb: 2 }}>

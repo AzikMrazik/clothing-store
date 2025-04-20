@@ -311,10 +311,11 @@ const Catalog = () => {
                 <Box 
                   sx={{ 
                     position: 'relative',
-                    paddingTop: { xs: '70%', sm: '80%' }, // сбалансированное пространство под изображение: 70% на моб и 80% на пк
+                    paddingTop: { xs: '80%', sm: '100%' }, // увеличено место для фото
                     width: '100%',
                     overflow: 'hidden',
-                    flexShrink: 0, // Предотвращает сжатие секции с изображением
+                    backgroundColor: 'background.paper',
+                    flexShrink: 0,
                   }}
                 >
                   <Box
@@ -347,7 +348,6 @@ const Catalog = () => {
                             transform: 'scale(1.05)'
                           }
                         }}
-                        onClick={() => navigate(`/product/${product._id}`)}
                       />
                     ) : (
                       <Box 
@@ -438,8 +438,8 @@ const Catalog = () => {
                     <Button
                       variant="contained"
                       fullWidth
+                      sx={{ position: 'sticky', bottom: 0, mt: 'auto' }}
                       onClick={(e) => { e.stopPropagation(); handleAddToCart(product); }}
-                      sx={{ fontSize: { xs: '0.75rem', sm: '0.8rem' } }}
                     >
                       В корзину
                     </Button>

@@ -312,6 +312,7 @@ const ProductDetails = () => {
                   fullWidth
                   onClick={handleAddToCart}
                   startIcon={<ShoppingCart />}
+                  sx={{ position: 'sticky', bottom: 0, mt: 'auto' }}
                 >
                   В корзину
                 </Button>

@@ -61,6 +61,7 @@ export interface PromoOffer {
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
+  targetUrl?: string; // добавлено поле для конечного url
 }
 
 // Новый интерфейс для промокодов

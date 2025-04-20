@@ -139,11 +139,14 @@ const CategoryCards: React.FC<CategoryCardsProps> = ({ onCategoryChange }) => {
                     cursor: 'pointer',
                     display: 'flex',
                     flexDirection: 'column',
+                    height: '100%',
+                    // Исправление перекрытия и запада
+                    boxShadow: 1,
                     '&:hover': { zIndex: 10, transform: 'translateY(-5px)', boxShadow: 6, transition: 'transform 0.3s ease' }
                   }}
                   onClick={() => handleCategoryClick(category._id)}
                 >
-                  <Box sx={{ position: 'relative', paddingTop: { xs: '80%', sm: '95%' }, overflow: 'hidden' }}>
+                  <Box sx={{ position: 'relative', paddingTop: { xs: '90%', sm: '110%' }, overflow: 'hidden' }}>
                     {category.imageUrl && (
                       <CardMedia
                         component="img"
