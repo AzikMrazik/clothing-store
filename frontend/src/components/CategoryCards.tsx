@@ -111,7 +111,7 @@ const CategoryCards: React.FC<CategoryCardsProps> = ({ onCategoryChange }) => {
       { breakpoint: 1200, settings: { slidesToShow: Math.min(categories.length, 5) } },
       { breakpoint: 900, settings: { slidesToShow: Math.min(categories.length, 4) } },
       { breakpoint: 600, settings: { slidesToShow: 2 } },
-      { breakpoint: 480, settings: { slidesToShow: 1 } }
+      { breakpoint: 480, settings: { slidesToShow: 2 } }
     ]
   };
 
@@ -141,7 +141,7 @@ const CategoryCards: React.FC<CategoryCardsProps> = ({ onCategoryChange }) => {
                 }}
                 onClick={() => handleCategoryClick(category._id)}
               >
-                <Box sx={{ position: 'relative', paddingTop: '80%', overflow: 'hidden' }}>
+                <Box sx={{ position: 'relative', paddingTop: { xs: '60%', sm: '80%' }, overflow: 'hidden' }}>
                   {category.imageUrl && (
                     <CardMedia
                       component="img"
