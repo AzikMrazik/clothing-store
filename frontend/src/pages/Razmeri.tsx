@@ -1,11 +1,13 @@
 import React from 'react';
-import { Container, Typography, Box, CardMedia, Button, Grid } from '@mui/material';
+import { Container, Typography, Box, CardMedia, Button } from '@mui/material';
+// removed Grid import, using Box grid layout instead
 
+// Replace these paths with your own filename(s) placed in public/images/
 const images = [
-  '/images/razmer1.jpg',
-  '/images/razmer2.jpg',
-  '/images/razmer3.jpg',
-  '/images/razmer4.jpg'
+  '/images/my-table-female.jpg',
+  '/images/my-table-male.jpg',
+  '/images/my-table-kids.jpg',
+  '/images/my-table-shoes.jpg'
 ];
 
 const Razmeri: React.FC = () => (
@@ -16,23 +18,37 @@ const Razmeri: React.FC = () => (
     <Typography variant="body1" sx={{ mb: 4 }}>
       Ниже представлены размерные таблицы. Если нужна помощь с выбором, свяжитесь с менеджером.
     </Typography>
-    <Grid container spacing={4}>
+    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: 4 }}>
       {images.map((src, idx) => (
-        <Grid item xs={12} sm={6} md={3} key={idx}>
-          <Box sx={{ textAlign: 'center' }}>
-            <Typography variant="h6" sx={{ mb: 1 }}>
-              Таблица {idx + 1}
-            </Typography>
-            <CardMedia
-              component="img"
-              src={src}
-              alt={`Таблица размеров ${idx + 1}`}
-              sx={{ width: '100%', height: 'auto', borderRadius: 1 }}
-            />
-          </Box>
-        </Grid>
+        <Box key={idx} sx={{ textAlign: 'center' }}>
+          <Typography variant="h6" sx={{ mb: 1 }}>
+            Таблица {idx + 1}
+          </Typography>
+          <CardMedia
+            component="img"
+            src={src}
+            alt={`Таблица размеров ${idx + 1}`}
+            sx={{ width: '100%', height: 'auto', borderRadius: 1 }}
+          />
+        </Box>
       ))}
-    </Grid>
+    </Box>
+    {/* Size charts section */}
+    <Box sx={{ mt: 6 }}>
+      <Typography variant="h4" gutterBottom>
+        Размерные сетки
+      </Typography>
+      {Object.entries({
+        'Женские': ['XS','S','M','L','XL'],
+        'Мужские': ['S','M','L','XL','XXL'],
+        'Детские': ['XXS','XS','S','M']
+      }).map(([group, sizes]) => (
+        <Box key={group} sx={{ mb: 3 }}>
+          <Typography variant="h6">{group}</Typography>
+          <Typography>{(sizes as string[]).join(', ')}</Typography>
+        </Box>
+      ))}
+    </Box>
     <Box sx={{ textAlign: 'center', mt: 5 }}>
       <Button
         component="a"
