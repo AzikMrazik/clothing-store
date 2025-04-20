@@ -52,6 +52,12 @@ const ProductSchema = new mongoose.Schema({
   colors: {
     type: [String],
     default: []
+  },
+  // Group of sizes for display and mapping
+  sizeGroup: {
+    type: String,
+    trim: true,
+    default: ''
   }
 }, {
   timestamps: true

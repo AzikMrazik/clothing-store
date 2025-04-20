@@ -63,6 +63,7 @@ type ProductForm = {
   videoUrl?: string;
   categories: string[];
   sizes?: string[];    // available sizes
+  sizeGroup?: string; // selected size pack
   colors?: string[];   // available colors
   newCategory?: string;
   newCategorySelected?: boolean;
@@ -70,6 +71,12 @@ type ProductForm = {
 
 const AdminPanel = () => {
   // Static options for sizes and colors
+  const sizeGroupOptions = ['Женские','Мужские','Детские'];
+  const sizeGroupMapping: Record<string,string[]> = {
+    'Женские': ['XS','S','M','L','XL'],
+    'Мужские': ['S','M','L','XL','XXL'],
+    'Детские': ['XXS','XS','S','M']
+  };
   const sizeOptions = ['XS','S','M','L','XL','XXL'];
   const colorOptions = ['Белый','Черный','Красный','Синий','Зеленый','Желтый'];
   const [products, setProducts] = useState<Product[]>([]);
@@ -128,6 +135,7 @@ const AdminPanel = () => {
         videoUrl: product.videoUrl,
         categories: product.categories || [],
         sizes: product.sizes || [],
+        sizeGroup: product.sizeGroup || '',
         colors: product.colors || []
       });
     } else {
@@ -139,6 +147,7 @@ const AdminPanel = () => {
         videoUrl: '',
         categories: [],
         sizes: [],
+        sizeGroup: '',
         colors: []
       });
     }
@@ -421,6 +430,26 @@ const AdminPanel = () => {
               <TextField {...params} label="Размеры" margin="normal" />
             )}
           />
+          {/* Size pack selection */}
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Группа размеров</InputLabel>
+            <Select
+              value={editingProduct?.sizeGroup || ''}
+              onChange={(e) => {
+                const group = e.target.value;
+                setEditingProduct(prev => prev ? {
+                  ...prev,
+                  sizeGroup: group,
+                  sizes: sizeGroupMapping[group as string] || []
+                } : null);
+              }}
+              label="Группа размеров"
+            >
+              {sizeGroupOptions.map(group => (
+                <MenuItem key={group} value={group}>{group}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <Autocomplete
             multiple
             freeSolo
