@@ -48,10 +48,7 @@ const PromoManager: React.FC = () => {
   const [editingPromo, setEditingPromo] = useState<PromoOffer | null>(null);
   const [formData, setFormData] = useState({
     title: '',
-    description: '',
     imageUrl: '',
-    linkUrl: '',
-    buttonText: '',
     startDate: new Date(),
     endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // По умолчанию +30 дней
     isActive: true
@@ -68,10 +65,7 @@ const PromoManager: React.FC = () => {
     if (editingPromo) {
       setFormData({
         title: editingPromo.title,
-        description: editingPromo.description,
         imageUrl: editingPromo.imageUrl,
-        linkUrl: editingPromo.linkUrl,
-        buttonText: editingPromo.buttonText,
         startDate: new Date(editingPromo.startDate),
         endDate: new Date(editingPromo.endDate),
         isActive: editingPromo.isActive
@@ -98,10 +92,7 @@ const PromoManager: React.FC = () => {
   const resetForm = () => {
     setFormData({
       title: '',
-      description: '',
       imageUrl: '',
-      linkUrl: '',
-      buttonText: 'Подробнее',
       startDate: new Date(),
       endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       isActive: true
@@ -127,35 +118,15 @@ const PromoManager: React.FC = () => {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    
     if (!formData.title.trim()) {
       newErrors.title = 'Заголовок акции обязателен';
     }
-    
-    if (!formData.description.trim()) {
-      newErrors.description = 'Описание акции обязательно';
-    }
-    
     if (!formData.imageUrl.trim()) {
       newErrors.imageUrl = 'URL изображения обязателен';
-    } else if (!/^(https?:\/\/|\/\/).+$/i.test(formData.imageUrl)) {
-      newErrors.imageUrl = 'URL изображения должен начинаться с http://, https:// или //';
     }
-
-    if (!formData.linkUrl.trim()) {
-      newErrors.linkUrl = 'URL для кнопки обязателен';
-    } else if (!/^(\/|https?:\/\/).+$/i.test(formData.linkUrl)) {
-      newErrors.linkUrl = 'URL должен быть абсолютным или относительным путем';
-    }
-
-    if (!formData.buttonText.trim()) {
-      newErrors.buttonText = 'Текст кнопки обязателен';
-    }
-
     if (formData.startDate >= formData.endDate) {
       newErrors.endDate = 'Дата окончания должна быть позже даты начала';
     }
-    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -195,7 +166,13 @@ const PromoManager: React.FC = () => {
 
       if (editingPromo) {
         // Обновление существующей акции
-        await PromoService.updatePromoOffer(editingPromo._id, formData);
+        await PromoService.updatePromoOffer(editingPromo._id, {
+          title: formData.title,
+          imageUrl: formData.imageUrl,
+          startDate: formData.startDate,
+          endDate: formData.endDate,
+          isActive: formData.isActive
+        });
         showNotification('Промо-акция успешно обновлена', 'success');
       } else {
         // Создание новой акции
@@ -203,11 +180,13 @@ const PromoManager: React.FC = () => {
         const maxOrder = promos.length > 0 
           ? Math.max(...promos.map(p => p.order)) 
           : 0;
-        
         await PromoService.createPromoOffer({
-          ...formData,
-          order: maxOrder + 1,
-          isActive: formData.isActive
+          title: formData.title,
+          imageUrl: formData.imageUrl,
+          startDate: formData.startDate,
+          endDate: formData.endDate,
+          isActive: formData.isActive,
+          order: maxOrder + 1
         });
         showNotification('Промо-акция успешно создана', 'success');
       }
@@ -466,20 +445,6 @@ const PromoManager: React.FC = () => {
               </Box>
               <Box sx={{ mb: 2 }}>
                 <TextField
-                  name="description"
-                  label="Описание"
-                  fullWidth
-                  multiline
-                  rows={3}
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  error={!!errors.description}
-                  helperText={errors.description}
-                  required
-                />
-              </Box>
-              <Box sx={{ mb: 2 }}>
-                <TextField
                   name="imageUrl"
                   label="URL изображения"
                   fullWidth
@@ -495,37 +460,6 @@ const PromoManager: React.FC = () => {
                       </InputAdornment>
                     ),
                   }}
-                />
-              </Box>
-              <Box sx={{ mb: 2 }}>
-                <TextField
-                  name="linkUrl"
-                  label="URL для кнопки"
-                  fullWidth
-                  value={formData.linkUrl}
-                  onChange={handleInputChange}
-                  error={!!errors.linkUrl}
-                  helperText={errors.linkUrl || 'Например: /products или /categories/summer-sale'}
-                  required
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <LinkIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Box>
-              <Box sx={{ mb: 2 }}>
-                <TextField
-                  name="buttonText"
-                  label="Текст кнопки"
-                  fullWidth
-                  value={formData.buttonText}
-                  onChange={handleInputChange}
-                  error={!!errors.buttonText}
-                  helperText={errors.buttonText}
-                  required
                 />
               </Box>
               <Box sx={{ mb: 2 }}>

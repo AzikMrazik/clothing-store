@@ -122,7 +122,7 @@ const CategoryCards: React.FC<CategoryCardsProps> = ({ onCategoryChange }) => {
           Категории товаров
         </Typography>
         {/* Horizontal scrollable slider for categories */}
-        <Box sx={{ '.slick-list': { overflow: 'visible !important' }, '.slick-track': { overflow: 'visible !important' } }}>
+        <Box sx={{ position: 'relative', '.slick-list': { overflow: 'hidden' }, '.slick-arrow': { zIndex: 3 } }}>
           <Slider {...settings}>
             {categories.map((category) => (
               <Box key={category._id}

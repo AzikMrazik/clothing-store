@@ -373,9 +373,10 @@ const Catalog = () => {
                   sx={{ 
                     display: 'flex', 
                     flexDirection: 'column',
+                    justifyContent: 'space-between',
                     p: { xs: 1.5, sm: 2 },
                     '&:last-child': { pb: { xs: 1.5, sm: 2 } },
-                    flexGrow: 1,
+                    height: '100%'
                   }}
                 >
                   {/* Контейнер для текстового содержимого с фиксированной высотой */}

@@ -9,6 +9,7 @@ export class PromoService {
 
     try {
       const response = await fetch(`${API_URL}/promos`, {
+        credentials: 'include',
         headers: {
           'Accept': 'application/json',
           'Cache-Control': 'no-cache'
@@ -38,6 +39,7 @@ export class PromoService {
     try {
       const response = await fetch(`${API_URL}/promos/order`, {
         method: 'PUT',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -64,6 +66,7 @@ export class PromoService {
     try {
       const response = await fetch(`${API_URL}/promos`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -90,6 +93,7 @@ export class PromoService {
     try {
       const response = await fetch(`${API_URL}/promos/${id}`, {
         method: 'PUT',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -116,6 +120,7 @@ export class PromoService {
     try {
       const response = await fetch(`${API_URL}/promos/${id}`, {
         method: 'DELETE',
+        credentials: 'include'
       });
 
       if (!response.ok) {
@@ -135,6 +140,7 @@ export class PromoService {
 
     try {
       const response = await fetch(`${API_URL}/promos/codes`, {
+        credentials: 'include',
         headers: {
           'Accept': 'application/json',
           'Cache-Control': 'no-cache'
@@ -164,6 +170,7 @@ export class PromoService {
     try {
       const response = await fetch(`${API_URL}/promos/codes/verify`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -240,6 +247,7 @@ export class PromoService {
     try {
       const response = await fetch(`${API_URL}/promos/codes`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -266,6 +274,7 @@ export class PromoService {
     try {
       const response = await fetch(`${API_URL}/promos/codes/${id}`, {
         method: 'PUT',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -296,6 +305,7 @@ export class PromoService {
     try {
       const response = await fetch(`${API_URL}/promos/codes/${id}`, {
         method: 'DELETE',
+        credentials: 'include'
       });
 
       if (!response.ok) {
