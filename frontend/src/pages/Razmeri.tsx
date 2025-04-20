@@ -1,6 +1,5 @@
 import React from 'react';
-import { Container, Typography, Box, Grid, CardMedia, Button } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Container, Typography, Box, CardMedia, Button, Grid } from '@mui/material';
 
 const images = [
   '/images/razmer1.jpg',

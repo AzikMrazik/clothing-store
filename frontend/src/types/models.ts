@@ -7,6 +7,7 @@ export interface Product {
   categories?: string[];
   sizes?: string[];  // available sizes
   colors?: string[]; // available colors
+  sizeGroup?: string; // size group identifier
   characteristics?: Array<{ name: string; value: string }>;
   videoUrl?: string;
 }

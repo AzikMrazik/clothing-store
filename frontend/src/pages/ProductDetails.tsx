@@ -36,7 +36,7 @@ const ProductDetails = () => {
     'Детские': ['XXS','XS','S','M']
   };
   const navigate = useNavigate();
-  const [product, setProduct] = useState<Product | null>(null);
+  const [product, setProduct] = useState<Product & { sizeGroup?: string } | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [quantity, setQuantity] = useState(1);
   const [selectedGroup, setSelectedGroup] = useState<string>('');
