@@ -197,7 +197,7 @@ const Cart = () => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}
       maxWidth="lg" 
-      sx={{ py: 4 }}
+      sx={{ py: 4, overflowX: 'hidden' }}
     >
       <Typography variant="h4" gutterBottom>
         Корзина
@@ -222,6 +222,8 @@ const Cart = () => {
                         display: 'flex',
                         gap: 2,
                         py: 2,
+                        flexWrap: 'wrap',
+                        alignItems: 'center',
                         '&:not(:last-child)': {
                           borderBottom: 1,
                           borderColor: 'divider'
@@ -263,7 +265,10 @@ const Cart = () => {
                       <Box sx={{ 
                         display: 'flex', 
                         alignItems: 'center',
-                        gap: 1
+                        gap: 1,
+                        mt: { xs: 1, sm: 0 },
+                        width: { xs: '100%', sm: 'auto' },
+                        justifyContent: { xs: 'flex-start', sm: 'flex-end' }
                       }}>
                         <IconButton
                           size="small"

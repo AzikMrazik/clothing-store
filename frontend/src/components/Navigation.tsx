@@ -145,14 +145,15 @@ const Navigation = () => {
           <SearchBar />
         </Box>
         {isMobile && (
-          <MuiIconButton color="inherit" onClick={() => setSearchDrawerOpen(true)} sx={{ ml: 'auto', mr: 1 }}>
+          <MuiIconButton color="inherit" onClick={() => setSearchDrawerOpen(true)} sx={{ mr: 1 }}>
             <SearchIcon />
           </MuiIconButton>
         )}
         <IconButton 
           color="inherit"
           onClick={() => navigate('/cart')}
-          sx={{ ml: isMobile ? 0 : 2 }}
+          sx={{ ml: 'auto' }}
+          aria-label="Корзина"
         >
           <Badge badgeContent={cart?.items?.length || 0} color="secondary">
             <ShoppingCart />
