@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
   Container,
   Typography,
@@ -9,7 +9,11 @@ import {
   CardContent,
   Box,
   Chip,
-  IconButton
+  IconButton,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { motion } from 'framer-motion';
@@ -24,11 +28,18 @@ import { API_URL } from '../config';
 
 const ProductDetails = () => {
   const { id } = useParams();
+  // Static size groups mapping
+  const sizeGroupOptions = ['Женские','Мужские','Детские'];
+  const sizeGroupMapping: Record<string,string[]> = {
+    'Женские': ['XS','S','M','L','XL'],
+    'Мужские': ['S','M','L','XL','XXL'],
+    'Детские': ['XXS','XS','S','M']
+  };
   const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [quantity, setQuantity] = useState(1);
-  // New states for selected size and color
+  const [selectedGroup, setSelectedGroup] = useState<string>('');
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState<string>('');
   const { addToCart } = useCart();
@@ -46,6 +57,7 @@ const ProductDetails = () => {
       // Initialize default size and color
       if (product.sizes && product.sizes.length) setSelectedSize(product.sizes[0]);
       if (product.colors && product.colors.length) setSelectedColor(product.colors[0]);
+      if (product.sizeGroup) setSelectedGroup(product.sizeGroup);
     }
   }, [product]);
 
@@ -219,12 +231,25 @@ const ProductDetails = () => {
               {product.description}
             </Typography>
 
-            {/* Size selector */}
-            {product.sizes && product.sizes.length > 0 && (
+            {/* Size group selection */}
+            <FormControl fullWidth margin="normal">
+              <InputLabel>Группа размеров</InputLabel>
+              <Select
+                value={selectedGroup}
+                label="Группа размеров"
+                onChange={e => { setSelectedGroup(e.target.value); setSelectedSize(''); }}
+              >
+                {sizeGroupOptions.map(gr => (
+                  <MenuItem key={gr} value={gr}>{gr}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            {/* Size options */}
+            {selectedGroup && (
               <Box sx={{ mb: 2 }}>
                 <Typography variant="subtitle1">Размер:</Typography>
                 <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
-                  {product.sizes.map(size => (
+                  {sizeGroupMapping[selectedGroup].map(size => (
                     <Chip
                       key={size}
                       label={size}
@@ -293,6 +318,10 @@ const ProductDetails = () => {
                 startIcon={<ShoppingCart />}
               >
                 В корзину
+              </Button>
+              {/* Link to sizes page */}
+              <Button component={Link} to="/razmeri" sx={{ mt: 1 }}>
+                Узнать размер
               </Button>
             </Box>
           </Box>

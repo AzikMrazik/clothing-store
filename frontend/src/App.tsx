@@ -17,6 +17,7 @@ import { LoadingProvider } from './contexts/LoadingContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { AuthProvider } from './contexts/AuthContext';
 import TelegramFallback from './components/TelegramFallback';
+import Razmeri from './pages/Razmeri';
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -36,6 +37,7 @@ const AnimatedRoutes = () => {
           } 
         />
         <Route path="/product/:id" element={<ProductDetails />} />
+        <Route path="/razmeri" element={<Razmeri />} />
         <Route path="/shared-cart/:id" element={<SharedCart />} />
       </Routes>
     </AnimatePresence>

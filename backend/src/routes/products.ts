@@ -90,7 +90,7 @@ router.get('/:id', asyncHandler(async (req: Request, res: Response): Promise<any
 router.post('/', asyncHandler(async (req: Request, res: Response): Promise<any> => {
   try {
     console.log('POST /products - Creating new product with data:', JSON.stringify(req.body, null, 2));
-    const { name, price, description, images, categories, newCategory, videoUrl, sizes, colors } = req.body;
+    const { name, price, description, images, categories, newCategory, videoUrl, sizes, colors, sizeGroup } = req.body;
 
     let finalCategories: string[] = [];
     if (categories && Array.isArray(categories) && categories.length > 0) {
@@ -118,7 +118,8 @@ router.post('/', asyncHandler(async (req: Request, res: Response): Promise<any> 
       categories: finalCategories,
       videoUrl,
       sizes: finalSizes,
-      colors: finalColors
+      colors: finalColors,
+      sizeGroup
     };
     const product = new Product(productData);
     const validationError = product.validateSync();
@@ -154,7 +155,7 @@ router.post('/upload', upload.single('file'), validateUploadedFiles, asyncHandle
 // Update a product
 router.put('/:id', asyncHandler(async (req: Request, res: Response): Promise<any> => {
   try {
-    const { name, price, description, images, categories, newCategory, videoUrl, sizes, colors } = req.body;
+    const { name, price, description, images, categories, newCategory, videoUrl, sizes, colors, sizeGroup } = req.body;
     let finalCategories: string[] = [];
     if (categories && Array.isArray(categories) && categories.length > 0) {
       finalCategories = categories as string[];
@@ -180,7 +181,8 @@ router.put('/:id', asyncHandler(async (req: Request, res: Response): Promise<any
       categories: finalCategories,
       videoUrl,
       sizes: finalSizes,
-      colors: finalColors
+      colors: finalColors,
+      sizeGroup
     };
     const product = await Product.findByIdAndUpdate(
       req.params.id,
