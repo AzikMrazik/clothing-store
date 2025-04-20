@@ -283,50 +283,39 @@ const ProductDetails = () => {
               </Box>
             )}
 
-            {/* Add to cart section */}
-            <Box sx={{ 
-              display: 'flex',
-              alignItems: 'center',
-              gap: 2,
-              mt: 'auto'
-            }}>
-              <Box sx={{ 
-                display: 'flex', 
-                alignItems: 'center',
-                border: '1px solid',
-                borderColor: 'divider',
-                borderRadius: 1
-              }}>
-                <IconButton
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  size="small"
-                >
-                  <Remove />
-                </IconButton>
-                <Typography sx={{ px: 2, minWidth: 40, textAlign: 'center' }}>
-                  {quantity}
-                </Typography>
-                <IconButton
-                  onClick={() => setQuantity(quantity + 1)}
-                  size="small"
-                >
-                  <Add />
-                </IconButton>
-              </Box>
-
+            {/* Action buttons: learn size above add to cart with quantity controls */}
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mt: 'auto' }}>
+              {/* Узнать размер button full width */}
               <Button
-                variant="contained"
-                color="primary"
+                component={Link}
+                to="/razmeri"
+                variant="outlined"
                 fullWidth
-                onClick={handleAddToCart}
-                startIcon={<ShoppingCart />}
               >
-                В корзину
-              </Button>
-              {/* Link to sizes page */}
-              <Button component={Link} to="/razmeri" sx={{ mt: 1 }}>
                 Узнать размер
               </Button>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                {/* Quantity controls */}
+                <Box sx={{ display: 'flex', alignItems: 'center', border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
+                  <IconButton onClick={() => setQuantity(Math.max(1, quantity - 1))} size="small">
+                    <Remove />
+                  </IconButton>
+                  <Typography sx={{ px: 2, minWidth: 40, textAlign: 'center' }}>{quantity}</Typography>
+                  <IconButton onClick={() => setQuantity(quantity + 1)} size="small">
+                    <Add />
+                  </IconButton>
+                </Box>
+                {/* Add to cart button full width */}
+                <Button
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                  onClick={handleAddToCart}
+                  startIcon={<ShoppingCart />}
+                >
+                  В корзину
+                </Button>
+              </Box>
             </Box>
           </Box>
         </Box>
