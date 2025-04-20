@@ -28,12 +28,11 @@ import { API_URL } from '../config';
 
 const ProductDetails = () => {
   const { id } = useParams();
-  // Static size groups mapping
-  const sizeGroupOptions = ['Женские','Взрослые','Детские','Обувь'];
+  // Mapping of size groups to sizes
   const sizeGroupMapping: Record<string,string[]> = {
-    'Взрослые': ['44','46','48','50','52','54','56','58','60','62','64','66','68','70'],
+    'Взрослые': ['44','46','48','50','52','54','56','58','60','62','64'],
     'Женские': ['38','40','42','44','46','48','50','52'],
-    'Детские': ['122','128','134','140','146','152','156','158','160','162','164'],
+    'Детские': ['122','128','134','140','146','152','156','158'],
     'Обувь': ['34','35','36','37','38','39','40','41','42','43','44','45','46','47'],
   };
   const navigate = useNavigate();
@@ -138,6 +137,11 @@ const ProductDetails = () => {
     return <Loading />;
   }
 
+  // Determine available groups: only shoes for shoe products, else exclude 'Обувь'
+  const sizeGroupOptions = product && ((product.categories?.includes('Обувь') || product.category === 'Обувь'))
+    ? ['Обувь']
+    : Object.keys(sizeGroupMapping).filter(group => group !== 'Обувь');
+
   return (
     <Container 
       component={motion.div}
@@ -146,7 +150,7 @@ const ProductDetails = () => {
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3 }}
       maxWidth="lg" 
-      sx={{ py: 4 }}
+      sx={{ py: 4, px: 2, overflowX: 'hidden' }}
     >
       <Card elevation={3} sx={{ 
         p: { xs: 2, md: 3 },
@@ -155,177 +159,183 @@ const ProductDetails = () => {
         borderRadius: { xs: 2, md: 2 }
       }}>
         <Grid container spacing={{ xs: 2, md: 4 }}>
-          {/* Mobile layout: Image first */}
-          <Box sx={{ 
-            mb: { xs: 2, md: 0 },
-            width: '100%',
-            '& img': {
-              maxHeight: { xs: '400px', md: '600px' },
-              objectFit: 'contain',
-              width: '100%'
-            }
-          }}>
-            <ImageGallery mainImage={product.images?.[0]} additionalImages={product.images?.slice(1) || []} />
-          </Box>
+          {/* Image section */}
+          <Grid item xs={12} md={6}>
+            <Box sx={{ 
+              mb: { xs: 2, md: 0 },
+              width: '100%',
+              '& img': {
+                maxHeight: { xs: '400px', md: '600px' },
+                objectFit: 'contain',
+                width: '100%'
+              }
+            }}>
+              <ImageGallery mainImage={product.images?.[0]} additionalImages={product.images?.slice(1) || []} />
+            </Box>
+          </Grid>
 
           {/* Product info section */}
-          <Box sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            height: '100%'
-          }}>
-            {/* Categories */}
-            <Box sx={{ 
-              display: 'flex', 
-              flexWrap: 'wrap', 
-              gap: 1,
-              mb: 2
-            }}>
-              {product.categories?.map((category, idx) => (
-                <Chip
-                  key={idx}
-                  label={category}
-                  size="small"
-                  color="primary"
-                  variant="outlined"
-                  onClick={() => navigate(`/?category=${category}`)}
-                  sx={{ cursor: 'pointer' }}
-                />
-              ))}
-            </Box>
-
-            {/* Product name */}
-            <Typography 
-              variant="h4" 
-              sx={{ 
-                fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
-                fontWeight: 600,
-                mb: 2
-              }}
-            >
-              {product.name}
-            </Typography>
-
-            {/* Price */}
-            <Typography 
-              variant="h5" 
-              color="primary" 
-              sx={{ 
-                mb: { xs: 2, md: 3 },
-                fontSize: { xs: '1.4rem', md: '1.5rem' },
-                fontWeight: 'bold'
-              }}
-            >
-              {Math.round(product.price)} ₽
-            </Typography>
-
-            {/* Description */}
-            <Typography 
-              variant="body1" 
-              sx={{ 
-                mb: { xs: 3, md: 4 },
-                fontSize: { xs: '0.875rem', md: '1rem' },
-                lineHeight: 1.6,
-                color: 'text.secondary'
-              }}
-            >
-              {product.description}
-            </Typography>
-
-            {/* Size group selection */}
-            <FormControl fullWidth margin="normal">
-              <InputLabel>Группа размеров</InputLabel>
-              <Select
-                value={selectedGroup}
-                label="Группа размеров"
-                onChange={e => { setSelectedGroup(e.target.value); setSelectedSize(''); }}
-              >
-                {sizeGroupOptions.map(gr => (
-                  <MenuItem key={gr} value={gr}>{gr}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            {/* Size options */}
-            {selectedGroup && (
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="subtitle1">Размер:</Typography>
-                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
-                  {sizeGroupMapping[selectedGroup].map(size => (
-                    <Chip
-                      key={size}
-                      label={size}
-                      clickable
-                      color={selectedSize === size ? 'primary' : 'default'}
-                      onClick={() => setSelectedSize(size)}
-                    />
-                  ))}
-                </Box>
-              </Box>
-            )}
-            {/* Color selector */}
-            {product.colors && product.colors.length > 0 && (
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="subtitle1">Цвет:</Typography>
-                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
-                  {product.colors.map(color => (
-                    <Chip
-                      key={color}
-                      label={color}
-                      clickable
-                      variant={selectedColor === color ? 'filled' : 'outlined'}
-                      onClick={() => setSelectedColor(color)}
-                    />
-                  ))}
-                </Box>
-              </Box>
-            )}
-
-            {/* Add to cart section */}
-            <Box sx={{ 
+          <Grid item xs={12} md={6}>
+            <Box sx={{
               display: 'flex',
-              alignItems: 'center',
-              gap: 2,
-              mt: 'auto'
+              flexDirection: 'column',
+              height: '100%'
             }}>
+              {/* Categories */}
               <Box sx={{ 
                 display: 'flex', 
-                alignItems: 'center',
-                border: '1px solid',
-                borderColor: 'divider',
-                borderRadius: 1
+                flexWrap: 'wrap', 
+                gap: 1,
+                mb: 2
               }}>
-                <IconButton
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  size="small"
-                >
-                  <Remove />
-                </IconButton>
-                <Typography sx={{ px: 2, minWidth: 40, textAlign: 'center' }}>
-                  {quantity}
-                </Typography>
-                <IconButton
-                  onClick={() => setQuantity(quantity + 1)}
-                  size="small"
-                >
-                  <Add />
-                </IconButton>
+                {product.categories?.map((category, idx) => (
+                  <Chip
+                    key={idx}
+                    label={category}
+                    size="small"
+                    color="primary"
+                    variant="outlined"
+                    onClick={() => navigate(`/?category=${category}`)}
+                    sx={{ cursor: 'pointer' }}
+                  />
+                ))}
               </Box>
 
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                onClick={handleAddToCart}
-                startIcon={<ShoppingCart />}
+              {/* Product name */}
+              <Typography 
+                variant="h4" 
+                sx={{ 
+                  fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
+                  fontWeight: 600,
+                  mb: 2
+                }}
               >
-                В корзину
-              </Button>
-              {/* Link to sizes page */}
-              <Button component={Link} to="/razmeri" sx={{ mt: 1 }}>
-                Узнать размер
-              </Button>
+                {product.name}
+              </Typography>
+
+              {/* Price */}
+              <Typography 
+                variant="h5" 
+                color="primary" 
+                sx={{ 
+                  mb: { xs: 2, md: 3 },
+                  fontSize: { xs: '1.4rem', md: '1.5rem' },
+                  fontWeight: 'bold'
+                }}
+              >
+                {Math.round(product.price)} ₽
+              </Typography>
+
+              {/* Description */}
+              <Typography 
+                variant="body1" 
+                sx={{ 
+                  mb: { xs: 3, md: 4 },
+                  fontSize: { xs: '0.875rem', md: '1rem' },
+                  lineHeight: 1.6,
+                  color: 'text.secondary'
+                }}
+              >
+                {product.description}
+              </Typography>
+
+              {/* Size group selection */}
+              <FormControl fullWidth margin="normal" sx={{ width: '100%' }}>
+                <InputLabel>Группа размеров</InputLabel>
+                <Select
+                  value={selectedGroup}
+                  label="Группа размеров"
+                  onChange={e => { setSelectedGroup(e.target.value); setSelectedSize(''); }}
+                  sx={{ width: '100%' }}
+                  MenuProps={{ PaperProps: { sx: { width: '100%' } } }}
+                >
+                  {sizeGroupOptions.map(gr => (
+                    <MenuItem key={gr} value={gr}>{gr}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              {/* Size options */}
+              {selectedGroup && (
+                <Box sx={{ mb: 2, width: '100%' }}>
+                  <Typography variant="subtitle1">Размер:</Typography>
+                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
+                    {sizeGroupMapping[selectedGroup].map(size => (
+                      <Chip
+                        key={size}
+                        label={size}
+                        clickable
+                        color={selectedSize === size ? 'primary' : 'default'}
+                        onClick={() => setSelectedSize(size)}
+                      />
+                    ))}
+                  </Box>
+                </Box>
+              )}
+              {/* Color selector */}
+              {product.colors && product.colors.length > 0 && (
+                <Box sx={{ mb: 2, width: '100%' }}>
+                  <Typography variant="subtitle1">Цвет:</Typography>
+                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
+                    {product.colors.map(color => (
+                      <Chip
+                        key={color}
+                        label={color}
+                        clickable
+                        variant={selectedColor === color ? 'filled' : 'outlined'}
+                        onClick={() => setSelectedColor(color)}
+                      />
+                    ))}
+                  </Box>
+                </Box>
+              )}
+
+              {/* Add to cart section */}
+              <Box sx={{ 
+                display: 'flex',
+                alignItems: 'center',
+                gap: 2,
+                mt: 'auto'
+              }}>
+                <Box sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center',
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  borderRadius: 1
+                }}>
+                  <IconButton
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    size="small"
+                  >
+                    <Remove />
+                  </IconButton>
+                  <Typography sx={{ px: 2, minWidth: 40, textAlign: 'center' }}>
+                    {quantity}
+                  </Typography>
+                  <IconButton
+                    onClick={() => setQuantity(quantity + 1)}
+                    size="small"
+                  >
+                    <Add />
+                  </IconButton>
+                </Box>
+
+                <Button
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                  onClick={handleAddToCart}
+                  startIcon={<ShoppingCart />}
+                >
+                  В корзину
+                </Button>
+                {/* Link to sizes page */}
+                <Button component={Link} to="/razmeri" sx={{ mt: 1 }}>
+                  Узнать размер
+                </Button>
+              </Box>
             </Box>
-          </Box>
+          </Grid>
         </Grid>
       </Card>
 
