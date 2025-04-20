@@ -237,27 +237,8 @@ const PromoCodeManager: React.FC = () => {
         showNotification('Промокод успешно обновлен', 'success');
       } else {
         // Создание нового промокода
-        try {
-          const result = await PromoService.createPromoCode({ ...formData });
-          showNotification('Промокод успешно создан', 'success');
-        } catch (innerError: any) {
-          // Если сервер вернул ошибку валидации, показать её пользователю
-          if (innerError instanceof Response) {
-            let errorText = 'Ошибка при сохранении промокода';
-            try {
-              const errJson = await innerError.json();
-              if (errJson && errJson.errors && Array.isArray(errJson.errors)) {
-                errorText = errJson.errors.join(', ');
-              } else if (errJson && errJson.message) {
-                errorText = errJson.message;
-              }
-            } catch {}
-            showNotification(errorText, 'error');
-            return;
-          }
-          showNotification(innerError?.message || 'Ошибка при сохранении промокода', 'error');
-          return;
-        }
+        await PromoService.createPromoCode({ ...formData });
+        showNotification('Промокод успешно создан', 'success');
       }
       handleCloseDialog();
       fetchPromoCodes();
