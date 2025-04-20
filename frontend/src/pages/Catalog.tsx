@@ -314,7 +314,6 @@ const Catalog = () => {
                     paddingTop: '75%', // 3:4 соотношение для контейнера изображения (75% = 3/4)
                     width: '100%',
                     overflow: 'hidden',
-                    backgroundColor: 'background.paper',
                     flexShrink: 0, // Предотвращает сжатие секции с изображением
                   }}
                 >
@@ -342,7 +341,7 @@ const Catalog = () => {
                           cursor: 'pointer',
                           width: '100%',
                           height: '100%',
-                          objectFit: 'contain',
+                          objectFit: 'cover',
                           transition: 'transform 0.3s ease',
                           '&:hover': {
                             transform: 'scale(1.05)'
