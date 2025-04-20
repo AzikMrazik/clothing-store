@@ -4,7 +4,7 @@ import {
   Paper,
   Container
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -94,7 +94,7 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({
   const [promos, setPromos] = useState<PromoOffer[]>([]);
   const [loading, setLoading] = useState(true);
   const { showNotification } = useNotification();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   useEffect(() => {
     fetchPromos();
@@ -188,7 +188,7 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({
               }
             }
           }}
-          onClick={() => navigate(promo.linkUrl)}
+          // removed navigation link
         >
           <Box
             sx={{
@@ -229,7 +229,7 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({
                   }
                 }
               }}
-              onClick={() => navigate(promo.linkUrl)}
+              // removed navigation link
             >
               <Box
                 sx={{
