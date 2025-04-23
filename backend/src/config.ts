@@ -52,7 +52,8 @@ export const SECURITY = {
       '/api/promos/',
       '/api/promos/codes',
       '/api/promos/codes/',
-      '/api/client-error'  // Разрешаем сбор клиентских ошибок без CSRF токена
+      '/api/client-error',  // Разрешаем сбор клиентских ошибок без CSRF токена
+      '/api/api/client-error'  // Также исключаем путь с двойным префиксом
     ]
   }
 };

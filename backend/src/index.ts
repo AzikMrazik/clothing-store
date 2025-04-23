@@ -161,10 +161,15 @@ process.on('SIGINT', async () => {
   process.exit(0);
 });
 
+// Endpoint to receive client-side error reports (exempt from CSRF)
+app.post('/api/client-error', (req: Request, res: Response) => {
+  console.log('Received client error report:', req.body);
+  logClientError(req.body);
+  res.status(200).json({ status: 'logged' });
+});
+
 // Применяем CSRF защиту для всех небезопасных маршрутов (POST,PUT,DELETE)
 app.use((req: Request, res: Response, next: NextFunction) => {
-  // Используем улучшенную версию CSRF защиты из middleware/security.ts
-  // Она автоматически пропускает исключенные пути из конфигурации
   csrfProtection(req, res, next);
 });
 
@@ -178,13 +183,6 @@ app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/promos', promoRoutes);
-
-// Endpoint to receive client-side error reports
-app.post('/api/client-error', (req: Request, res: Response) => {
-  console.log('Received client error report:', req.body);
-  logClientError(req.body);
-  res.status(200).json({ status: 'logged' });
-});
 
 // Serve frontend production build
 const frontendDist = path.join(__dirname, '..', '..', 'frontend', 'dist');

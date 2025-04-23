@@ -20,7 +20,7 @@ const API_BASE = import.meta.env.VITE_API_URL || '';
 async function _reportError(data: any) {
   console.log('Reporting error data to server:', data);
   try {
-    await fetch(`${API_BASE}/api/client-error`, {
+    await fetch(`${window.location.origin}/api/client-error`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
