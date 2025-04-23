@@ -24,20 +24,14 @@ router.get('/', asyncHandler(async (req: Request, res: Response): Promise<any> =
   
   if (category) {
     console.log(`Filtering products by category slug: ${category}`);
-    // Map slug to category name
     const catSlug = String(category);
     const categoryDoc = await Category.findOne({ slug: catSlug }).lean();
     if (categoryDoc) {
       const name = categoryDoc.name;
-      query = {
-        $or: [
-          { category: name },
-          { categories: name }
-        ]
-      };
+      query.$or = [ { category: name }, { categories: name } ];
     } else {
-      // No such category, return empty
-      query = { categories: null };
+      // No such category, force empty result
+      query.categories = null;
     }
   }
 
