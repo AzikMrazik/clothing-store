@@ -6,25 +6,15 @@ const PromoOfferSchema = new mongoose.Schema({
     required: [true, 'Promo title is required'],
     trim: true
   },
-  description: {
-    type: String,
-    required: [true, 'Promo description is required'],
-    trim: true
-  },
   imageUrl: {
     type: String,
     required: [true, 'Promo image URL is required'],
     trim: true
   },
-  linkUrl: {
+  targetUrl: {
     type: String,
-    required: [true, 'Promo link URL is required'],
-    trim: true
-  },
-  buttonText: {
-    type: String,
-    required: [true, 'Button text is required'],
-    trim: true
+    trim: true,
+    default: ''
   },
   order: {
     type: Number,

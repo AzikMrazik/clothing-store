@@ -47,7 +47,11 @@ export const SECURITY = {
       '/api/products', // Добавляем доступ к API товаров
       '/api/products/', // Вариант с завершающим слешем
       '/api/products', // Для создания товаров
-      '/api/webhook' // Для внешних сервисов, которые не могут отправлять CSRF токен
+      '/api/webhook', // Для внешних сервисов, которые не могут отправлять CSRF токен
+      '/api/promos', // Все промо-эндпоинты
+      '/api/promos/',
+      '/api/promos/codes',
+      '/api/promos/codes/'
     ]
   }
 };

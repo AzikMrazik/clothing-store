@@ -357,10 +357,8 @@ router.post('/', asyncHandler(async (req: Request, res: Response): Promise<any> 
     
     const promoData = {
       title: req.body.title,
-      description: req.body.description,
       imageUrl: req.body.imageUrl,
-      linkUrl: req.body.linkUrl,
-      buttonText: req.body.buttonText || 'Подробнее',
+      targetUrl: req.body.targetUrl || '',
       order: req.body.order || 0,
       startDate: req.body.startDate || new Date(),
       endDate: req.body.endDate || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
@@ -403,10 +401,8 @@ router.put('/:id', asyncHandler(async (req: Request, res: Response): Promise<any
     const updateData: any = {};
     
     if (req.body.title !== undefined) updateData.title = req.body.title;
-    if (req.body.description !== undefined) updateData.description = req.body.description;
     if (req.body.imageUrl !== undefined) updateData.imageUrl = req.body.imageUrl;
-    if (req.body.linkUrl !== undefined) updateData.linkUrl = req.body.linkUrl;
-    if (req.body.buttonText !== undefined) updateData.buttonText = req.body.buttonText;
+    if (req.body.targetUrl !== undefined) updateData.targetUrl = req.body.targetUrl;
     if (req.body.order !== undefined) updateData.order = req.body.order;
     if (req.body.startDate !== undefined) updateData.startDate = req.body.startDate;
     if (req.body.endDate !== undefined) updateData.endDate = req.body.endDate;

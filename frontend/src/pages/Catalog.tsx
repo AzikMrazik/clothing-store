@@ -42,12 +42,11 @@ const Catalog = () => {
   const { call } = useApi();
   const { showNotification } = useNotification();
   const query = useQuery();
-  const categoryFromUrl = query.get('category');
-
+  const categoryFromUrl = query.get('category') || '';
+  const selectedCategory = categoryFromUrl;
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl || '');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
   const [sortBy, setSortBy] = useState<SortOption>('price_asc');
   const [categoryMap, setCategoryMap] = useState<Record<string, string>>({});
@@ -61,19 +60,6 @@ const Catalog = () => {
   const maxPrice = useMemo(() => {
     return Math.max(...products.map(p => p.price), 1000);
   }, [products]);
-
-  // Обновляем URL при изменении категории
-  useEffect(() => {
-    const url = new URL(window.location.href);
-    
-    if (selectedCategory) {
-      url.searchParams.set('category', selectedCategory);
-    } else {
-      url.searchParams.delete('category');
-    }
-    
-    window.history.replaceState({}, '', url.toString());
-  }, [selectedCategory]);
 
   useEffect(() => {
     fetchCategories();
@@ -167,7 +153,6 @@ const Catalog = () => {
 
   const clearFilters = () => {
     setSearchQuery('');
-    setSelectedCategory('');
     setPriceRange([0, maxPrice]);
     setSelectedCategories([]);
   };
@@ -180,8 +165,8 @@ const Catalog = () => {
     <>
       <PromoCarousel />
       
-      {/* Отображаем карточки категорий только когда не выбрана ни одна категория */}
-      {!selectedCategory && <CategoryCards onCategoryChange={setSelectedCategory} />}
+      {/* Отображаем карточки категорий на главной странице */}
+      {!selectedCategory && <CategoryCards />}
       {/* Увеличиваем отступ между категориями и фильтрами */}
       <Container maxWidth="xl" sx={{ py: 2, mt: !selectedCategory ? 0 : 0, mb: !selectedCategory ? 6 : 0 }}>
         {/* Filter and sort section */}
@@ -409,18 +394,9 @@ const Catalog = () => {
                     borderColor: 'divider',
                     mt: 'auto',
                     display: 'flex',
-                    flexDirection: { xs: 'column', sm: 'column', md: 'column' },
-                    alignItems: { xs: 'stretch', sm: 'stretch', md: 'stretch' },
-                    gap: 1,
-                    position: { xs: 'fixed', sm: 'static', md: 'static' },
-                    left: 0,
-                    bottom: 0,
-                    width: '100%',
-                    bgcolor: { xs: 'background.paper', sm: 'unset', md: 'unset' },
-                    zIndex: 2,
-                    boxShadow: { xs: 3, sm: 0, md: 0 },
-                    p: { xs: 2, sm: 0, md: 0 },
-                    borderRadius: { xs: '0 0 12px 12px', sm: 0, md: 0 }
+                    flexDirection: 'column',
+                    alignItems: 'stretch',
+                    gap: 1
                   }}>
                     <Typography
                       variant="h6"
@@ -460,7 +436,7 @@ const Catalog = () => {
             </Typography>
             <Button 
               variant="contained" 
-              onClick={clearFilters}
+              onClick={() => navigate('/')}
             >
               Сбросить фильтры
             </Button>

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, useParams, Navigate } from 'react-router-dom';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { AnimatePresence } from 'framer-motion';
 import { theme } from './theme';
@@ -19,12 +19,19 @@ import { AuthProvider } from './contexts/AuthContext';
 import TelegramFallback from './components/TelegramFallback';
 import Razmeri from './pages/Razmeri';
 
+// Redirect wrapper for category path
+const CategoryRedirect = () => {
+  const { category } = useParams<{ category: string }>();
+  return <Navigate to={`/?category=${category}`} replace />;
+};
+
 const AnimatedRoutes = () => {
   const location = useLocation();
   
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
+        <Route path="/category/:category" element={<CategoryRedirect />} />
         <Route path="/" element={<Catalog />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/login" element={<Login />} />

@@ -180,7 +180,7 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({
             borderRadius: 2,
             overflow: 'hidden',
             boxShadow: 3,
-            cursor: 'pointer',
+            cursor: promo.targetUrl ? 'pointer' : 'default',
             '&:hover': {
               boxShadow: 6,
               '& .MuiBox-root': {
@@ -188,7 +188,7 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({
               }
             }
           }}
-          // removed navigation link
+          onClick={() => { if (promo.targetUrl) window.open(promo.targetUrl, '_blank'); }}
         >
           <Box
             sx={{
@@ -221,7 +221,7 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({
                 borderRadius: 2,
                 overflow: 'hidden',
                 boxShadow: 3,
-                cursor: 'pointer',
+                cursor: promo.targetUrl ? 'pointer' : 'default',
                 '&:hover': {
                   boxShadow: 6,
                   '& .MuiBox-root': {
@@ -229,7 +229,7 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({
                   }
                 }
               }}
-              // removed navigation link
+              onClick={() => { if (promo.targetUrl) window.open(promo.targetUrl, '_blank'); }}
             >
               <Box
                 sx={{
