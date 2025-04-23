@@ -58,8 +58,6 @@ export default defineConfig(({ mode }) => {
       }),
       // Настройка плагина React с правильными параметрами для горячей перезагрузки
       react({
-        // Включаем Fast Refresh для лучшей разработки
-        fastRefresh: true,
         // Явно включаем JSX runtime
         jsxRuntime: 'automatic'
         // Удаляем проблемную конфигурацию Babel
@@ -150,6 +148,9 @@ export default defineConfig(({ mode }) => {
       },
       // Добавляем HTTPS если есть сертификаты
       https: httpsOptions
+    },
+    preview: {
+      cors: true
     },
     resolve: {
       alias: {
