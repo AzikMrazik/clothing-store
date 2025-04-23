@@ -184,7 +184,7 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({
             '&:hover': {
               boxShadow: 6,
               '& .MuiBox-root': {
-                backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4)), url(${promo.imageUrl})`,
+                backgroundImage: `url(${promo.imageUrl})`,
               }
             }
           }}
@@ -192,7 +192,7 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({
         >
           <Box
             sx={{
-              backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url(${promo.imageUrl})`,
+              backgroundImage: `url(${promo.imageUrl})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               height: '100%',
@@ -225,7 +225,7 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({
                 '&:hover': {
                   boxShadow: 6,
                   '& .MuiBox-root': {
-                    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4)), url(${promo.imageUrl})`,
+                    backgroundImage: `url(${promo.imageUrl})`,
                   }
                 }
               }}
@@ -233,7 +233,7 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({
             >
               <Box
                 sx={{
-                  backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url(${promo.imageUrl})`,
+                  backgroundImage: `url(${promo.imageUrl})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   height: '100%',

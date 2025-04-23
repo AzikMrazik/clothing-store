@@ -356,12 +356,10 @@ const Catalog = () => {
 
                 <CardContent 
                   sx={{ 
-                    display: 'flex', 
+                    display: 'flex',
                     flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    p: { xs: 1.5, sm: 2 },
-                    '&:last-child': { pb: { xs: 1.5, sm: 2 } },
-                    height: '100%'
+                    flex: 1,
+                    p: { xs: 1.5, sm: 2 }
                   }}
                 >
                   {/* Контейнер для текстового содержимого с фиксированной высотой */}

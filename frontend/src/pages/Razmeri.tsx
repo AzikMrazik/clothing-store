@@ -2,12 +2,12 @@ import React from 'react';
 import { Container, Typography, Box, CardMedia, Button } from '@mui/material';
 // removed Grid import, using Box grid layout instead
 
-// Replace these paths with your own filename(s) placed in public/images/
+// Replace these URLs with your bucket image URLs
 const images = [
-  '/images/my-table-female.jpg',
-  '/images/my-table-male.jpg',
-  '/images/my-table-kids.jpg',
-  '/images/my-table-shoes.jpg'
+  'https://storage.yandexcloud.net/rvs-bucket/photo_2025-04-23_14-32-19.jpg',
+  'https://storage.yandexcloud.net/rvs-bucket/photo_2025-04-23_14-32-26.jpg',
+  'https://storage.yandexcloud.net/rvs-bucket/photo_2025-04-23_14-32-24.jpg',
+  'https://storage.yandexcloud.net/rvs-bucket/photo_2025-04-23_14-32-29.jpg'
 ];
 
 const Razmeri: React.FC = () => (
@@ -39,9 +39,10 @@ const Razmeri: React.FC = () => (
         Размерные сетки
       </Typography>
       {Object.entries({
-        'Женские': ['XS','S','M','L','XL'],
-        'Мужские': ['S','M','L','XL','XXL'],
-        'Детские': ['XXS','XS','S','M']
+            'Взрослые': ['44','46','48','50','52','54','56','58','60','62','64'],
+            'Женские': ['38','40','42','44','46','48','50','52'],
+            'Детские': ['122','128','134','140','146','152','156','158'],
+            'Обувь (RUS)': ['34','35','36','37','38','39','40','41','42','43','44','45','46','47'],
       }).map(([group, sizes]) => (
         <Box key={group} sx={{ mb: 3 }}>
           <Typography variant="h6">{group}</Typography>
