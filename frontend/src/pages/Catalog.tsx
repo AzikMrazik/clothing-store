@@ -49,7 +49,6 @@ const Catalog = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
   const [sortBy, setSortBy] = useState<SortOption>('price_asc');
-  const [categoryMap, setCategoryMap] = useState<Record<string, string>>({});
   const [slugToId, setSlugToId] = useState<Record<string, string>>({});
   const [loadingCategories, setLoadingCategories] = useState(true);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -71,13 +70,10 @@ const Catalog = () => {
   const fetchCategories = async () => {
     try {
       const categories = await CategoryService.fetchCategories();
-      const map: Record<string, string> = {};
       const slugMap: Record<string, string> = {};
       categories.forEach(category => {
-        map[category._id] = category.name;
         slugMap[category.slug] = category._id;
       });
-      setCategoryMap(map);
       setSlugToId(slugMap);
     } catch (error) {
       console.error('Error fetching categories for mapping:', error);
