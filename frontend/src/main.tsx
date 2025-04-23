@@ -4,10 +4,16 @@ import App from './App';
 import './index.css';
 import ErrorBoundary from './components/ErrorBoundary';
 
-// Function to send client-side error reports to the backend
-async function sendClientError(data: any) {
+// Setup robust global error listeners as early as possible
+console.log('Initializing global error handlers');
+
+// Base URL for API calls, set via Vite env
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
+async function _reportError(data: any) {
+  console.log('Reporting error data to server:', data);
   try {
-    await fetch('/api/client-error', {
+    await fetch(`${API_BASE}/api/client-error`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -16,6 +22,35 @@ async function sendClientError(data: any) {
     console.error('Failed to send client error report', e);
   }
 }
+
+window.addEventListener('error', (event) => {
+  console.log('Global error event caught:', event);
+  _reportError({
+    message: event.message,
+    filename: (event as any).filename || event.filename,
+    lineno: (event as any).lineno || event.lineno,
+    colno: (event as any).colno || event.colno,
+    stack: (event.error as Error)?.stack,
+    userAgent: navigator.userAgent,
+    url: window.location.href,
+    timestamp: new Date().toISOString()
+  });
+});
+
+window.addEventListener('unhandledrejection', (event) => {
+  console.log('Unhandled promise rejection event caught:', event);
+  const reason = (event as PromiseRejectionEvent).reason;
+  _reportError({
+    message: reason?.message || String(reason),
+    stack: reason?.stack,
+    userAgent: navigator.userAgent,
+    url: window.location.href,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Alias sendClientError to unified reporter for consistent logs
+const sendClientError = _reportError;
 
 // Глобальная обработка ошибок и отправка логов в Telegram WebView
 if (navigator.userAgent.includes('Telegram')) {
@@ -66,6 +101,14 @@ if (navigator.userAgent.includes('Telegram')) {
     console.error('Unhandled promise rejection:', event);
     return false;
   };
+}
+
+// DEV-only test: throw an error on startup to verify logging
+if (import.meta.env.DEV) {
+  setTimeout(() => {
+    console.log('Throwing test error to verify global handler');
+    throw new Error('Test client error for verifying handler');
+  }, 3000);
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

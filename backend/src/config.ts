@@ -51,7 +51,8 @@ export const SECURITY = {
       '/api/promos', // Все промо-эндпоинты
       '/api/promos/',
       '/api/promos/codes',
-      '/api/promos/codes/'
+      '/api/promos/codes/',
+      '/api/client-error'  // Разрешаем сбор клиентских ошибок без CSRF токена
     ]
   }
 };
