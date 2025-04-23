@@ -23,7 +23,7 @@ import { useCart } from '../contexts/CartContext';
 import { useApi } from '../hooks/useApi';
 import { useNotification } from '../contexts/NotificationContext';
 import Loading from '../components/Loading';
-import { Product } from '../types/models';
+import { Product, Category } from '../types/models';
 import { API_URL } from '../config';
 import PromoCarousel from '../components/PromoCarousel';
 import CategoryCards from '../components/CategoryCards';
@@ -49,8 +49,6 @@ const Catalog = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
   const [sortBy, setSortBy] = useState<SortOption>('price_asc');
-  const [slugToId, setSlugToId] = useState<Record<string, string>>({});
-  const [loadingCategories, setLoadingCategories] = useState(true);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   const categories = useMemo(() => {
@@ -63,30 +61,20 @@ const Catalog = () => {
   }, [products]);
 
   useEffect(() => {
-    fetchCategories();
+    // при изменении выбранной категории или сбросе URL грузим товары
+    setLoadingProducts(true);
+    setSelectedCategories([]);
     fetchProducts();
-  }, []);
-
-  const fetchCategories = async () => {
-    try {
-      const categories = await CategoryService.fetchCategories();
-      const slugMap: Record<string, string> = {};
-      categories.forEach(category => {
-        slugMap[category.slug] = category._id;
-      });
-      setSlugToId(slugMap);
-    } catch (error) {
-      console.error('Error fetching categories for mapping:', error);
-    } finally {
-      setLoadingCategories(false);
-    }
-  };
+  }, [selectedCategory]);
 
   const fetchProducts = async () => {
     try {
       const result = await call(
         async () => {
-          const response = await fetch(`${API_URL}/products`);
+          const url = selectedCategory
+            ? `${API_URL}/products?category=${selectedCategory}`
+            : `${API_URL}/products`;
+          const response = await fetch(url);
           if (!response.ok) {
             throw new Error(`Failed to fetch products: ${response.status} ${response.statusText}`);
           }
@@ -122,21 +110,22 @@ const Catalog = () => {
     }
   };
 
-  // Фильтрация товаров с учетом slug категории
+  // показываем Loading пока грузятся товары
+  if (loadingProducts) {
+    return <Loading />;
+  }
+
+  // Фильтрация товаров: учитываем только manual selectedCategories
   const filteredProducts = useMemo(() => {
     return products
       .filter(product => {
-        // filter by search query
         const searchMatch = !searchQuery ||
           product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           product.description.toLowerCase().includes(searchQuery.toLowerCase());
-        // filter by category or categories: match by id, используя slugToId при выбранной категории
         const cats = product.categories || [];
-        const selectedCatId = selectedCategory && slugToId[selectedCategory] ? slugToId[selectedCategory] : '';
         const categoryMatch = selectedCategories.length > 0
           ? cats.some(c => selectedCategories.includes(c))
-          : (!selectedCategory || cats.includes(selectedCatId));
-        // filter by price range
+          : true;
         const priceMatch = product.price >= priceRange[0] && product.price <= priceRange[1];
         return searchMatch && categoryMatch && priceMatch;
       })
@@ -149,7 +138,7 @@ const Catalog = () => {
           default: return 0;
         }
       });
-  }, [products, searchQuery, selectedCategory, selectedCategories, priceRange, sortBy, slugToId]);
+  }, [products, searchQuery, selectedCategories, priceRange, sortBy]);
 
   const handleAddToCart = (product: Product) => {
     addToCart({ ...product, quantity: 1 });
@@ -162,10 +151,6 @@ const Catalog = () => {
     setSelectedCategories([]);
     navigate('/');
   };
-
-  if (loadingProducts || loadingCategories || (selectedCategory && !slugToId[selectedCategory])) {
-    return <Loading />;
-  }
 
   return (
     <>
@@ -194,16 +179,16 @@ const Catalog = () => {
                 input={<OutlinedInput label="Категории" />}
                 renderValue={(selected) => (
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                    {(selected as string[]).map((value) => (
-                      <Chip key={value} label={value} />
+                    {(selected as string[]).map((catName) => (
+                      <Chip key={catName} label={catName} />
                     ))}
                   </Box>
                 )}
               >
-                {categories.map((category) => (
-                  <MenuItem key={category} value={category}>
-                    <Checkbox checked={selectedCategories.indexOf(category) > -1} />
-                    <ListItemText primary={category} />
+                {categories.map(catName => (
+                  <MenuItem key={catName} value={catName}>
+                    <Checkbox checked={selectedCategories.includes(catName)} />
+                    <ListItemText primary={catName} />
                   </MenuItem>
                 ))}
               </Select>

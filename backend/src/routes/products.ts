@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { Product } from '../models/Product';
 import mongoose from 'mongoose';
+import { Product } from '../models/Product';
+import { Category } from '../models/Category';
 import { uploadToYOS, deleteFromYOS } from '../services/yos';
 import { upload, validateUploadedFiles } from '../middleware/fileUpload';
 import fs from 'fs';
@@ -22,13 +23,22 @@ router.get('/', asyncHandler(async (req: Request, res: Response): Promise<any> =
   let query: any = {};
   
   if (category) {
-    console.log(`Filtering products by category: ${category}`);
-    query = { 
-      $or: [
-        { category: category },
-        { categories: category }
-      ]
-    };
+    console.log(`Filtering products by category slug: ${category}`);
+    // Map slug to category name
+    const catSlug = String(category);
+    const categoryDoc = await Category.findOne({ slug: catSlug }).lean();
+    if (categoryDoc) {
+      const name = categoryDoc.name;
+      query = {
+        $or: [
+          { category: name },
+          { categories: name }
+        ]
+      };
+    } else {
+      // No such category, return empty
+      query = { categories: null };
+    }
   }
 
   if (search) {
