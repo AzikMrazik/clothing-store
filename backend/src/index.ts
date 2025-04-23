@@ -5,6 +5,7 @@ import { config } from 'dotenv';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import { SECURITY, PORT } from './config';
+import helmet from 'helmet';
 // Импортируем middleware безопасности
 import { 
   xssProtection, 
@@ -50,6 +51,17 @@ process.on('unhandledRejection', (reason) => {
 // Улучшенные настройки безопасности
 app.disable('x-powered-by');
 
+// Redirect HTTP to HTTPS
+app.use((req: Request, res: Response, next: NextFunction) => {
+  if (process.env.NODE_ENV === 'production' && req.headers['x-forwarded-proto'] !== 'https') {
+    return res.redirect(`https://${req.headers.host}${req.url}`);
+  }
+  next();
+});
+
+// HSTS для HTTPS
+app.use(helmet.hsts({ maxAge: 31536000, includeSubDomains: true, preload: true }));
+
 // Применяем middleware для логирования запросов
 app.use(requestLogger);
 
@@ -65,15 +77,12 @@ app.use(bruteForceProtection());
 app.use(rateLimiter);
 app.use(sqlInjectionCheck);
 
-// Simplify CORS for debugging
-app.use(cors()); // allow all origins
-// Глобальный CORS для всех ответов (index.html, assets и API)
-app.use((req: Request, res: Response, next: NextFunction) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
-  next();
-});
+// Применяем безопасные CORS
+app.use(cors({
+  origin: SECURITY.CORS_ORIGIN.split(','),
+  methods: SECURITY.CORS_METHODS.split(','),
+  credentials: true
+}));
 
 // Увеличиваем лимиты запросов с валидацией контента
 app.use(express.json({ 
@@ -178,11 +187,8 @@ app.post('/api/client-error', (req: Request, res: Response) => {
 });
 
 // Применяем CSRF защиту для всех небезопасных маршрутов (POST,PUT,DELETE)
-// Temporarily disable CSRF for debugging
-// app.use((req: Request, res: Response, next: NextFunction) => {
-//   csrfProtection(req, res, next);
-// });
-// app.use(csrfToken);
+app.use(csrfProtection);
+app.use(csrfToken);
 
 // API эндпоинты
 app.use('/api/products', productRoutes);
@@ -213,11 +219,12 @@ app.get('*', (req: Request, res: Response, next: NextFunction) => {
 app.get('/.well-known/security.txt', (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'text/plain');
   res.send(
-    `Contact: mailto:security@yourdomain.com
-Expires: ${new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString()}
-Policy: https://yourdomain.com/security-policy
-Hiring: https://yourdomain.com/careers
-Preferred-Languages: en, ru`
+    `Contact: mailto:abuse@prostor-shop.com
+Encryption: https://prostor-shop.com/pgp-key.txt
+Acknowledgments: https://prostor-shop.com/hall-of-fame.html
+Canonical: https://prostor-shop.com/.well-known/security.txt
+Policy: https://prostor-shop.com/security-policy.txt
+Preferred-Languages: en`
   );
 });
 
