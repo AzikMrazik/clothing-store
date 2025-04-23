@@ -52,11 +52,11 @@ const CategoryCards: React.FC<CategoryCardsProps> = ({ onCategoryChange }) => {
     }
   };
 
-  const handleCategoryClick = (categoryId: string) => {
+  const handleCategoryClick = (categorySlug: string) => {
     if (onCategoryChange) {
-      onCategoryChange(categoryId);
+      onCategoryChange(categorySlug);
     } else {
-      navigate(`/?category=${categoryId}`);
+      navigate(`/category/${categorySlug}`);
     }
   };
 

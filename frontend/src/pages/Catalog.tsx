@@ -45,11 +45,13 @@ const Catalog = () => {
   const categoryFromUrl = query.get('category') || '';
   const selectedCategory = categoryFromUrl;
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingProducts, setLoadingProducts] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
   const [sortBy, setSortBy] = useState<SortOption>('price_asc');
   const [categoryMap, setCategoryMap] = useState<Record<string, string>>({});
+  const [slugToId, setSlugToId] = useState<Record<string, string>>({});
+  const [loadingCategories, setLoadingCategories] = useState(true);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   const categories = useMemo(() => {
@@ -70,12 +72,17 @@ const Catalog = () => {
     try {
       const categories = await CategoryService.fetchCategories();
       const map: Record<string, string> = {};
+      const slugMap: Record<string, string> = {};
       categories.forEach(category => {
         map[category._id] = category.name;
+        slugMap[category.slug] = category._id;
       });
       setCategoryMap(map);
+      setSlugToId(slugMap);
     } catch (error) {
       console.error('Error fetching categories for mapping:', error);
+    } finally {
+      setLoadingCategories(false);
     }
   };
 
@@ -115,11 +122,11 @@ const Catalog = () => {
       console.error('Error in fetchProducts:', err);
       showNotification('Ошибка загрузки товаров', 'error');
     } finally {
-      setLoading(false);
+      setLoadingProducts(false);
     }
   };
 
-  // Удаляем все проверки product.category, используем только product.categories (массив)
+  // Фильтрация товаров с учетом slug категории
   const filteredProducts = useMemo(() => {
     return products
       .filter(product => {
@@ -127,10 +134,12 @@ const Catalog = () => {
         const searchMatch = !searchQuery ||
           product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           product.description.toLowerCase().includes(searchQuery.toLowerCase());
-        // filter by category or categories
+        // filter by category or categories: match by id, используя slugToId при выбранной категории
+        const cats = product.categories || [];
+        const selectedCatId = selectedCategory && slugToId[selectedCategory] ? slugToId[selectedCategory] : '';
         const categoryMatch = selectedCategories.length > 0
-          ? (product.categories || []).some(c => selectedCategories.includes(c))
-          : (!selectedCategory || (product.categories || []).includes(selectedCategory));
+          ? cats.some(c => selectedCategories.includes(c))
+          : (!selectedCategory || cats.includes(selectedCatId));
         // filter by price range
         const priceMatch = product.price >= priceRange[0] && product.price <= priceRange[1];
         return searchMatch && categoryMatch && priceMatch;
@@ -144,7 +153,7 @@ const Catalog = () => {
           default: return 0;
         }
       });
-  }, [products, searchQuery, selectedCategory, selectedCategories, priceRange, sortBy, categoryMap]);
+  }, [products, searchQuery, selectedCategory, selectedCategories, priceRange, sortBy, slugToId]);
 
   const handleAddToCart = (product: Product) => {
     addToCart({ ...product, quantity: 1 });
@@ -155,9 +164,10 @@ const Catalog = () => {
     setSearchQuery('');
     setPriceRange([0, maxPrice]);
     setSelectedCategories([]);
+    navigate('/');
   };
 
-  if (loading) {
+  if (loadingProducts || loadingCategories || (selectedCategory && !slugToId[selectedCategory])) {
     return <Loading />;
   }
 
