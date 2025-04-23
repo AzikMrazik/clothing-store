@@ -27,6 +27,7 @@
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build",
+    "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "security:audit": "npm audit --production",
     "security:fix": "npm audit fix --production",

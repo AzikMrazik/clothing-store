@@ -46,6 +46,10 @@ export default defineConfig(({ mode }) => {
   }
   
   return {
+    // Принудительно устанавливаем NODE_ENV=development для вывода полных react-ошибок
+    define: {
+      'process.env.NODE_ENV': JSON.stringify('development')
+    },
     plugins: [
       // Legacy support for older browsers (e.g., Telegram WebView)
       legacy({
