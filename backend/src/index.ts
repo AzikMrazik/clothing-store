@@ -195,12 +195,12 @@ app.use('/api/promos', promoRoutes);
 // Path to frontend production build
 const frontendDist = path.join(__dirname, '..', '..', 'frontend', 'dist');
 
-// Serve frontend production build with CORS on JS files
+// Serve frontend production build with CORS on all files
 app.use(express.static(frontendDist, {
-  setHeaders: (res, filePath) => {
-    if (filePath.endsWith('.js')) {
-      res.setHeader('Access-Control-Allow-Origin', '*');
-    }
+  setHeaders: (res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
   }
 }));
 app.get('*', (req: Request, res: Response, next: NextFunction) => {

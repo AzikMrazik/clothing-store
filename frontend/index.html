@@ -14,6 +14,39 @@
     <title>Prostor-Shop</title>
   </head>
   <body>
+    <!-- Error reporting before application start -->
+    <script>
+      window.addEventListener('error', function(event) {
+        try {
+          fetch('/api/client-error', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              message: event.message,
+              filename: event.filename,
+              lineno: event.lineno,
+              colno: event.colno,
+              stack: event.error ? event.error.stack : null,
+              userAgent: navigator.userAgent
+            })
+          });
+        } catch (e) { console.error(e); }
+      });
+      window.addEventListener('unhandledrejection', function(event) {
+        try {
+          const error = event.reason;
+          fetch('/api/client-error', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              message: error && (error.message || error.toString()),
+              stack: error && error.stack,
+              userAgent: navigator.userAgent
+            })
+          });
+        } catch (e) { console.error(e); }
+      });
+    </script>
     <div id="root"></div>
     <script type="module" crossorigin src="/src/main.tsx"></script>
   </body>
