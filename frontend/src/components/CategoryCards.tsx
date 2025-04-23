@@ -144,7 +144,7 @@ const CategoryCards: React.FC<CategoryCardsProps> = ({ onCategoryChange }) => {
                     boxShadow: 1,
                     '&:hover': { zIndex: 10, transform: 'translateY(-5px)', boxShadow: 6, transition: 'transform 0.3s ease' }
                   }}
-                  onClick={() => handleCategoryClick(category._id)}
+                  onClick={() => handleCategoryClick(category.slug)}
                 >
                   <Box sx={{ position: 'relative', paddingTop: { xs: '90%', sm: '110%' }, overflow: 'hidden' }}>
                     {category.imageUrl && (
