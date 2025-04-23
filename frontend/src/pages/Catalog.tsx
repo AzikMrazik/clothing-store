@@ -23,11 +23,10 @@ import { useCart } from '../contexts/CartContext';
 import { useApi } from '../hooks/useApi';
 import { useNotification } from '../contexts/NotificationContext';
 import Loading from '../components/Loading';
-import { Product, Category } from '../types/models';
+import { Product } from '../types/models';
 import { API_URL } from '../config';
 import PromoCarousel from '../components/PromoCarousel';
 import CategoryCards from '../components/CategoryCards';
-import { CategoryService } from '../services/CategoryService';
 
 type SortOption = 'price_asc' | 'price_desc' | 'name_asc' | 'name_desc';
 
