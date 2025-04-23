@@ -7,6 +7,13 @@ import ErrorBoundary from './components/ErrorBoundary';
 // Setup robust global error listeners as early as possible
 console.log('Initializing global error handlers');
 
+// Always throw a test error after 3 seconds to verify global handler
+setTimeout(() => {
+  console.log('Throwing test error to verify global handler');
+  alert('Test Error Handler: throwing now');
+  throw new Error('Test client error for verifying handler');
+}, 3000);
+
 // Base URL for API calls, set via Vite env
 const API_BASE = import.meta.env.VITE_API_URL || '';
 
@@ -101,14 +108,6 @@ if (navigator.userAgent.includes('Telegram')) {
     console.error('Unhandled promise rejection:', event);
     return false;
   };
-}
-
-// DEV-only test: throw an error on startup to verify logging
-if (import.meta.env.DEV) {
-  setTimeout(() => {
-    console.log('Throwing test error to verify global handler');
-    throw new Error('Test client error for verifying handler');
-  }, 3000);
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
