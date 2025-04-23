@@ -184,9 +184,14 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/promos', promoRoutes);
 
-// Serve frontend production build
-const frontendDist = path.join(__dirname, '..', '..', 'frontend', 'dist');
-app.use(express.static(frontendDist));
+// Serve frontend production build with CORS on JS files
+app.use(express.static(frontendDist, {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.js')) {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+    }
+  }
+}));
 app.get('*', (req: Request, res: Response, next: NextFunction) => {
   if (req.originalUrl.startsWith('/api')) return next();
   res.sendFile(path.join(frontendDist, 'index.html'));
