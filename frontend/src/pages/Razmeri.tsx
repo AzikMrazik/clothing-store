@@ -1,13 +1,13 @@
 import React from 'react';
 import { Container, Typography, Box, CardMedia, Button } from '@mui/material';
-// removed Grid import, using Box grid layout instead
+import { CDN_URL } from '../config';
 
-// Replace these URLs with your bucket image URLs
+// Replace these paths with your own filename(s) placed in public/images/
 const images = [
-  'https://storage.yandexcloud.net/rvs-bucket/photo_2025-04-23_14-32-19.jpg',
-  'https://storage.yandexcloud.net/rvs-bucket/photo_2025-04-23_14-32-26.jpg',
-  'https://storage.yandexcloud.net/rvs-bucket/photo_2025-04-23_14-32-24.jpg',
-  'https://storage.yandexcloud.net/rvs-bucket/photo_2025-04-23_14-32-29.jpg'
+  `${CDN_URL}/photo_2025-04-23_14-32-19.jpg`,
+  `${CDN_URL}/photo_2025-04-23_14-32-26.jpg`,
+  `${CDN_URL}/photo_2025-04-23_14-32-24.jpg`,
+  `${CDN_URL}/photo_2025-04-23_14-32-29.jpg`
 ];
 
 const Razmeri: React.FC = () => (

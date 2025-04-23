@@ -4,6 +4,9 @@ export const API_URL = '/api';
 // Определяем базовый URL для фронтенда
 export const FRONTEND_URL = window.location.origin;
 
+// Base URL for static assets CDN
+export const CDN_URL = 'https://storage.yandexcloud.net/rvs-bucket';
+
 // Добавляем подробное логирование API запросов для отладки
 // Рекомендуется отключить в продакшене
 export const API_DEBUG = process.env.NODE_ENV !== 'production';

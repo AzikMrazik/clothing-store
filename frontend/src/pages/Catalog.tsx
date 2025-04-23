@@ -359,6 +359,7 @@ const Catalog = () => {
                     display: 'flex',
                     flexDirection: 'column',
                     flex: 1,
+                    justifyContent: 'space-between',
                     p: { xs: 1.5, sm: 2 }
                   }}
                 >
