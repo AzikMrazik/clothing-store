@@ -109,11 +109,6 @@ const Catalog = () => {
     }
   };
 
-  // показываем Loading пока грузятся товары
-  if (loadingProducts) {
-    return <Loading />;
-  }
-
   // Фильтрация товаров: учитываем только manual selectedCategories
   const filteredProducts = useMemo(() => {
     return products
@@ -138,6 +133,11 @@ const Catalog = () => {
         }
       });
   }, [products, searchQuery, selectedCategories, priceRange, sortBy]);
+
+  // показываем Loading пока грузятся товары
+  if (loadingProducts) {
+    return <Loading />;
+  }
 
   const handleAddToCart = (product: Product) => {
     addToCart({ ...product, quantity: 1 });
