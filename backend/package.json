@@ -23,7 +23,7 @@
     "winston-daily-rotate-file": "^4.7.1"
   },
   "overrides": {
-    "csurf>cookie": "^0.8.0"
+    "cookie": "^0.8.0"
   },
   "scripts": {
     "start": "node dist/index.js",
