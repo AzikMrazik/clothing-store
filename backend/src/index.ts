@@ -38,6 +38,15 @@ import { logClientError } from './utils/logger';
 config();
 const app = express();
 
+// Debug: log startup and catch unhandled errors
+console.log('Backend starting at', new Date().toISOString());
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+});
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled Rejection:', reason);
+});
+
 // Улучшенные настройки безопасности
 app.disable('x-powered-by');
 
@@ -56,15 +65,8 @@ app.use(bruteForceProtection());
 app.use(rateLimiter);
 app.use(sqlInjectionCheck);
 
-// Настройка CORS с ограниченным доступом 
-const corsOptions = {
-  origin: SECURITY.CORS_ORIGIN.split(','),
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin', 'CSRF-Token'],
-  credentials: true,
-  maxAge: 86400
-};
-app.use(cors(corsOptions));
+// Simplify CORS for debugging
+app.use(cors()); // Temporarily allow all origins without credentials
 
 // Увеличиваем лимиты запросов с валидацией контента
 app.use(express.json({ 
@@ -169,12 +171,11 @@ app.post('/api/client-error', (req: Request, res: Response) => {
 });
 
 // Применяем CSRF защиту для всех небезопасных маршрутов (POST,PUT,DELETE)
-app.use((req: Request, res: Response, next: NextFunction) => {
-  csrfProtection(req, res, next);
-});
-
-// Добавляем CSRF токен для всех ответов
-app.use(csrfToken);
+// Temporarily disable CSRF for debugging
+// app.use((req: Request, res: Response, next: NextFunction) => {
+//   csrfProtection(req, res, next);
+// });
+// app.use(csrfToken);
 
 // API эндпоинты
 app.use('/api/products', productRoutes);
@@ -183,6 +184,9 @@ app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/promos', promoRoutes);
+
+// Path to frontend production build
+const frontendDist = path.join(__dirname, '..', '..', 'frontend', 'dist');
 
 // Serve frontend production build with CORS on JS files
 app.use(express.static(frontendDist, {

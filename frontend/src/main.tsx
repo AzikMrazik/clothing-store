@@ -7,13 +7,6 @@ import ErrorBoundary from './components/ErrorBoundary';
 // Setup robust global error listeners as early as possible
 console.log('Initializing global error handlers');
 
-// Always throw a test error after 3 seconds to verify global handler
-setTimeout(() => {
-  console.log('Throwing test error to verify global handler');
-  alert('Test Error Handler: throwing now');
-  throw new Error('Test client error for verifying handler');
-}, 3000);
-
 // Base URL for API calls, set via Vite env
 const API_BASE = import.meta.env.VITE_API_URL || '';
 
