@@ -33,6 +33,7 @@ import cartRoutes from './routes/cart';
 import orderRoutes from './routes/orders';
 import categoryRoutes from './routes/categories';
 import promoRoutes from './routes/promos';
+import { logClientError } from './utils/logger';
 
 config();
 const app = express();
@@ -177,6 +178,12 @@ app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/promos', promoRoutes);
+
+// Endpoint to receive client-side error reports
+app.post('/api/client-error', (req: Request, res: Response) => {
+  logClientError(req.body);
+  res.status(200).json({ status: 'logged' });
+});
 
 // Serve frontend production build
 const frontendDist = path.join(__dirname, '..', '..', 'frontend', 'dist');

@@ -144,6 +144,15 @@ const securityLogTransport = new winston.transports.DailyRotateFile({
   level: 'warn',
 });
 
+// Client-side error logging transport
+const clientErrorLogTransport = new winston.transports.DailyRotateFile({
+  filename: path.join(LOG_DIR, 'client-error-%DATE%.log'),
+  datePattern: 'YYYY-MM-DD',
+  maxSize: '10m',
+  maxFiles: '7d',
+  level: 'warn',
+});
+
 // Создаем логгеры для разных типов логов
 export const accessLogger = winston.createLogger({
   format: logFormat,
@@ -160,6 +169,12 @@ export const securityLogger = winston.createLogger({
   transports: [securityLogTransport],
 });
 
+// Logger for client-side errors
+export const clientErrorLogger = winston.createLogger({
+  format: logFormat,
+  transports: [clientErrorLogTransport],
+});
+
 // Добавляем консольный вывод для режима разработки
 if (process.env.NODE_ENV !== 'production') {
   const consoleTransport = new winston.transports.Console({
@@ -172,6 +187,7 @@ if (process.env.NODE_ENV !== 'production') {
   accessLogger.add(consoleTransport);
   errorLogger.add(consoleTransport);
   securityLogger.add(consoleTransport);
+  clientErrorLogger.add(consoleTransport);
 }
 
 // Функция для логирования доступа
@@ -271,6 +287,11 @@ export const logSecurityEvent = (
   } catch (err) {
     console.error('Error writing security event to log file:', err);
   }
+};
+
+// Function to log client-side errors
+export const logClientError = (data: any) => {
+  clientErrorLogger.warn('Client-side Error', data);
 };
 
 /**
