@@ -82,6 +82,15 @@ export default defineConfig(({ mode }) => {
             
             next();
           });
+        },
+        configurePreview(server) {
+          server.middlewares.use((req, res, next) => {
+            // Добавляем CORS-заголовки для сервера preview
+            res.setHeader('Access-Control-Allow-Origin', '*');
+            res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,POST,DELETE,OPTIONS');
+            res.setHeader('Access-Control-Allow-Headers', '*');
+            next();
+          });
         }
       }
     ],
