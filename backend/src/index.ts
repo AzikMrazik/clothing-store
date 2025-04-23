@@ -181,6 +181,7 @@ app.use('/api/promos', promoRoutes);
 
 // Endpoint to receive client-side error reports
 app.post('/api/client-error', (req: Request, res: Response) => {
+  console.log('Received client error report:', req.body);
   logClientError(req.body);
   res.status(200).json({ status: 'logged' });
 });
