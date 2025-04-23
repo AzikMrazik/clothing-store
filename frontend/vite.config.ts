@@ -86,8 +86,8 @@ export default defineConfig(({ mode }) => {
     root: path.resolve(__dirname, ''),
     build: {
       outDir: 'dist',
-      // Включаем source map только для дев-режима
-      sourcemap: !isProd,
+      // Всегда генерируем source map для продакшн, чтобы дебажить ошибки
+      sourcemap: true,
       // Настройки безопасности для сборки
       rollupOptions: {
         output: {
@@ -102,8 +102,8 @@ export default defineConfig(({ mode }) => {
           assetFileNames: isProd ? 'assets/[name].[hash].[ext]' : 'assets/[name].[ext]',
         }
       },
-      // Настройки минификации
-      minify: isProd ? 'terser' : false,
+      // Отключаем минификацию, чтобы React ошибки были читаемыми
+      minify: false,
       terserOptions: isProd ? {
         compress: {
           drop_console: true,

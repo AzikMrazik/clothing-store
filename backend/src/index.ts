@@ -178,6 +178,14 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/promos', promoRoutes);
 
+// Serve frontend production build
+const frontendDist = path.join(__dirname, '..', '..', 'frontend', 'dist');
+app.use(express.static(frontendDist));
+app.get('*', (req: Request, res: Response, next: NextFunction) => {
+  if (req.originalUrl.startsWith('/api')) return next();
+  res.sendFile(path.join(frontendDist, 'index.html'));
+});
+
 // Создаем роут для проверки безопасности (security.txt)
 // Согласно https://securitytxt.org/
 app.get('/.well-known/security.txt', (req: Request, res: Response) => {
@@ -189,21 +197,6 @@ Policy: https://yourdomain.com/security-policy
 Hiring: https://yourdomain.com/careers
 Preferred-Languages: en, ru`
   );
-});
-
-// Модифицируем обработку маршрутов для фронтенда:
-// Обрабатываем только не-API запросы, возвращая JSON для API запросов и 404 для остальных
-app.use('*', (req: Request, res: Response) => {
-  // Если запрос начинается с /api, возвращаем JSON с ошибкой
-  if (req.originalUrl.startsWith('/api')) {
-    return res.status(404).json({ 
-      error: 'API endpoint not found',
-      path: req.originalUrl
-    });
-  }
-  
-  // Для не-API запросов возвращаем 404
-  res.status(404).send('Not found');
 });
 
 // Глобальный обработчик ошибок
