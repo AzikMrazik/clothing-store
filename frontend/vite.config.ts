@@ -102,6 +102,8 @@ export default defineConfig(({ mode }) => {
       // Настройки безопасности для сборки
       rollupOptions: {
         output: {
+          // Включаем crossorigin на теги <script> для раскрытия ошибок
+          crossOriginLoading: 'anonymous',
           // Разделение кода по чанкам
           manualChunks: {
             vendor: ['react', 'react-dom', 'react-router-dom'],
@@ -159,7 +161,13 @@ export default defineConfig(({ mode }) => {
       https: httpsOptions
     },
     preview: {
-      cors: true
+      host: '0.0.0.0',
+      cors: true,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET,HEAD,PUT,POST,DELETE,OPTIONS',
+        'Access-Control-Allow-Headers': '*'
+      }
     },
     resolve: {
       alias: {
