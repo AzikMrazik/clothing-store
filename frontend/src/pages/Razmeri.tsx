@@ -1,13 +1,12 @@
 import React from 'react';
 import { Container, Typography, Box, CardMedia, Button } from '@mui/material';
-import { CDN_URL } from '../config';
 
 // Replace these paths with your own filename(s) placed in public/images/
 const images = [
-  `${CDN_URL}/photo_2025-04-23_14-32-19.jpg`,
-  `${CDN_URL}/photo_2025-04-23_14-32-26.jpg`,
-  `${CDN_URL}/photo_2025-04-23_14-32-24.jpg`,
-  `${CDN_URL}/photo_2025-04-23_14-32-29.jpg`
+  `https://storage.yandexcloud.net/rvs-bucket/ba20cf16-40ef-4d62-a01b-1f4d69737bbd.jpg`,
+  `https://storage.yandexcloud.net/rvs-bucket/386aa3e4-68d5-4dcb-bc0c-5ba8b757d8ff.jpg`,
+  `https://storage.yandexcloud.net/rvs-bucket/95096f6c-e494-4157-91ab-26f1345655fa.jpg`,
+  `https://storage.yandexcloud.net/rvs-bucket/b2ad4bd5-4f1d-40b5-804d-31d0ae498796.jpg`
 ];
 
 const Razmeri: React.FC = () => (
