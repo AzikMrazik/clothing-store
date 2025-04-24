@@ -40,6 +40,7 @@ const ProductDetails = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedGroup, setSelectedGroup] = useState<string>('');
   const [selectedSize, setSelectedSize] = useState<string>('');
+  const [selectedShoeSize, setSelectedShoeSize] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState<string>('');
   const { addToCart } = useCart();
   const { call, error } = useApi();
@@ -104,7 +105,7 @@ const ProductDetails = () => {
 
   const handleAddToCart = () => {
     if (product) {
-      addToCart({ ...product, quantity, selectedSize, selectedColor });
+      addToCart({ ...product, quantity, selectedSize, selectedColor, selectedShoeSize });
       showNotification('Товар добавлен в корзину', 'success');
       navigate('/cart');
     }
@@ -140,6 +141,9 @@ const ProductDetails = () => {
   const sizeGroupOptions = product?.categories?.includes('Обувь')
     ? ['Обувь']
     : Object.keys(sizeGroupMapping).filter(group => group !== 'Обувь');
+
+  // Check if this is a set product
+  const isSetProduct = product.categories?.includes('Наборы');
 
   return (
     <Container 
@@ -233,38 +237,94 @@ const ProductDetails = () => {
               {product.description}
             </Typography>
 
-            {/* Size group selection */}
-            <FormControl fullWidth margin="normal">
-              <InputLabel>Группа размеров</InputLabel>
-              <Select
-                fullWidth
-                value={selectedGroup}
-                label="Группа размеров"
-                onChange={e => { setSelectedGroup(e.target.value); setSelectedSize(''); }}
-                MenuProps={{ PaperProps: { sx: { maxWidth: '100%' } } }}
-              >
-                {sizeGroupOptions.map(gr => (
-                  <MenuItem key={gr} value={gr}>{gr}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            {/* Size options */}
-            {selectedGroup && (
-              <Box sx={{ mb: 2, width: '100%', maxWidth: '100%' }}>
-                <Typography variant="subtitle1">Размер:</Typography>
-                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
-                  {sizeGroupMapping[selectedGroup].map(size => (
-                    <Chip
-                      key={size}
-                      label={size}
-                      clickable
-                      color={selectedSize === size ? 'primary' : 'default'}
-                      onClick={() => setSelectedSize(size)}
-                    />
-                  ))}
+            {/* Size selection */}
+            {isSetProduct ? (
+              <>
+                {/* Clothing size group selection */}
+                <FormControl fullWidth margin="normal">
+                  <InputLabel>Группа размеров</InputLabel>
+                  <Select
+                    fullWidth
+                    value={selectedGroup}
+                    label="Группа размеров"
+                    onChange={e => { setSelectedGroup(e.target.value); setSelectedSize(''); }}
+                  >
+                    {sizeGroupOptions.filter(gr => gr !== 'Обувь').map(gr => (
+                      <MenuItem key={gr} value={gr}>{gr}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                {/* Clothing size options */}
+                {selectedGroup && (
+                  <Box sx={{ mb: 2, width: '100%' }}>
+                    <Typography variant="subtitle1">Размер одежды:</Typography>
+                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
+                      {sizeGroupMapping[selectedGroup].map(size => (
+                        <Chip
+                          key={size}
+                          label={size}
+                          clickable
+                          color={selectedSize === size ? 'primary' : 'default'}
+                          onClick={() => setSelectedSize(size)}
+                        />
+                      ))}
+                    </Box>
+                  </Box>
+                )}
+                {/* Shoe size options */}
+                <Box sx={{ mb: 2, width: '100%' }}>
+                  <Typography variant="subtitle1">Размер обуви:</Typography>
+                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
+                    {sizeGroupMapping['Обувь'].map(size => (
+                      <Chip
+                        key={size}
+                        label={size}
+                        clickable
+                        color={selectedShoeSize === size ? 'primary' : 'default'}
+                        onClick={() => setSelectedShoeSize(size)}
+                      />
+                    ))}
+                  </Box>
                 </Box>
-              </Box>
+              </>
+            ) : (
+              /* existing single group/size UI */
+              <>
+                {/* Size group selection */}
+                <FormControl fullWidth margin="normal">
+                  <InputLabel>Группа размеров</InputLabel>
+                  <Select
+                    fullWidth
+                    value={selectedGroup}
+                    label="Группа размеров"
+                    onChange={e => { setSelectedGroup(e.target.value); setSelectedSize(''); }}
+                    MenuProps={{ PaperProps: { sx: { maxWidth: '100%' } } }}
+                  >
+                    {sizeGroupOptions.map(gr => (
+                      <MenuItem key={gr} value={gr}>{gr}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                {/* Size options */}
+                {selectedGroup && (
+                  <Box sx={{ mb: 2, width: '100%', maxWidth: '100%' }}>
+                    <Typography variant="subtitle1">Размер:</Typography>
+                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
+                      {sizeGroupMapping[selectedGroup].map(size => (
+                        <Chip
+                          key={size}
+                          label={size}
+                          clickable
+                          color={selectedSize === size ? 'primary' : 'default'}
+                          onClick={() => setSelectedSize(size)}
+                        />
+                      ))}
+                    </Box>
+                  </Box>
+                )}
+              </>
             )}
+
             {/* Color selector */}
             {product.colors && product.colors.length > 0 && (
               <Box sx={{ mb: 2, width: '100%', maxWidth: '100%' }}>

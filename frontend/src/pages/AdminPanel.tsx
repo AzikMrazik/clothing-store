@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Container,
   Box,
@@ -91,6 +91,7 @@ const AdminPanel = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
   const [tab, setTab] = useState(0);
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   useEffect(() => {
     fetchProducts();
@@ -234,9 +235,7 @@ const AdminPanel = () => {
     e.preventDefault();
     
     if (!editingProduct?.name || !editingProduct?.price || !editingProduct?.description || 
-        !editingProduct?.images?.length || !(editingProduct?.categories && editingProduct.categories.length > 0) ||
-        !(editingProduct?.sizes && editingProduct.sizes.length > 0) ||
-        !(editingProduct?.colors && editingProduct.colors.length > 0)) {
+        !editingProduct?.images?.length || !(editingProduct?.categories && editingProduct.categories.length > 0)) {
       showNotification('Заполните все обязательные поля и добавьте хотя бы одно фото', 'error');
       return;
     }
@@ -308,6 +307,17 @@ const AdminPanel = () => {
   const handleCategoryFilterChange = (event: SelectChangeEvent<string[]>) => {
     setSelectedCategories(event.target.value as string[]);
   };
+
+  // Filter products by search, category and price
+  const filteredProducts = useMemo(() => {
+    return products.filter(product => {
+      const matchSearch = !searchQuery || product.name.toLowerCase().includes(searchQuery.toLowerCase());
+      const cats = product.categories || [product.category];
+      const matchCategory = selectedCategories.length > 0 ? cats.some(c => selectedCategories.includes(c)) : true;
+      const matchPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
+      return matchSearch && matchCategory && matchPrice;
+    });
+  }, [products, searchQuery, selectedCategories, priceRange]);
 
   const renderProductDialog = () => (
     <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
@@ -420,27 +430,7 @@ const AdminPanel = () => {
             </Box>
           )}
 
-          {/* Removed manual sizes autocomplete; sizes managed by выбор группы размеров */}
-          {/* Size pack selection */}
-          <FormControl fullWidth margin="normal">
-            <InputLabel>Группа размеров</InputLabel>
-            <Select
-              value={editingProduct?.sizeGroup || ''}
-              onChange={(e) => {
-                const group = e.target.value;
-                setEditingProduct(prev => prev ? {
-                  ...prev,
-                  sizeGroup: group,
-                  sizes: sizeGroupMapping[group as string] || []
-                } : null);
-              }}
-              label="Группа размеров"
-            >
-              {sizeGroupOptions.map(group => (
-                <MenuItem key={group} value={group}>{group}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          {/* Color selection */}
           <Autocomplete
             multiple
             freeSolo
@@ -468,11 +458,21 @@ const AdminPanel = () => {
   );
 
   const renderProductsTable = () => (
-    <>
+    <> 
       <Box sx={{ mb: 3 }}>
         <Typography variant="h6" gutterBottom>
           Фильтры
         </Typography>
+        {/* Search by name */}
+        <Box sx={{ mb: 2 }}>
+          <TextField
+            fullWidth
+            size="small"
+            label="Поиск по названию"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </Box>
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 2 }}>
           <Box sx={{ flex: 1 }}>
             <FormControl fullWidth>
@@ -531,7 +531,7 @@ const AdminPanel = () => {
           </TableHead>
           <TableBody>
             <AnimatePresence>
-              {products.map((product) => (
+              {filteredProducts.map((product) => (
                 <TableRow
                   key={product._id}
                   component={motion.tr}

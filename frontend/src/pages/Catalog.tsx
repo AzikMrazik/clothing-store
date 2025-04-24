@@ -274,6 +274,7 @@ const Catalog = () => {
                   height: '100%', 
                   minHeight: { xs: 300, sm: 320, md: 340 },
                   aspectRatio: '3/4', // Устанавливаем соотношение сторон 3:4 (ширина:высота)
+                  position: 'relative',
                   '&:hover': {
                     transform: 'translateY(-4px)',
                     transition: 'transform 0.2s ease-in-out',
@@ -346,11 +347,10 @@ const Catalog = () => {
 
                 <CardContent 
                   sx={{ 
+                    // reserve space for footer
                     display: 'flex',
                     flexDirection: 'column',
                     flex: 1,
-                    justifyContent: 'space-between',
-                    p: { xs: 1.5, sm: 2 }
                   }}
                 >
                   {/* Контейнер для текстового содержимого с фиксированной высотой */}
@@ -378,10 +378,14 @@ const Catalog = () => {
                   </Box>
                   {/* Блок с ценой и кнопкой всегда внизу карточки */}
                   <Box sx={{
-                    pt: 1,
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    width: '100%',
+                    p: 2,
+                    backgroundColor: 'background.paper',
                     borderTop: '1px solid',
                     borderColor: 'divider',
-                    mt: 'auto',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'stretch',
