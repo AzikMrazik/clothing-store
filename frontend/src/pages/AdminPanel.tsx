@@ -70,14 +70,7 @@ type ProductForm = {
 };
 
 const AdminPanel = () => {
-  // Static options for sizes and colors
-  const sizeGroupOptions = ['Женские','Взрослые','Детские','Обувь'];
-  const sizeGroupMapping: Record<string,string[]> = {
-    'Взрослые': ['44','46','48','50','52','54','56','58','60','62','64','66','68','70'],
-    'Женские': ['38','40','42','44','46','48','50','52'],
-    'Детские': ['122','128','134','140','146','152','156','158','160','162','164'],
-    'Обувь': ['34','35','36','37','38','39','40','41','42','43','44','45','46','47'],
-  }
+  // Static options for colors
   const colorOptions = ['Белый','Черный','Красный','Синий','Зеленый','Желтый'];
   const [products, setProducts] = useState<Product[]>([]);
   const [open, setOpen] = useState(false);

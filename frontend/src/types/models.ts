@@ -16,6 +16,7 @@ export interface CartItem extends Product {
   quantity: number;
   selectedSize?: string;  // chosen size
   selectedColor?: string; // chosen color
+  selectedShoeSize?: string; // chosen shoe size
 }
 
 // Обновляем интерфейс корзины, добавляем поля для работы с доставкой и промокодами
