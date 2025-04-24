@@ -93,17 +93,10 @@ export default defineConfig(({ mode }) => {
             res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,POST,DELETE,OPTIONS');
             res.setHeader('Access-Control-Allow-Headers', '*');
             res.setHeader('Referrer-Policy', 'no-referrer');
+            // Устанавливаем CSP по HTTP заголовкам в preview
+            res.setHeader('Content-Security-Policy', cspString);
             next();
           });
-        }
-      },
-      // Inject security meta tags into HTML
-      {
-        name: 'html-security',
-        transformIndexHtml(html) {
-          return html.replace(/<head>/i,
-            `<head>\n    <meta http-equiv="Referrer-Policy" content="no-referrer" />\n    <meta http-equiv="Content-Security-Policy" content="${cspString}" />`
-          );
         }
       }
     ],
@@ -180,7 +173,8 @@ export default defineConfig(({ mode }) => {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET,HEAD,PUT,POST,DELETE,OPTIONS',
         'Access-Control-Allow-Headers': '*',
-        'Referrer-Policy': 'no-referrer'
+        'Referrer-Policy': 'no-referrer',
+        'Content-Security-Policy': cspString
       }
     },
     resolve: {

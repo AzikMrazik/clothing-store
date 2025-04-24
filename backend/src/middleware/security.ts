@@ -37,25 +37,28 @@ export const xssProtection = (req: Request, res: Response, next: NextFunction) =
  * Middleware для настройки Content Security Policy
  */
 export const contentSecurityPolicy = (req: Request, res: Response, next: NextFunction) => {
-  // Проверяем, включена ли CSP в конфигурации
-  if (!SECURITY.CONTENT_SECURITY_POLICY) {
-    return next();
-  }
-
-  // Настраиваем CSP
+  if (!SECURITY.CONTENT_SECURITY_POLICY) return next();
+  const isProd = process.env.NODE_ENV === 'production';
   helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"], // В продакшене стоит убрать unsafe-eval
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      scriptSrc: isProd
+        ? ["'self'", "https://www.google-analytics.com"]
+        : ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://www.google-analytics.com"],
+      styleSrc: isProd
+        ? ["'self'", "https://fonts.googleapis.com"]
+        : ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       imgSrc: ["'self'", "data:", "blob:"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      connectSrc: ["'self'"],
+      connectSrc: isProd
+        ? ["'self'", "https://www.google-analytics.com"]
+        : ["'self'"],
       mediaSrc: ["'self'"],
       objectSrc: ["'none'"],
       frameSrc: ["'self'"],
+      frameAncestors: ["'self'"],
       upgradeInsecureRequests: [],
-    },
+    }
   })(req, res, next);
 };
 

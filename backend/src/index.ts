@@ -58,6 +58,21 @@ app.disable('etag');
 // Apply default Helmet security headers
 app.use(helmet());
 
+// Apply global Content Security Policy via HTTP headers
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    defaultSrc: ["'self'"],
+    scriptSrc: ["'self'", "https://www.google-analytics.com"],
+    styleSrc: ["'self'", "https://fonts.googleapis.com"],
+    imgSrc: ["'self'", "data:", "blob:"],
+    fontSrc: ["'self'", "https://fonts.gstatic.com"],
+    connectSrc: ["'self'", "https://www.google-analytics.com"],
+    objectSrc: ["'none'"],
+    frameAncestors: ["'self'"],
+    upgradeInsecureRequests: []
+  }
+}));
+
 // Redirect HTTP to HTTPS
 app.use((req: Request, res: Response, next: NextFunction) => {
   if (process.env.NODE_ENV === 'production' && req.headers['x-forwarded-proto'] !== 'https') {
