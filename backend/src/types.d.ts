@@ -30,3 +30,7 @@ declare namespace Express {
 
 // Экспортируем пустой объект для правильной обработки файла как модуля
 export {};
+
+// Add missing module declarations
+declare module 'express-mongo-sanitize';
+declare module 'hpp';

@@ -3,6 +3,26 @@ import dotenv from 'dotenv';
 // Загружаем переменные окружения из файла .env
 dotenv.config();
 
+// Validate production environment variables
+if (process.env.NODE_ENV === 'production') {
+  ['JWT_SECRET', 'JWT_REFRESH_SECRET', 'SESSION_SECRET'].forEach(name => {
+    if (!process.env[name]) throw new Error(`${name} must be set in production`);
+  });
+  if (!process.env.CORS_ORIGIN || process.env.CORS_ORIGIN === '*') {
+    throw new Error('CORS_ORIGIN must be a specific domain in production');
+  }
+}
+
+// Validate required environment variables in production
+if (process.env.NODE_ENV === 'production') {
+  ['JWT_SECRET', 'JWT_REFRESH_SECRET', 'SESSION_SECRET'].forEach(name => {
+    if (!process.env[name]) throw new Error(`${name} must be set in production`);
+  });
+  if (!process.env.CORS_ORIGIN || process.env.CORS_ORIGIN === '*') {
+    throw new Error('CORS_ORIGIN must be a specific domain in production');
+  }
+}
+
 // Берем значения из переменных окружения или используем значения по умолчанию
 export const NODE_ENV = process.env.NODE_ENV || 'development';
 export const PORT = parseInt(process.env.PORT || '3001', 10);

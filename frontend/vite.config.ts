@@ -10,17 +10,20 @@ export default defineConfig(({ mode }) => {
   const apiUrl = env.VITE_API_URL || 'http://localhost:3001';
   const isProd = mode === 'production';
   
+  // Ensure production env is configured
+  if (isProd && !env.VITE_API_URL) {
+    throw new Error('VITE_API_URL must be set in production');
+  }
+  
   // Создаем CSP политику для защиты от XSS и других уязвимостей
+  // Tighten CSP for production: remove unsafe-inline and unsafe-eval
   const cspPolicy = {
     'default-src': ["'self'"],
-    // Добавляем 'unsafe-inline' для работы с Vite в режиме разработки
-    'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://www.google-analytics.com"],
-    'style-src': ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-    // Разрешаем загрузку изображений со всех HTTPS источников
-    'img-src': ["'self'", "data:", "blob:", "https://*", "http://*"], // Разрешаем все https и http источники для изображений
+    'script-src': isProd ? ["'self'", "https://www.google-analytics.com"] : ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://www.google-analytics.com"],
+    'style-src': isProd ? ["'self'", "https://fonts.googleapis.com"] : ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+    'img-src': ["'self'", "data:", "blob:", "https:"],
     'font-src': ["'self'", "data:", "https://fonts.gstatic.com"],
-    // Исправляем connect-src, чтобы он правильно работал с API
-    'connect-src': ["'self'", apiUrl, "https://www.google-analytics.com", "*"],
+    'connect-src': ["'self'", apiUrl, "https://www.google-analytics.com"],
     'media-src': ["'self'"],
     'object-src': ["'none'"],
     'frame-src': ["'self'"],
@@ -46,9 +49,9 @@ export default defineConfig(({ mode }) => {
   }
   
   return {
-    // Принудительно устанавливаем NODE_ENV=development для вывода полных react-ошибок
+    // Dynamically set NODE_ENV based on mode
     define: {
-      'process.env.NODE_ENV': JSON.stringify('development')
+      'process.env.NODE_ENV': JSON.stringify(mode)
     },
     plugins: [
       // Legacy support for older browsers (e.g., Telegram WebView)
@@ -70,7 +73,7 @@ export default defineConfig(({ mode }) => {
             res.setHeader('X-Content-Type-Options', 'nosniff');
             res.setHeader('X-Frame-Options', 'DENY');
             res.setHeader('X-XSS-Protection', '1; mode=block');
-            res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+            res.setHeader('Referrer-Policy', 'no-referrer');
             res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
             
             // Устанавливаем CSP в режиме разработки, но только если в HTML нет CSP
@@ -89,16 +92,26 @@ export default defineConfig(({ mode }) => {
             res.setHeader('Access-Control-Allow-Origin', '*');
             res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,POST,DELETE,OPTIONS');
             res.setHeader('Access-Control-Allow-Headers', '*');
+            res.setHeader('Referrer-Policy', 'no-referrer');
             next();
           });
+        }
+      },
+      // Inject security meta tags into HTML
+      {
+        name: 'html-security',
+        transformIndexHtml(html) {
+          return html.replace(/<head>/i,
+            `<head>\n    <meta http-equiv="Referrer-Policy" content="no-referrer" />\n    <meta http-equiv="Content-Security-Policy" content="${cspString}" />`
+          );
         }
       }
     ],
     root: path.resolve(__dirname, ''),
     build: {
       outDir: 'dist',
-      // Всегда генерируем source map для продакшн, чтобы дебажить ошибки
-      sourcemap: true,
+      // Disable sourcemaps in production to prevent code exposure
+      sourcemap: isProd ? false : true,
       // Настройки безопасности для сборки
       rollupOptions: {
         output: {
@@ -166,7 +179,8 @@ export default defineConfig(({ mode }) => {
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET,HEAD,PUT,POST,DELETE,OPTIONS',
-        'Access-Control-Allow-Headers': '*'
+        'Access-Control-Allow-Headers': '*',
+        'Referrer-Policy': 'no-referrer'
       }
     },
     resolve: {

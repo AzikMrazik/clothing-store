@@ -6,6 +6,8 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import { SECURITY, PORT } from './config';
 import helmet from 'helmet';
+import mongoSanitize from 'express-mongo-sanitize';
+import hpp from 'hpp';
 // Импортируем middleware безопасности
 import { 
   xssProtection, 
@@ -50,6 +52,11 @@ process.on('unhandledRejection', (reason) => {
 
 // Улучшенные настройки безопасности
 app.disable('x-powered-by');
+// Disable ETag headers to avoid cache fingerprinting
+app.disable('etag');
+
+// Apply default Helmet security headers
+app.use(helmet());
 
 // Redirect HTTP to HTTPS
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -61,6 +68,9 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 // HSTS для HTTPS
 app.use(helmet.hsts({ maxAge: 31536000, includeSubDomains: true, preload: true }));
+
+// Apply additional Helmet security headers for anonymity
+app.use(helmet.referrerPolicy({ policy: 'no-referrer' }));
 
 // Применяем middleware для логирования запросов
 app.use(requestLogger);
@@ -76,6 +86,11 @@ app.use(secureHeaders);
 app.use(bruteForceProtection());
 app.use(rateLimiter);
 app.use(sqlInjectionCheck);
+
+// Prevent NoSQL injection by sanitizing data
+app.use(mongoSanitize());
+// Protect against HTTP Parameter Pollution
+app.use(hpp());
 
 // Применяем безопасные CORS
 app.use(cors({
@@ -99,6 +114,15 @@ app.use(express.json({
 }));
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 
+// Utility to anonymize IP for privacy
+const anonymizeIp = (ip: string): string => {
+  const v4 = ip.split('.');
+  if (v4.length === 4) { v4[3] = '0'; return v4.join('.'); }
+  const v6 = ip.split(':');
+  if (v6.length > 0) { v6[v6.length - 1] = '0000'; return v6.join(':'); }
+  return ip;
+};
+
 // Middleware для отслеживания запросов с улучшенным логированием безопасности
 app.use((req: Request, res: Response, next: NextFunction) => {
   // Очищаем чувствительные данные перед логированием
@@ -113,7 +137,10 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     });
   }
   
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.path} - Origin: ${req.headers.origin} - IP: ${req.ip}`);
+  // Safely obtain IP address, falling back if undefined
+  const rawIp = (req.ip ?? req.socket.remoteAddress ?? '');
+  const anonIp = anonymizeIp(rawIp);
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path} - Origin: ${req.headers.origin} - IP: ${anonIp}`);
   next();
 });
 
