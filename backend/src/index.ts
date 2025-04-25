@@ -75,10 +75,14 @@ app.use(helmet.contentSecurityPolicy({
   }
 }));
 
-// Redirect HTTP to HTTPS
+// Redirect HTTP to HTTPS for non-API routes
 app.use((req: Request, res: Response, next: NextFunction) => {
-  if (process.env.NODE_ENV === 'production' && req.headers['x-forwarded-proto'] !== 'https') {
-    return res.redirect(`https://${req.headers.host}${req.url}`);
+  if (process.env.NODE_ENV === 'production') {
+    // Skip redirect for API endpoints
+    if (req.path.startsWith('/api')) return next();
+    if (req.headers['x-forwarded-proto'] !== 'https') {
+      return res.redirect(`https://${req.headers.host}${req.url}`);
+    }
   }
   next();
 });
