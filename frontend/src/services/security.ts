@@ -182,17 +182,8 @@ class SecurityService {
     
     // Добавление других политик безопасности, если необходимо
     // Например, добавление X-Frame-Options, если не установлено через сервер
-    try {
-      // Защита от кликджекинга через X-Frame-Options, если поддерживается
-      if (SECURITY.FRAME_OPTIONS) {
-        const frameOptions = document.createElement('meta');
-        frameOptions.httpEquiv = 'X-Frame-Options';
-        frameOptions.content = SECURITY.FRAME_OPTIONS;
-        document.head.appendChild(frameOptions);
-      }
-    } catch (error) {
-      console.error('Ошибка при установке дополнительных политик:', error);
-    }
+    // X-Frame-Options should be delivered via HTTP headers by the server
+    // Meta tags for X-Frame-Options removed to comply with browser requirements
   }
 }
 
