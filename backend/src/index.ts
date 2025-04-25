@@ -62,8 +62,8 @@ app.use(helmet());
 app.use(helmet.contentSecurityPolicy({
   directives: {
     defaultSrc: ["'self'"],
-    scriptSrc: ["'self'", "https://www.google-analytics.com"],
-    styleSrc: ["'self'", "https://fonts.googleapis.com"],
+    scriptSrc: ["'self'", "'unsafe-inline'", "https://www.google-analytics.com"],
+    styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
     imgSrc: ["'self'", "data:", "blob:"],
     fontSrc: ["'self'", "https://fonts.gstatic.com"],
     connectSrc: ["'self'", "https://www.google-analytics.com"],
@@ -249,12 +249,28 @@ app.use(express.static(frontendDist, {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+    // Ensure CSP header is applied
+    res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://www.google-analytics.com; object-src 'none'; frame-ancestors 'self'; upgrade-insecure-requests");
   }
 }));
-app.get('*', (req: Request, res: Response, next: NextFunction) => {
-  if (req.originalUrl.startsWith('/api')) return next();
-  res.sendFile(path.join(frontendDist, 'index.html'));
-});
+
+// Apply CSP via Helmet when serving SPA fallback
+app.get('*', helmet.contentSecurityPolicy({ directives: {
+    defaultSrc: ["'self'"],
+    scriptSrc: ["'self'", "'unsafe-inline'", "https://www.google-analytics.com"],
+    styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+    imgSrc: ["'self'", "data:", "blob:"],
+    fontSrc: ["'self'", "https://fonts.gstatic.com"],
+    connectSrc: ["'self'", "https://www.google-analytics.com"],
+    objectSrc: ["'none'"],
+    frameAncestors: ["'self'"],
+    upgradeInsecureRequests: []
+  } }),
+  (req: Request, res: Response, next: NextFunction) => {
+    if (req.originalUrl.startsWith('/api')) return next();
+    res.sendFile(path.join(frontendDist, 'index.html'));
+  }
+);
 
 // Создаем роут для проверки безопасности (security.txt)
 // Согласно https://securitytxt.org/
