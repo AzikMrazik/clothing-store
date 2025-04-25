@@ -40,6 +40,8 @@ import { logClientError } from './utils/logger';
 
 config();
 const app = express();
+// Trust proxy headers (e.g., x-forwarded-proto) when behind a reverse proxy
+app.set('trust proxy', true);
 
 // Debug: log startup and catch unhandled errors
 console.log('Backend starting at', new Date().toISOString());

@@ -108,8 +108,6 @@ export default defineConfig(({ mode }) => {
       // Настройки безопасности для сборки
       rollupOptions: {
         output: {
-          // Включаем crossorigin на теги <script> для раскрытия ошибок
-          crossOriginLoading: 'anonymous',
           // Разделение кода по чанкам
           manualChunks: {
             vendor: ['react', 'react-dom', 'react-router-dom'],
